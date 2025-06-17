@@ -9,10 +9,16 @@ public class NumberBlock : MonoBehaviour
     [SerializeField] private TextMeshPro valueText;
 
     // Chance for an X-joker instead of 1–9
-    private const float jokerChance = 0.03f;  // 5% for X
+    private const float jokerChance = 0.01f;  // 5% for X
     // Within the non-joker pool, 55% for [1–4], 45% for [5–9]
     private const float range1to4Chance = 0.55f;
     public SpriteRenderer spriteRenderer;
+
+    [Header("Neighbor Links (assign in prefab)")]
+    public NumberBlock neighborUp;
+    public NumberBlock neighborDown;
+    public NumberBlock neighborLeft;
+    public NumberBlock neighborRight;
 
     private void Awake()
     {

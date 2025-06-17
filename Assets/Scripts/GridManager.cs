@@ -174,7 +174,7 @@ public class GridManager : MonoBehaviour
 		}
 
 		// ���� CALL SCORING ����
-		// ClassicModeManager.Instance.OnBlocksDestroyed(toRemove.Count);
+		ClassicModeManager.Instance.OnBlocksDestroyed(toRemove.Count);
 
 		// DESTROY ANY EMPTY COMPOSITE PARENTS
 		foreach (var parent in parentTrack)

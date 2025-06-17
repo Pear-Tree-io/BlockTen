@@ -38,7 +38,7 @@ public class SpawnManager : MonoBehaviour
 				spawnPoints[i].position,
 				Quaternion.identity
 			);
-			go.transform.localScale = Vector3.one * 0.8f;
+			go.transform.localScale = Vector3.one * 0.7f;
 
 			var comp = go.GetComponent<DraggableCompositeBlock>();
 			comp.spawnManager = this;
@@ -64,7 +64,8 @@ public class SpawnManager : MonoBehaviour
 		currentBlocks.Clear();
 		placedCount = 0;
 		SpawnAll();
-	}
+        CheckRemainingSpace();
+    }
 
 	/// <summary>
 	/// Called by each DraggableCompositeBlock when it successfully lands.
