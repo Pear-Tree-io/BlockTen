@@ -6,17 +6,21 @@ public class NumberBlock : MonoBehaviour
 {
     public int Value { get; private set; }
     public bool IsJoker { get; private set; }
-    [SerializeField] private TMP_Text valueText;
+    [SerializeField] private TextMeshPro valueText;
 
     // Chance for an X-joker instead of 1–9
     private const float jokerChance = 0.03f;  // 5% for X
     // Within the non-joker pool, 55% for [1–4], 45% for [5–9]
     private const float range1to4Chance = 0.55f;
+    public SpriteRenderer spriteRenderer;
 
     private void Awake()
     {
+	    if (spriteRenderer == null)
+			spriteRenderer = GetComponent<SpriteRenderer>();
+	    
         if (valueText == null)
-            valueText = GetComponentInChildren<TMP_Text>();
+            valueText = GetComponentInChildren<TextMeshPro>();
     }
 
     /// <summary>
@@ -51,4 +55,16 @@ public class NumberBlock : MonoBehaviour
         if (valueText != null)
             valueText.text = Value.ToString();
     }
+    
+    public void OnDragStart()
+    {
+	    spriteRenderer.sortingOrder = 3;
+	    valueText.sortingOrder = 4;
+    }
+
+	public void OnDragEnd()
+	{
+		spriteRenderer.sortingOrder = 1;
+		valueText.sortingOrder = 2;
+	}
 }

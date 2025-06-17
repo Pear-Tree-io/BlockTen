@@ -8,18 +8,18 @@ public class DraggableCompositeBlock : MonoBehaviour,
 {
     [HideInInspector] public SpawnManager spawnManager;
     [HideInInspector] public Vector3 startPosition;
+    [HideInInspector] public List<NumberBlock> children;
+    [HideInInspector] public bool placed;
 
     private Camera cam;
     private float screenZ;
     private Vector3 offset;
-    private bool placed;
-    private List<NumberBlock> children;
 
     private void Start()
     {
         cam = Camera.main;
         screenZ = cam.WorldToScreenPoint(transform.position).z;
-        children = new List<NumberBlock>(GetComponentsInChildren<NumberBlock>());
+        children = new(GetComponentsInChildren<NumberBlock>());
 
         // Randomize child values on spawn
         foreach (var nb in children)
@@ -32,6 +32,7 @@ public class DraggableCompositeBlock : MonoBehaviour,
 
         // Grow back to full size on grab
         transform.localScale = Vector3.one;
+        children.ForEach(i => i.OnDragStart());
 
         var ps = new Vector3(e.position.x, e.position.y, screenZ);
         offset = transform.position - cam.ScreenToWorldPoint(ps);
@@ -88,6 +89,7 @@ public class DraggableCompositeBlock : MonoBehaviour,
         for (int i = 0; i < n; i++)
             GridManager.Instance.RegisterBlock(children[i], gx[i], gy[i]);
 
+        children.ForEach(i => i.OnDragEnd());
         placed = true;
 
         // 4) Run your match‐and‐clear logic
