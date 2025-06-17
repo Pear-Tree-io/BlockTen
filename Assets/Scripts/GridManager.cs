@@ -47,7 +47,30 @@ public class GridManager : MonoBehaviour
 		}
 	}
 
-	public bool TryPlaceCell(Vector3 worldPos, out Vector3 cellCenter, out int gx, out int gy)
+    /// <summary>
+    /// Can we occupy the cell under this world position?
+    /// (no side-effects: just tests bounds + occupancy)
+    /// </summary>
+    public bool CanPlaceCell(Vector3 worldPos, out int gx, out int gy)
+    {
+        Vector3 local = worldPos - origin;
+        int x = Mathf.RoundToInt(local.x / cellSize);
+        int y = Mathf.RoundToInt(local.y / cellSize);
+        gx = x; gy = y;
+        return x >= 0 && x < columns
+            && y >= 0 && y < rows
+            && !occupied[x, y];
+    }
+
+    /// <summary>
+    /// Returns the world‐space center of the cell at (x,y).
+    /// </summary>
+    public Vector3 GetCellCenter(int x, int y)
+    {
+        return origin + new Vector3(x * cellSize, y * cellSize, 0f);
+    }
+
+    public bool TryPlaceCell(Vector3 worldPos, out Vector3 cellCenter, out int gx, out int gy)
 	{
 		Vector3 local = worldPos - origin;
 		int x = Mathf.RoundToInt(local.x / cellSize);

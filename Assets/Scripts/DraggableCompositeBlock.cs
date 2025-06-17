@@ -54,57 +54,43 @@ public class DraggableCompositeBlock : MonoBehaviour,
         if (placed) return;
 
         int n = children.Count;
-        var centers = new Vector3[n];
         var gx = new int[n];
         var gy = new int[n];
-        bool ok = true;
+        var centers = new Vector3[n];
 
-        // 1) Try to reserve each target cell
+        // 1) TEST pass: can *all* children fit?
         for (int i = 0; i < n; i++)
         {
-            if (!GridManager.Instance.TryPlaceCell(
+            if (!GridManager.Instance.CanPlaceCell(
                     children[i].transform.position,
-                    out centers[i],
-                    out gx[i],
-                    out gy[i]))
+                    out gx[i], out gy[i]))
             {
-                ok = false;
-                break;
+                // failure → snap back & shrink
+                transform.position = startPosition;
+                transform.localScale = Vector3.one * 0.8f;
+                return;
             }
+            // if they *can*, remember their would-be centers
+            centers[i] = GridManager.Instance.GetCellCenter(gx[i], gy[i]);
         }
 
-        if (!ok)
-        {
-            // Failed: snap back and shrink
-            transform.position = startPosition;
-            transform.localScale = Vector3.one * 0.8f;
-            return;
-        }
-
-        // 2) Align the parent so all children land flush
+        // 2) ALIGN parent so all children land exactly on their centers
         var localOffset = children[0].transform.localPosition;
         transform.position = centers[0] - localOffset;
 
-        // 3) Register each child in the grid
+        // 3) RESERVE & REGISTER each child (marks occupied + stores ref)
         for (int i = 0; i < n; i++)
             GridManager.Instance.RegisterBlock(children[i], gx[i], gy[i]);
 
-        children.ForEach(i => i.OnDragEnd());
         placed = true;
 
-        // 4) Run your match‐and‐clear logic
+        // 4) Clear matches, detach, destroy parent, notify spawn manager…
         GridManager.Instance.CheckAndDestroyMatches();
 
-        // 5) Detach children so they live independently on the grid
         foreach (var nb in children)
-        {
             nb.transform.SetParent(GridManager.Instance.transform, true);
-        }
-
-        // 6) Destroy the now‐empty composite parent
         Destroy(gameObject);
 
-        // 7) Tell the spawner we placed one
         spawnManager.NotifyBlockPlaced();
     }
 }
