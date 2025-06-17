@@ -8,8 +8,10 @@ public class NumberBlock : MonoBehaviour
     public bool IsJoker { get; private set; }
     [SerializeField] private TMP_Text valueText;
 
-    // Chance for an X-joker instead of 1–9 (0.05 = 5%)
-    private const float jokerChance = 0.01f;
+    // Chance for an X-joker instead of 1–9
+    private const float jokerChance = 0.03f;  // 5% for X
+    // Within the non-joker pool, 55% for [1–4], 45% for [5–9]
+    private const float range1to4Chance = 0.55f;
 
     private void Awake()
     {
@@ -18,25 +20,35 @@ public class NumberBlock : MonoBehaviour
     }
 
     /// <summary>
-    /// Assigns either a random 1–9 or, rarely, an X-joker.
+    /// Assigns either a random 1–9 (with your custom weighting) or, rarely, an X-joker.
     /// </summary>
-    public void AssignRandom(int min = 1, int max = 9)
+    public void AssignRandom()
     {
+        // 1) Joker roll
         if (Random.value < jokerChance)
         {
-            // Joker branch
             IsJoker = true;
-            Value = 0;                // ignored in matching logic
-            if (valueText != null)
-                valueText.text = "X";
+            Value = 0;
+            if (valueText != null) valueText.text = "X";
+            return;
+        }
+
+        // 2) Number roll (non-joker)
+        IsJoker = false;
+        float r = Random.value;
+
+        if (r < range1to4Chance)
+        {
+            // pick uniformly from 1,2,3,4
+            Value = Random.Range(1, 5);
         }
         else
         {
-            // Regular number
-            IsJoker = false;
-            Value = Random.Range(min, max + 1);
-            if (valueText != null)
-                valueText.text = Value.ToString();
+            // pick uniformly from 5,6,7,8,9
+            Value = Random.Range(5, 10);
         }
+
+        if (valueText != null)
+            valueText.text = Value.ToString();
     }
 }

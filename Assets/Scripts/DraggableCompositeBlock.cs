@@ -21,7 +21,7 @@ public class DraggableCompositeBlock : MonoBehaviour,
         screenZ = cam.WorldToScreenPoint(transform.position).z;
         children = new List<NumberBlock>(GetComponentsInChildren<NumberBlock>());
 
-        // 2) random values on spawn
+        // Randomize child values on spawn
         foreach (var nb in children)
             nb.AssignRandom();
     }
@@ -29,7 +29,8 @@ public class DraggableCompositeBlock : MonoBehaviour,
     public void OnPointerDown(PointerEventData e)
     {
         if (placed) return;
-        // 3) snap up to full size when you grab it
+
+        // Grow back to full size on grab
         transform.localScale = Vector3.one;
 
         var ps = new Vector3(e.position.x, e.position.y, screenZ);
@@ -57,15 +58,14 @@ public class DraggableCompositeBlock : MonoBehaviour,
         var gy = new int[n];
         bool ok = true;
 
-        // calculate each child’s target cell
+        // 1) Try to reserve each target cell
         for (int i = 0; i < n; i++)
         {
             if (!GridManager.Instance.TryPlaceCell(
                     children[i].transform.position,
                     out centers[i],
                     out gx[i],
-                    out gy[i]
-                ))
+                    out gy[i]))
             {
                 ok = false;
                 break;
@@ -74,22 +74,35 @@ public class DraggableCompositeBlock : MonoBehaviour,
 
         if (!ok)
         {
-            // 4) reset both position AND scale if placement failed
+            // Failed: snap back and shrink
             transform.position = startPosition;
-            transform.localScale = Vector3.one * 0.6f;
+            transform.localScale = Vector3.one * 0.8f;
             return;
         }
 
-        // align the parent based on its first child’s local offset
+        // 2) Align the parent so all children land flush
         var localOffset = children[0].transform.localPosition;
         transform.position = centers[0] - localOffset;
 
-        // register them and lock them in
+        // 3) Register each child in the grid
         for (int i = 0; i < n; i++)
             GridManager.Instance.RegisterBlock(children[i], gx[i], gy[i]);
 
         placed = true;
+
+        // 4) Run your match‐and‐clear logic
         GridManager.Instance.CheckAndDestroyMatches();
+
+        // 5) Detach children so they live independently on the grid
+        foreach (var nb in children)
+        {
+            nb.transform.SetParent(GridManager.Instance.transform, true);
+        }
+
+        // 6) Destroy the now‐empty composite parent
+        Destroy(gameObject);
+
+        // 7) Tell the spawner we placed one
         spawnManager.NotifyBlockPlaced();
     }
 }

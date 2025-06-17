@@ -166,15 +166,14 @@ public class GridManager : MonoBehaviour
         {
             var b = gridBlocks[p.x, p.y];
             if (b == null) continue;
-
-            // remember parent for cleanup
-            if (b.transform.parent != null)
-                parentTrack.Add(b.transform.parent);
-
+            parentTrack.Add(b.transform.parent);
             occupied[p.x, p.y] = false;
             gridBlocks[p.x, p.y] = null;
             Destroy(b.gameObject);
         }
+
+        // 式式 CALL SCORING 式式
+        ClassicModeManager.Instance.OnBlocksDestroyed(toRemove.Count);
 
         // DESTROY ANY EMPTY COMPOSITE PARENTS
         foreach (var parent in parentTrack)
