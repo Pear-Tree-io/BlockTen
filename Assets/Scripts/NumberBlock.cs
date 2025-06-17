@@ -67,4 +67,13 @@ public class NumberBlock : MonoBehaviour
 		spriteRenderer.sortingOrder = 1;
 		valueText.sortingOrder = 2;
 	}
+
+    /// <summary>
+    /// Tint this block’s sprite to the given color.
+    /// </summary>
+    public void SetColor(Color col)
+    {
+        if (spriteRenderer != null)
+            spriteRenderer.color = col;
+    }
 }

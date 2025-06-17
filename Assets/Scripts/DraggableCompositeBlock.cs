@@ -6,6 +6,11 @@ using System.Collections.Generic;
 public class DraggableCompositeBlock : MonoBehaviour,
     IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
+    [Header("Color Settings")]
+    [Tooltip("Pick one of these at random and tint the entire composite.")]
+    public Color[] availableColors;
+    private Color blockColor;
+
     [HideInInspector] public SpawnManager spawnManager;
     [HideInInspector] public Vector3 startPosition;
     [HideInInspector] public List<NumberBlock> children;
@@ -24,6 +29,14 @@ public class DraggableCompositeBlock : MonoBehaviour,
         // Randomize child values on spawn
         foreach (var nb in children)
             nb.AssignRandom();
+
+        // 2) pick a uniform color for whole composite
+        if (availableColors != null && availableColors.Length > 0)
+        {
+            blockColor = availableColors[Random.Range(0, availableColors.Length)];
+            foreach (var nb in children)
+                nb.SetColor(blockColor);
+        }
     }
 
     public void OnPointerDown(PointerEventData e)
@@ -82,6 +95,7 @@ public class DraggableCompositeBlock : MonoBehaviour,
         for (int i = 0; i < n; i++)
             GridManager.Instance.RegisterBlock(children[i], gx[i], gy[i]);
 
+        children.ForEach(i => i.OnDragEnd());
         placed = true;
 
         // 4) Clear matches, detach, destroy parent, notify spawn manager…

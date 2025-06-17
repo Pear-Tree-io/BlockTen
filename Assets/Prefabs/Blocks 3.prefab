@@ -50,8 +50,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9c56aa21c526d847b88b24381b071c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  availableColors:
+  - {r: 0.9607844, g: 0.48627454, b: 0.37254903, a: 1}
+  - {r: 0.9215687, g: 0.7568628, b: 0.1764706, a: 1}
+  - {r: 0.9294118, g: 0.3019608, b: 0.34901962, a: 1}
+  - {r: 0.44705886, g: 0.7058824, b: 0.83921576, a: 1}
+  - {r: 0, g: 0.48235297, b: 0.74509805, a: 1}
   spawnManager: {fileID: 0}
   startPosition: {x: 0, y: 0, z: 0}
+  children: []
+  placed: 0
 --- !u!61 &4265777920306125360
 BoxCollider2D:
   m_ObjectHideFlags: 0
