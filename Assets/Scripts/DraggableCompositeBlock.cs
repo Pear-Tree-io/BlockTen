@@ -69,22 +69,29 @@ public class DraggableCompositeBlock : MonoBehaviour,
         int n = children.Count;
         var gx = new int[n];
         var gy = new int[n];
+        bool ok = true;
         var centers = new Vector3[n];
 
         // 1) TEST pass: can *all* children fit?
         for (int i = 0; i < n; i++)
         {
-            if (!GridManager.Instance.CanPlaceCell(
+            if (!GridManager.Instance.TryPlaceCell(
                     children[i].transform.position,
-                    out gx[i], out gy[i]))
+                    out centers[i],
+                    out gx[i],
+                    out gy[i]))
             {
-                // failure → snap back & shrink
-                transform.position = startPosition;
-                transform.localScale = Vector3.one * 0.8f;
-                return;
+                ok = false;
+                break;
             }
-            // if they *can*, remember their would-be centers
-            centers[i] = GridManager.Instance.GetCellCenter(gx[i], gy[i]);
+        }
+
+        if (!ok)
+        {
+            // Failed: snap back and shrink
+            transform.position = startPosition;
+            transform.localScale = Vector3.one * 0.8f;
+            return;
         }
 
         // 2) ALIGN parent so all children land exactly on their centers
