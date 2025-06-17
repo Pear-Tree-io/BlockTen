@@ -34,34 +34,27 @@ public class NumberBlock : MonoBehaviour
     /// </summary>
     public void AssignRandom()
     {
-        // 1) Joker roll
-        if (Random.value < jokerChance)
+        float r = Random.value;
+
+        // 1) Joker check
+        if (r < jokerChance)
         {
             IsJoker = true;
             Value = 0;
-            if (valueText != null) valueText.text = "X";
+            valueText.text = "X";
             return;
         }
 
-        // 2) Number roll (non-joker)
-        IsJoker = false;
-        float r = Random.value;
-
-        if (r < range1to4Chance)
-        {
-            // pick uniformly from 1,2,3,4
+        // 2) Number roll with single Random.value
+        float s = (r - jokerChance) / (1f - jokerChance);
+        if (s < range1to4Chance)
             Value = Random.Range(1, 5);
-        }
         else
-        {
-            // pick uniformly from 5,6,7,8,9
             Value = Random.Range(5, 10);
-        }
 
-        if (valueText != null)
-            valueText.text = Value.ToString();
+        valueText.text = Value.ToString();
     }
-    
+
     public void OnDragStart()
     {
 	    spriteRenderer.sortingOrder = 3;

@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-using static Unity.VisualScripting.Metadata;
-using Unity.VisualScripting;
 
 [RequireComponent(typeof(Collider2D))]
 public class DraggableCompositeBlock : MonoBehaviour,
@@ -23,7 +21,6 @@ public class DraggableCompositeBlock : MonoBehaviour,
     private Vector3 offset;
 
     private List<Vector2Int> childOffsets;
-    private Dictionary<Vector2Int, int> offsetToIndex;
 
     private void Start()
     {
@@ -47,12 +44,13 @@ public class DraggableCompositeBlock : MonoBehaviour,
         // now roll numbers until no adjacent-pair can sum to 10
         AssignValidRandomNumbers();
 
-
         // 2) pick a uniform color for whole composite
         if (availableColors != null && availableColors.Length > 0)
+        {
             blockColor = availableColors[Random.Range(0, availableColors.Length)];
             foreach (var nb in children)
                 nb.SetColor(blockColor);
+        }
     }
 
     /// <summary>
@@ -154,8 +152,6 @@ public class DraggableCompositeBlock : MonoBehaviour,
         return false;
     }
 
-
-
     public void OnPointerDown(PointerEventData e)
     {
         if (placed) return;
@@ -189,18 +185,16 @@ public class DraggableCompositeBlock : MonoBehaviour,
         bool ok = true;
         var centers = new Vector3[n];
 
-        // 1) TEST pass: can *all* children fit?
         for (int i = 0; i < n; i++)
         {
-            if (!GridManager.Instance.TryPlaceCell(
+            if (!GridManager.Instance.CanPlaceCell(
                     children[i].transform.position,
-                    out centers[i],
-                    out gx[i],
-                    out gy[i]))
+                    out gx[i], out gy[i]))
             {
                 ok = false;
                 break;
             }
+            centers[i] = GridManager.Instance.GetCellCenter(gx[i], gy[i]);
         }
 
         if (!ok)
@@ -208,14 +202,16 @@ public class DraggableCompositeBlock : MonoBehaviour,
             // Failed: snap back and shrink
             transform.position = startPosition;
             transform.localScale = Vector3.one * 0.7f;
+            spawnManager.CheckRemainingSpace();
             return;
         }
-
+        
         // 2) ALIGN parent so all children land exactly on their centers
         var localOffset = children[0].transform.localPosition;
         transform.position = centers[0] - localOffset;
 
-        // 3) RESERVE & REGISTER each child (marks occupied + stores ref)
+
+        // align parent, then finally register each child:
         for (int i = 0; i < n; i++)
             GridManager.Instance.RegisterBlock(children[i], gx[i], gy[i]);
 

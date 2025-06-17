@@ -42,8 +42,6 @@ public class ClassicModeManager : MonoBehaviour
         // award points: each block gives comboMultiplier points
         score += destroyedCount * comboMultiplier;
         scoreText.text = score.ToString();
-
-        // update combo display before increasing, so the player sees the multiplier they just used
         UpdateComboText();
 
         // next clear is worth more
