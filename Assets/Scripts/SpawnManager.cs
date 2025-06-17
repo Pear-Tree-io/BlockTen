@@ -34,7 +34,7 @@ public class SpawnManager : MonoBehaviour
                 spawnPoints[i].position,
                 Quaternion.identity
             );
-            go.transform.localScale = Vector3.one * 0.8f;
+            go.transform.localScale = Vector3.one * 0.6f;
 
             var comp = go.GetComponent<DraggableCompositeBlock>();
             comp.spawnManager = this;

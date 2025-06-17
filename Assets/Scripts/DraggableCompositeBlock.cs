@@ -76,7 +76,7 @@ public class DraggableCompositeBlock : MonoBehaviour,
         {
             // 4) reset both position AND scale if placement failed
             transform.position = startPosition;
-            transform.localScale = Vector3.one * 0.8f;
+            transform.localScale = Vector3.one * 0.6f;
             return;
         }
 

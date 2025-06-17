@@ -1,10 +1,6 @@
-// GridManager.cs
 using UnityEngine;
 using System.Collections.Generic;
 
-/// <summary>
-/// Manages an NxM grid, tracks block placement, frees cells, checks for matches, and handles game over.
-/// </summary>
 public class GridManager : MonoBehaviour
 {
     public static GridManager Instance { get; private set; }
@@ -26,42 +22,31 @@ public class GridManager : MonoBehaviour
         else
             Instance = this;
 
-        // Initialize grid arrays early so HasFreeSlots can be called safely
         occupied = new bool[columns, rows];
         gridBlocks = new NumberBlock[columns, rows];
     }
 
     private void Start()
     {
-        // Center the grid around this GameObject
         float w = columns * cellSize;
         float h = rows * cellSize;
-        origin = transform.position - new Vector3(
-            w / 2f - cellSize / 2f,
-            h / 2f - cellSize / 2f,
-            0f
-        );
+        origin = transform.position
+               - new Vector3(w / 2f - cellSize / 2f,
+                             h / 2f - cellSize / 2f,
+                             0f);
 
-        // Initialize grid state and instantiate cell placeholders
         for (int x = 0; x < columns; x++)
-        {
             for (int y = 0; y < rows; y++)
             {
                 occupied[x, y] = false;
                 gridBlocks[x, y] = null;
-                Instantiate(
-                    cellPrefab,
-                    origin + new Vector3(x * cellSize, y * cellSize, 0f),
-                    Quaternion.identity,
-                    transform
-                );
+                Instantiate(cellPrefab,
+                            origin + new Vector3(x * cellSize, y * cellSize, 0f),
+                            Quaternion.identity,
+                            transform);
             }
-        }
     }
 
-    /// <summary>
-    /// Attempts to occupy the nearest cell to worldPos.
-    /// </summary>
     public bool TryPlaceCell(Vector3 worldPos, out Vector3 cellCenter, out int gx, out int gy)
     {
         Vector3 local = worldPos - origin;
@@ -80,18 +65,12 @@ public class GridManager : MonoBehaviour
         return false;
     }
 
-    /// <summary>
-    /// Registers a block in the grid at (x, y).
-    /// </summary>
     public void RegisterBlock(NumberBlock block, int x, int y)
     {
         gridBlocks[x, y] = block;
         occupied[x, y] = true;
     }
 
-    /// <summary>
-    /// Frees the cell at (x, y).
-    /// </summary>
     public void FreeCell(int x, int y)
     {
         if (x >= 0 && x < columns && y >= 0 && y < rows)
@@ -101,104 +80,105 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Returns true if at least 'count' slots are free.
-    /// </summary>
     public bool HasFreeSlots(int count)
     {
         int freeCount = 0;
         for (int x = 0; x < columns; x++)
-        {
             for (int y = 0; y < rows; y++)
-            {
                 if (!occupied[x, y] && ++freeCount >= count)
                     return true;
-            }
-        }
         return false;
     }
 
     /// <summary>
-    /// Logs game over if there aren't enough free slots.
-    /// </summary>
-    public void CheckGameOver(int requiredSlots)
-    {
-        if (!HasFreeSlots(requiredSlots))
-        {
-            Debug.Log("Game Over: No more space to place blocks.");
-            // TODO: Trigger your Game Over sequence here
-        }
-    }
-
-    /// <summary>
-    /// Clears any horizontal or vertical sequences summing to 10 and removes empty parents.
+    /// Scans horizontal & vertical straight segments of 2+ blocks where
+    /// non-joker sum + jokers-as-[1¡¦9] can reach exactly 10, and removes them.
     /// </summary>
     public void CheckAndDestroyMatches()
     {
         var toRemove = new HashSet<Vector2Int>();
         var parentTrack = new HashSet<Transform>();
 
-        // Horizontal
+        // HORIZONTAL
         for (int y = 0; y < rows; y++)
-        {
             for (int xs = 0; xs < columns; xs++)
             {
-                int sum = 0;
+                int sumNonJ = 0;
+                int jokerCnt = 0;
+
                 for (int x = xs; x < columns; x++)
                 {
-                    var nb = gridBlocks[x, y];
-                    if (nb == null) break;
-                    sum += nb.Value;
-                    if (sum == 10 && x > xs)
+                    var b = gridBlocks[x, y];
+                    if (b == null) break;
+
+                    if (b.IsJoker) jokerCnt++;
+                    else sumNonJ += b.Value;
+
+                    int length = x - xs + 1;
+                    int minSum = sumNonJ + jokerCnt * 1;
+                    int maxSum = sumNonJ + jokerCnt * 9;
+
+                    if (minSum > 10)
+                        break;
+
+                    if (length >= 2 && minSum <= 10 && maxSum >= 10)
                     {
                         for (int k = xs; k <= x; k++)
                             toRemove.Add(new Vector2Int(k, y));
+                        break;
                     }
-                    if (sum >= 10) break;
                 }
             }
-        }
 
-        // Vertical
+        // VERTICAL
         for (int x = 0; x < columns; x++)
-        {
             for (int ys = 0; ys < rows; ys++)
             {
-                int sum = 0;
+                int sumNonJ = 0;
+                int jokerCnt = 0;
+
                 for (int y = ys; y < rows; y++)
                 {
-                    var nb = gridBlocks[x, y];
-                    if (nb == null) break;
-                    sum += nb.Value;
-                    if (sum == 10 && y > ys)
+                    var b = gridBlocks[x, y];
+                    if (b == null) break;
+
+                    if (b.IsJoker) jokerCnt++;
+                    else sumNonJ += b.Value;
+
+                    int length = y - ys + 1;
+                    int minSum = sumNonJ + jokerCnt * 1;
+                    int maxSum = sumNonJ + jokerCnt * 9;
+
+                    if (minSum > 10)
+                        break;
+
+                    if (length >= 2 && minSum <= 10 && maxSum >= 10)
                     {
                         for (int k = ys; k <= y; k++)
                             toRemove.Add(new Vector2Int(x, k));
+                        break;
                     }
-                    if (sum >= 10) break;
                 }
             }
-        }
 
-        // Destroy blocks
+        // DESTROY MARKED BLOCKS
         foreach (var p in toRemove)
         {
-            var block = gridBlocks[p.x, p.y];
-            if (block != null)
-            {
-                if (block.transform.parent != null)
-                    parentTrack.Add(block.transform.parent);
-                occupied[p.x, p.y] = false;
-                gridBlocks[p.x, p.y] = null;
-                Destroy(block.gameObject);
-            }
+            var b = gridBlocks[p.x, p.y];
+            if (b == null) continue;
+
+            // remember parent for cleanup
+            if (b.transform.parent != null)
+                parentTrack.Add(b.transform.parent);
+
+            occupied[p.x, p.y] = false;
+            gridBlocks[p.x, p.y] = null;
+            Destroy(b.gameObject);
         }
 
-        // Remove empty parents
+        // DESTROY ANY EMPTY COMPOSITE PARENTS
         foreach (var parent in parentTrack)
-        {
             if (parent != null && parent.GetComponentInChildren<NumberBlock>() == null)
                 Destroy(parent.gameObject);
-        }
     }
 }
