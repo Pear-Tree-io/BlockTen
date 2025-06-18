@@ -10,10 +10,6 @@ public class DraggableCompositeBlock : MonoBehaviour,
     [Header("Color Settings")]
     public Color[] availableColors;
 
-    [Header("Drag Preview")]
-    [Tooltip("Color to tint the composite when over a valid drop spot")]
-    public Color validDropTint = new Color(0f, 1f, 0f, 0.5f);
-
     [HideInInspector] public SpawnManager spawnManager;
     [HideInInspector] public Vector3 startPosition;
     [HideInInspector] public List<NumberBlock> children;
@@ -24,7 +20,6 @@ public class DraggableCompositeBlock : MonoBehaviour,
     private Vector3 offset;
     
     private bool _isOverValidSpot = false;
-    private Color[] _originalColors;
 
     private void OnEnable()
     {
@@ -37,13 +32,11 @@ public class DraggableCompositeBlock : MonoBehaviour,
         {
             var tint = availableColors[Random.Range(0, availableColors.Length)];
             foreach (var nb in children)
+            {
                 nb.spriteRenderer.color = tint;
+                nb.OriginalColor = tint;
+            }      
         }
-
-        // 3) NOW cache those post-tint colors as your “original” base
-        _originalColors = children
-            .Select(nb => nb.spriteRenderer.color)
-            .ToArray();
     }
 
     private void Start()
@@ -167,9 +160,8 @@ public class DraggableCompositeBlock : MonoBehaviour,
         // 3) Always clear previous highlights/tints
         if (_isOverValidSpot)
         {
-            // restore composite blocks to their base colors
-            for (int i = 0; i < children.Count; i++)
-                children[i].spriteRenderer.color = _originalColors[i];
+            foreach (var nb in children)
+                nb.StopPreview();
 
             // clear any grid‐block previews
             GridManager.Instance.ClearAllPreviews();
@@ -180,7 +172,6 @@ public class DraggableCompositeBlock : MonoBehaviour,
         if (canPlace)
         {
             // 1) GRID PREVIEW: as before
-            GridManager.Instance.ClearAllPreviews();
             var runs = GridManager.Instance.GetPreviewRuns(temp);
             foreach (var run in runs)
                 foreach (var cell in run)
@@ -198,25 +189,23 @@ public class DraggableCompositeBlock : MonoBehaviour,
             {
                 var cell = temp[nb];
                 if (matchedCells.Contains(cell))
-                    nb.spriteRenderer.color = validDropTint;
+                    nb.PlayPreview();   // start pulse+color change
                 else
-                    nb.spriteRenderer.color = _originalColors[children.IndexOf(nb)];
+                    nb.StopPreview();   // ensure non-matched ones are static
             }
 
             _isOverValidSpot = true;
         }
     }
 
-
     public void OnPointerUp(PointerEventData e)
     {
-        // on drop, make sure composite is back to its base tint
-        if (_isOverValidSpot)
-        {
-            for (int i = 0; i < children.Count; i++)
-                children[i].spriteRenderer.color = _originalColors[i];
-            _isOverValidSpot = false;
-        }
+        // 0) First: stop *all* play‐preview on the dragged blocks
+        foreach (var nb in children)
+            nb.StopPreview();
+        _isOverValidSpot = false;
+
+        // Clear any running preview animations on the grid
         GridManager.Instance.ClearAllPreviews();
 
         if (placed) return;
@@ -264,7 +253,7 @@ public class DraggableCompositeBlock : MonoBehaviour,
         // remember this drop pos for the combo popup:
         GridManager.Instance.LastPlacedPosition = transform.position;
 
-        // 4) Clear matches
+        // 4) Clear matches (this will ultimately call NotifyBlockPlaced)
         GridManager.Instance.CheckAndDestroyMatches();
 
         // detach blocks and destroy this composite
@@ -272,5 +261,6 @@ public class DraggableCompositeBlock : MonoBehaviour,
             nb.transform.SetParent(GridManager.Instance.transform, true);
         Destroy(gameObject);
     }
+
 
 }

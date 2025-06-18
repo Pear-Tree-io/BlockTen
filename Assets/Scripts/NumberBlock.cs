@@ -16,7 +16,10 @@ public class NumberBlock : MonoBehaviour
     [SerializeField] private TextMeshPro valueText;
     public SpriteRenderer spriteRenderer;
 
+    // --- Preview animation ---
+    [SerializeField] private Color previewColor = Color.yellow;
     private Coroutine _previewRoutine;
+    private Color _originalColor;
 
     // 55% chance to pick from [1–4], else [5–9]
     private const float range1to4Chance = 0.55f;
@@ -78,11 +81,19 @@ public class NumberBlock : MonoBehaviour
         set { valueText = value; }
     }
 
+    public Color OriginalColor
+    {
+        get { return _originalColor; }
+        set { _originalColor = value; }
+    }
+
+
     /// <summary>Begin a looping pulse to show this block is in a potential clear.</summary>
     public void PlayPreview()
     {
         StopPreview();
-        _previewRoutine = StartCoroutine(PreviewPulse());
+        spriteRenderer.color = previewColor;
+        //_previewRoutine = StartCoroutine(PreviewPulse());
     }
 
     /// <summary>Stop any preview animation on this block.</summary>
@@ -92,6 +103,7 @@ public class NumberBlock : MonoBehaviour
             StopCoroutine(_previewRoutine);
         // restore to default
         transform.localScale = Vector3.one;
+        spriteRenderer.color = _originalColor;
     }
 
     private IEnumerator PreviewPulse()
@@ -104,7 +116,7 @@ public class NumberBlock : MonoBehaviour
             float t = 0f;
             while (t < 0.2f)
             {
-                transform.localScale = Vector3.Lerp(baseScale, maxScale, t / 0.2f);
+                transform.localScale = Vector3.Lerp(baseScale, maxScale, t / 0.3f);
                 t += Time.deltaTime;
                 yield return null;
             }
@@ -112,7 +124,7 @@ public class NumberBlock : MonoBehaviour
             t = 0f;
             while (t < 0.2f)
             {
-                transform.localScale = Vector3.Lerp(maxScale, baseScale, t / 0.2f);
+                transform.localScale = Vector3.Lerp(maxScale, baseScale, t / 0.3f);
                 t += Time.deltaTime;
                 yield return null;
             }
