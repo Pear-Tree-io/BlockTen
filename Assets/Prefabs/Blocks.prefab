@@ -186,6 +186,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Block_Child
       objectReference: {fileID: 0}
+    - target: {fileID: 4848644840010861867, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4848644840010861867, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.4
+      objectReference: {fileID: 0}
     - target: {fileID: 8271018933826811366, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: m_IsTrigger
       value: 0
