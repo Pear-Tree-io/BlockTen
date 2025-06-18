@@ -4,68 +4,61 @@ using TMPro;
 [RequireComponent(typeof(Collider2D))]
 public class NumberBlock : MonoBehaviour
 {
-    public int Value { get; private set; }
-    public bool IsJoker { get; private set; }
-    [SerializeField] private TextMeshPro valueText;
+    // --- Composite‐chain links (used by DraggableCompositeBlock) ---
+    [HideInInspector] public NumberBlock neighborUp;
+    [HideInInspector] public NumberBlock neighborDown;
+    [HideInInspector] public NumberBlock neighborLeft;
+    [HideInInspector] public NumberBlock neighborRight;
 
-    // Chance for an X-joker instead of 1–9
-    private const float jokerChance = 0.01f;  // 5% for X
-    // Within the non-joker pool, 55% for [1–4], 45% for [5–9]
-    private const float range1to4Chance = 0.55f;
+    // --- Value and display ---
+    public int Value { get; private set; }
+    [SerializeField] private TextMeshPro valueText;
     public SpriteRenderer spriteRenderer;
 
-    [Header("Neighbor Links (assign in prefab)")]
-    public NumberBlock neighborUp;
-    public NumberBlock neighborDown;
-    public NumberBlock neighborLeft;
-    public NumberBlock neighborRight;
+    // 55% chance to pick from [1–4], else [5–9]
+    private const float range1to4Chance = 0.55f;
 
     private void Awake()
     {
-	    if (spriteRenderer == null)
-			spriteRenderer = GetComponent<SpriteRenderer>();
-	    
+        // cache sprite renderer
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // grab the TMP_Text in your children
         if (valueText == null)
             valueText = GetComponentInChildren<TextMeshPro>();
     }
 
     /// <summary>
-    /// Assigns either a random 1–9 (with your custom weighting) or, rarely, an X-joker.
+    /// Assigns a random value between 1 and 9 using a 55/45 split,
+    /// then updates the label.
     /// </summary>
     public void AssignRandom()
     {
+        // ensure we have the text component
+        if (valueText == null)
+            valueText = GetComponentInChildren<TextMeshPro>();
+
         float r = Random.value;
-
-        // 1) Joker check
-        if (r < jokerChance)
-        {
-            IsJoker = true;
-            Value = 0;
-            valueText.text = "X";
-            return;
-        }
-
-        // 2) Number roll with single Random.value
-        float s = (r - jokerChance) / (1f - jokerChance);
-        if (s < range1to4Chance)
-            Value = Random.Range(1, 5);
+        if (r < range1to4Chance)
+            Value = Random.Range(1, 5);   // 1,2,3,4
         else
-            Value = Random.Range(5, 10);
+            Value = Random.Range(5, 10);  // 5,6,7,8,9
 
         valueText.text = Value.ToString();
     }
 
     public void OnDragStart()
     {
-	    spriteRenderer.sortingOrder = 3;
-	    valueText.sortingOrder = 4;
+        spriteRenderer.sortingOrder = 3;
+        valueText.sortingOrder = 4;
     }
 
-	public void OnDragEnd()
-	{
-		spriteRenderer.sortingOrder = 1;
-		valueText.sortingOrder = 2;
-	}
+    public void OnDragEnd()
+    {
+        spriteRenderer.sortingOrder = 1;
+        valueText.sortingOrder = 2;
+    }
 
     /// <summary>
     /// Tint this block’s sprite to the given color.
@@ -74,5 +67,11 @@ public class NumberBlock : MonoBehaviour
     {
         if (spriteRenderer != null)
             spriteRenderer.color = col;
+    }
+
+    public TextMeshPro ValueText
+    {
+        get { return valueText; }
+        set { valueText = value; }
     }
 }

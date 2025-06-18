@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
 
 public class GridManager : MonoBehaviour
 {
@@ -14,6 +16,13 @@ public class GridManager : MonoBehaviour
     private NumberBlock[,] gridBlocks;
     private bool[,] occupied;
     private Vector3 origin;
+
+    public GameObject destroyVFX;
+    [Header("Destroy Highlight")]
+    [Tooltip("Color to flash on blocks just before they pop-and-destroy")]
+    public Color destroyHighlightColor = Color.red;
+    public SpawnManager spawnManager;
+
 
     private void Awake()
     {
@@ -65,53 +74,38 @@ public class GridManager : MonoBehaviour
 
     /// <summary>
     /// Scans horizontal & vertical straight segments of 2+ blocks where
-    /// non-joker sum + jokers-as-[1��9] can reach exactly 10, and removes them.
+    /// sum can reach exactly 10, and removes them.
     /// </summary>
     public void CheckAndDestroyMatches()
     {
-        var toRemove = new HashSet<Vector2Int>();
-        var parentTrack = new HashSet<Transform>();
+        var runs = new List<List<Vector2Int>>();
 
         // ── HORIZONTAL ──
         for (int y = 0; y < rows; y++)
         {
             for (int xs = 0; xs < columns; xs++)
             {
-                int sumNonJ = 0;
-                int jokerCnt = 0;
+                int sum = 0;
                 for (int x = xs; x < columns; x++)
                 {
                     var b = gridBlocks[x, y];
                     if (b == null) break;
-                    if (b.IsJoker) jokerCnt++;
-                    else sumNonJ += b.Value;
 
-                    int length = x - xs + 1;
-                    if (length < 2) continue;
+                    sum += b.Value;
+                    int len = x - xs + 1;
 
-                    if (jokerCnt == 0)
+                    if (len >= 2 && sum == 10)
                     {
-                        // 조커 없을 때는 실제 합이 10일 때만
-                        if (sumNonJ == 10)
-                        {
-                            for (int k = xs; k <= x; k++)
-                                toRemove.Add(new Vector2Int(k, y));
-                        }
+                        var run = Enumerable.Range(xs, len)
+                                            .Select(i => new Vector2Int(i, y))
+                                            .ToList();
+                        runs.Add(run);
+                        break;
                     }
-                    else
+                    else if (sum > 10)
                     {
-                        // 조커 있을 때는 기존 범위 검사
-                        int minSum = sumNonJ + jokerCnt * 1;
-                        int maxSum = sumNonJ + jokerCnt * 9;
-                        if (minSum <= 10 && maxSum >= 10)
-                        {
-                            for (int k = xs; k <= x; k++)
-                                toRemove.Add(new Vector2Int(k, y));
-                        }
+                        break;
                     }
-
-                    // 범위를 넘으면 더 이상 연장 불필요
-                    if (sumNonJ > 10) break;
                 }
             }
         }
@@ -121,66 +115,132 @@ public class GridManager : MonoBehaviour
         {
             for (int ys = 0; ys < rows; ys++)
             {
-                int sumNonJ = 0;
-                int jokerCnt = 0;
+                int sum = 0;
                 for (int y = ys; y < rows; y++)
                 {
                     var b = gridBlocks[x, y];
                     if (b == null) break;
-                    if (b.IsJoker) jokerCnt++;
-                    else sumNonJ += b.Value;
 
-                    int length = y - ys + 1;
-                    if (length < 2) continue;
+                    sum += b.Value;
+                    int len = y - ys + 1;
 
-                    if (jokerCnt == 0)
+                    if (len >= 2 && sum == 10)
                     {
-                        if (sumNonJ == 10)
-                        {
-                            for (int k = ys; k <= y; k++)
-                                toRemove.Add(new Vector2Int(x, k));
-                        }
+                        var run = Enumerable.Range(ys, len)
+                                            .Select(i => new Vector2Int(x, i))
+                                            .ToList();
+                        runs.Add(run);
+                        break;
                     }
-                    else
+                    else if (sum > 10)
                     {
-                        int minSum = sumNonJ + jokerCnt * 1;
-                        int maxSum = sumNonJ + jokerCnt * 9;
-                        if (minSum <= 10 && maxSum >= 10)
-                        {
-                            for (int k = ys; k <= y; k++)
-                                toRemove.Add(new Vector2Int(x, k));
-                        }
+                        break;
                     }
-
-                    if (sumNonJ > 10) break;
                 }
             }
         }
 
-        // ── DESTROY & SCORE ──
-        int destroyedCount = toRemove.Count;
+
+        // 2) Flatten & dedupe to count unique blocks
+        var allCoords = new HashSet<Vector2Int>();
+        foreach (var run in runs)
+            foreach (var coord in run)
+                allCoords.Add(coord);
+
+        // <-- use the Count property here:
+        int destroyedCount = allCoords.Count;
+
+        // 3) scoring/combo
+        ClassicModeManager.Instance?.OnBlocksDestroyed(destroyedCount);
+
         if (destroyedCount > 0)
-            ClassicModeManager.Instance.OnBlocksDestroyed(destroyedCount);
-
-        foreach (var p in toRemove)
         {
-            var b = gridBlocks[p.x, p.y];
-            if (b == null) continue;
+            // play your existing pop/VFX coroutine…
+            StartCoroutine(PlayDestroySequence(runs));
+        }
+        else
+        {
+            // ← re-insert this so that "no clear" also advances the wave
+            spawnManager.NotifyBlockPlaced();
+        }
+    }
 
-            // 1) free the cell
-            occupied[p.x, p.y] = false;
+    private IEnumerator PlayDestroySequence(List<List<Vector2Int>> runs)
+    {
+        // Convert runs of coords → runs of NumberBlock
+        var allRuns = runs
+            .Select(run => run
+                .Select(p => gridBlocks[p.x, p.y])
+                .Where(b => b != null)
+                .ToList()
+            )
+            .ToList();
 
-            // 2) remove from our lookup
-            gridBlocks[p.x, p.y] = null;
+        var allBlocks = new HashSet<NumberBlock>();
 
-            // 3) destroy the GameObject
+        // 1) Animate each run in order
+        foreach (var run in allRuns)
+        {
+            foreach (var b in run)
+            {
+                allBlocks.Add(b);
+                StartCoroutine(PopOne(b, 0.2f));
+            }
+            yield return new WaitForSeconds(0.3f);
+        }
+
+        // 2) Final simultaneous pop
+        /*foreach (var b in allBlocks)
+            StartCoroutine(PopOne(b, 0.2f));
+        yield return new WaitForSeconds(0.25f);*/
+
+        // 3) Spawn VFX, free cells & destroy objects
+        foreach (var b in allBlocks)
+        {
+            Instantiate(destroyVFX, b.transform.position, Quaternion.identity);
+            var coord = FindBlockCoords(b);
+            occupied[coord.x, coord.y] = false;
+            gridBlocks[coord.x, coord.y] = null;
             Destroy(b.gameObject);
         }
 
-        // DESTROY ANY EMPTY COMPOSITE PARENTS
-        foreach (var parent in parentTrack)
-            if (parent != null && parent.GetComponentInChildren<NumberBlock>() == null)
-                Destroy(parent.gameObject);
+        spawnManager.NotifyBlockPlaced();
+    }
+
+    /// <summary>
+    /// Scales up then back down over totalDuration seconds.
+    /// </summary>
+    private IEnumerator PopOne(NumberBlock b, float totalDuration)
+    {
+        // 0) Flash to the destroy color immediately
+        b.SetColor(destroyHighlightColor);
+        b.spriteRenderer.sortingOrder = 3;
+        b.ValueText.sortingOrder = 4;
+
+        float half = totalDuration * 0.5f;
+        // scale up
+        for (float t = 0; t < half; t += Time.deltaTime)
+        {
+            b.transform.localScale = Vector3.one * Mathf.Lerp(1f, 2f, t / half);
+            yield return null;
+        }
+        // scale back
+        for (float t = 0; t < half; t += Time.deltaTime)
+        {
+            b.transform.localScale = Vector3.one * Mathf.Lerp(2f, 1f, t / half);
+            yield return null;
+        }
+        b.transform.localScale = Vector3.one;
+    }
+
+    // Helper to find a block's grid coords
+    private Vector2Int FindBlockCoords(NumberBlock b)
+    {
+        for (int x = 0; x < columns; x++)
+            for (int y = 0; y < rows; y++)
+                if (gridBlocks[x, y] == b)
+                    return new Vector2Int(x, y);
+        return Vector2Int.zero;
     }
 
     /// <summary>
@@ -189,28 +249,19 @@ public class GridManager : MonoBehaviour
     /// </summary>
     public bool CanPlaceCompositeBlockAnywhere(DraggableCompositeBlock comp)
     {
-        // grab whatever NumberBlock instances are under this composite right now
         var blocks = comp.GetComponentsInChildren<NumberBlock>();
-        if (blocks == null || blocks.Length == 0)
-            return false;
-
-        // choose the first one as our “root” (any will do, since neighbors link the rest)
-        NumberBlock root = blocks[0];
-
-        // try every free cell for that root
-        for (int x = 0; x < columns; x++)
+        foreach (var root in blocks)
         {
-            for (int y = 0; y < rows; y++)
-            {
-                if (occupied[x, y]) continue;
+            for (int x = 0; x < columns; x++)
+                for (int y = 0; y < rows; y++)
+                {
+                    if (occupied[x, y]) continue;
 
-                // track placements in this trial
-                var placed = new Dictionary<NumberBlock, Vector2Int>();
-                if (TryPlaceRec(root, x, y, placed))
-                    return true;  // fits somewhere!
-            }
+                    var placed = new Dictionary<NumberBlock, Vector2Int>();
+                    if (TryPlaceRec(root, x, y, placed))
+                        return true;
+                }
         }
-
         return false;
     }
 
@@ -310,23 +361,18 @@ public class GridManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Given a successful placement mapping (block→grid coords),
-    /// returns true if adding those blocks would create at least one
-    /// adjacent pair summing to 10 (treating jokers as wildcards).
+    /// Returns true if placing these new blocks would create any adjacent
+    /// pair whose values sum exactly to 10.
     /// </summary>
     private bool PlacementHasMatch(Dictionary<NumberBlock, Vector2Int> placed)
     {
-        // for each newly placed block...
         foreach (var kv in placed)
         {
             var nb = kv.Key;
             var p = kv.Value;
 
-            // check its four neighbors on the EXISTING grid
-            foreach (var d in new[]{ Vector2Int.up,
-                                 Vector2Int.right,
-                                 Vector2Int.down,
-                                 Vector2Int.left })
+            foreach (var d in new[]{ Vector2Int.up, Vector2Int.right,
+                                      Vector2Int.down, Vector2Int.left })
             {
                 var np = p + d;
                 if (np.x < 0 || np.x >= columns ||
@@ -335,28 +381,27 @@ public class GridManager : MonoBehaviour
                 var neighbor = gridBlocks[np.x, np.y];
                 if (neighbor == null) continue;
 
-                // get fixed sums
-                int v1 = nb.IsJoker ? 0 : nb.Value;
-                int v2 = neighbor.IsJoker ? 0 : neighbor.Value;
-                int jokers = (nb.IsJoker ? 1 : 0) + (neighbor.IsJoker ? 1 : 0);
-
-                // if there's ANY way to reach 10 with jokers as [1..9], we have a match
-                int min = v1 + v2 + jokers * 1;
-                int max = v1 + v2 + jokers * 9;
-                if (min <= 10 && max >= 10)
+                if (nb.Value + neighbor.Value == 10)
                     return true;
             }
         }
         return false;
     }
 
-    /// <summary> Returns true if there is at least one block already placed on the grid. </summary>
     public bool HasPlacedBlocks()
     {
         for (int x = 0; x < columns; x++)
             for (int y = 0; y < rows; y++)
-                if (occupied[x, y])
-                    return true;
+                if (occupied[x, y]) return true;
         return false;
+    }
+
+    public int CountFreeCells()
+    {
+        int free = 0;
+        for (int x = 0; x < columns; x++)
+            for (int y = 0; y < rows; y++)
+                if (!occupied[x, y]) free++;
+        return free;
     }
 }

@@ -947,6 +947,9 @@ MonoBehaviour:
   columns: 8
   cellSize: 1
   cellPrefab: {fileID: 4145093259610895930, guid: 0a6fe3aba94aa0b429fa0b35e6988226, type: 3}
+  destroyVFX: {fileID: 7861580100568878158, guid: 31f86a718a2f1ed43b00bdc6c4f4d491, type: 3}
+  destroyHighlightColor: {r: 0.727252, g: 0, b: 1, a: 1}
+  spawnManager: {fileID: 737700784}
 --- !u!4 &859904051
 Transform:
   m_ObjectHideFlags: 0

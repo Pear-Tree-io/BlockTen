@@ -21,80 +21,114 @@ public class SpawnManager : MonoBehaviour
 
     public void SpawnAll()
     {
-        // 1) If there's not room for a full wave, game over
+        // 1) If there's not room for a full wave, Game Over
         if (!GridManager.Instance.HasFreeSlots(spawnPoints.Length))
         {
             Debug.Log("Game Over: Not enough space for a full wave!");
             return;
         }
 
-        // 2) Clear any unplaced leftovers
-        currentBlocks.ForEach(c => { if (c) Destroy(c.gameObject); });
+        // 2) Tear down leftovers
+        foreach (var old in currentBlocks)
+            if (old) Destroy(old.gameObject);
         currentBlocks.Clear();
 
         bool gridEmpty = !GridManager.Instance.HasPlacedBlocks();
-        DraggableCompositeBlock guaranteed = null;
 
-        if (gridEmpty)
+        // 3) Spawn exactly three composites
+        for (int i = 0; i < spawnPoints.Length; i++)
         {
-            // First wave: only require that it fits somewhere
-            do
-            {
-                currentBlocks.ForEach(c => { if (c) Destroy(c.gameObject); });
-                currentBlocks.Clear();
+            DraggableCompositeBlock compInstance = null;
+            Vector3 pos = spawnPoints[i].position;
 
+            // Wave-2+: try to fit + match
+            if (i == 0 && !gridEmpty)
+            {
+                // A) Find a prefab that fits & can clear
+                foreach (var prefab in compositePrefabs.OrderBy(_ => Random.value))
+                {
+                    var go = Instantiate(prefab, pos, Quaternion.identity);
+                    go.transform.localScale = Vector3.one * 0.8f;
+                    var comp = go.GetComponent<DraggableCompositeBlock>();
+                    comp.spawnManager = this;
+                    comp.startPosition = pos;
+
+                    // must fit
+                    if (!GridManager.Instance.CanPlaceCompositeBlockAnywhere(comp))
+                    {
+                        Destroy(go);
+                        continue;
+                    }
+
+                    // reroll numbers up to 20 times until it WILL clear
+                    bool success = false;
+                    for (int attempt = 0; attempt < 20; attempt++)
+                    {
+                        comp.AssignValidRandomNumbers();
+                        if (GridManager.Instance.TryFindPlacementThatMatchesSum10(comp))
+                        {
+                            success = true;
+                            break;
+                        }
+                    }
+
+                    if (success)
+                    {
+                        compInstance = comp;
+                        break;
+                    }
+                    Destroy(go);
+                }
+
+                // B) Fallback: if none both fit+match, pick any *fitting* prefab
+                if (compInstance == null)
+                {
+                    Debug.Log("Fallback: No matchable composite—spawning any that fits.");
+                    foreach (var prefab in compositePrefabs.OrderBy(_ => Random.value))
+                    {
+                        var go = Instantiate(prefab, pos, Quaternion.identity);
+                        go.transform.localScale = Vector3.one * 0.8f;
+                        var comp = go.GetComponent<DraggableCompositeBlock>();
+                        comp.spawnManager = this;
+                        comp.startPosition = pos;
+
+                        if (GridManager.Instance.CanPlaceCompositeBlockAnywhere(comp))
+                        {
+                            compInstance = comp;
+                            comp.AssignValidRandomNumbers();
+                            break;
+                        }
+                        Destroy(go);
+                    }
+
+                    // C) If STILL nothing fits, that truly is Game Over
+                    if (compInstance == null)
+                    {
+                        Debug.Log("Game Over: No composite can fit in the remaining space!");
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                // First wave or slots 2+3: pure random
                 var prefab = compositePrefabs[Random.Range(0, compositePrefabs.Count)];
-                var go = Instantiate(prefab, spawnPoints[0].position, Quaternion.identity);
+                var go = Instantiate(prefab, pos, Quaternion.identity);
                 go.transform.localScale = Vector3.one * 0.8f;
 
                 var comp = go.GetComponent<DraggableCompositeBlock>();
                 comp.spawnManager = this;
-                comp.startPosition = spawnPoints[0].position;
-                currentBlocks.Add(comp);
-                guaranteed = comp;
+                comp.startPosition = pos;
 
-                foreach (var nb in comp.GetComponentsInChildren<NumberBlock>())
-                    nb.AssignRandom();
+                comp.AssignValidRandomNumbers();
 
-            } while (!GridManager.Instance.CanPlaceCompositeBlockAnywhere(guaranteed));
-        }
-        else
-        {
-            // Subsequent waves: require both fit + at least one sum-10 match
-            do
-            {
-                currentBlocks.ForEach(c => { if (c) Destroy(c.gameObject); });
-                currentBlocks.Clear();
+                compInstance = comp;
+            }
 
-                var prefab = compositePrefabs[Random.Range(0, compositePrefabs.Count)];
-                var go = Instantiate(prefab, spawnPoints[0].position, Quaternion.identity);
-                go.transform.localScale = Vector3.one * 0.8f;
-
-                var comp = go.GetComponent<DraggableCompositeBlock>();
-                comp.spawnManager = this;
-                comp.startPosition = spawnPoints[0].position;
-                currentBlocks.Add(comp);
-                guaranteed = comp;
-
-                foreach (var nb in comp.GetComponentsInChildren<NumberBlock>())
-                    nb.AssignRandom();
-
-            } while (!GridManager.Instance.TryFindPlacementThatMatchesSum10(guaranteed));
+            currentBlocks.Add(compInstance);
         }
 
-        // 3) Spawn the rest of the wave normally
-        for (int i = 1; i < spawnPoints.Length; i++)
-        {
-            var prefab = compositePrefabs[Random.Range(0, compositePrefabs.Count)];
-            var go = Instantiate(prefab, spawnPoints[i].position, Quaternion.identity);
-            go.transform.localScale = Vector3.one * 0.8f;
-
-            var comp = go.GetComponent<DraggableCompositeBlock>();
-            comp.spawnManager = this;
-            comp.startPosition = spawnPoints[i].position;
-            currentBlocks.Add(comp);
-        }
-
+        // 4) Reset for this wave
         placedCount = 0;
     }
 
@@ -115,17 +149,14 @@ public class SpawnManager : MonoBehaviour
         CheckRemainingSpace();
     }
 
-    /// <summary>
-    /// Called by each DraggableCompositeBlock when it successfully lands.
-    /// </summary>
     public void NotifyBlockPlaced()
     {
         placedCount++;
-
         int remaining = spawnPoints.Length - placedCount;
+
         if (remaining > 0)
         {
-            // Of the blocks still un-placed, is there at least one that could fit?
+            // Of the *un-placed* composites, is there at least one that fits?
             bool anyFit = currentBlocks
                 .Where(c => c != null && !c.placed)
                 .Any(c => GridManager.Instance.CanPlaceCompositeBlockAnywhere(c));
@@ -133,17 +164,17 @@ public class SpawnManager : MonoBehaviour
             if (!anyFit)
             {
                 Debug.Log("Game Over: No more possible moves!");
-                // TODO: hook in your Game Over UI/scene logic here
+                // TODO: your Game Over UI here
                 return;
             }
+            // otherwise, just wait for the next placement
         }
         else
         {
-            // All in this wave placed → spawn next wave
+            // wave done → spawn three fresh composites
             SpawnAll();
         }
     }
-
 
     /// <summary>
     /// Called any time a placement *might* have freed or consumed space.
