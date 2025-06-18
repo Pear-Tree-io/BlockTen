@@ -140,10 +140,10 @@ public class DraggableCompositeBlock : MonoBehaviour,
     public void OnDrag(PointerEventData e)
     {
         // 1) Move the composite with the cursor
-        var screenPt = new Vector3(e.position.x, e.position.y, screenZ);
+        Vector3 screenPt = new Vector3(e.position.x, e.position.y, screenZ);
         transform.position = cam.ScreenToWorldPoint(screenPt) + offset;
 
-        // 2) Build a temp-placement to test “canPlace”
+        // 2) Build temp map & test full composite placement
         var temp = new Dictionary<NumberBlock, Vector2Int>();
         bool canPlace = true;
         foreach (var nb in children)
@@ -157,56 +157,51 @@ public class DraggableCompositeBlock : MonoBehaviour,
             temp[nb] = new Vector2Int(gx, gy);
         }
 
-        // 3) Always clear previous highlights/tints
-        if (_isOverValidSpot)
-        {
-            foreach (var nb in children)
-                nb.StopPreview();
-
-            // clear any grid‐block previews
-            GridManager.Instance.ClearAllPreviews();
-            _isOverValidSpot = false;
-        }
-
-        // 4) If over a valid spot, do both previews
-        if (canPlace)
-        {
-            // 1) GRID PREVIEW: as before
-            var runs = GridManager.Instance.GetPreviewRuns(temp);
-            foreach (var run in runs)
-                foreach (var cell in run)
-                    GridManager.Instance.GetBlockAt(cell.x, cell.y)
-                                ?.PlayPreview();
-
-            // 2) COMPOSITE PREVIEW: find all cells that would clear
-            var matchedCells = new HashSet<Vector2Int>();
-            foreach (var run in runs)
-                foreach (var cell in run)
-                    matchedCells.Add(cell);
-
-            // 3) Tint only those children whose target cell is in matchedCells
-            foreach (var nb in children)
-            {
-                var cell = temp[nb];
-                if (matchedCells.Contains(cell))
-                    nb.PlayPreview();   // start pulse+color change
-                else
-                    nb.StopPreview();   // ensure non-matched ones are static
-            }
-
-            _isOverValidSpot = true;
-        }
-    }
-
-    public void OnPointerUp(PointerEventData e)
-    {
-        // 0) First: stop *all* play‐preview on the dragged blocks
+        // 3) Clear previous previews on grid & children
+        GridManager.Instance.ClearAllPreviews();
         foreach (var nb in children)
             nb.StopPreview();
         _isOverValidSpot = false;
 
+        if (!canPlace)
+            return;
+
+        // 4a) GRID PREVIEW: highlight runs that would clear
+        var runs = GridManager.Instance.GetPreviewRuns(temp);
+        foreach (var run in runs)
+        {
+            foreach (var cell in run)
+                GridManager.Instance.GetBlockAt(cell.x, cell.y)
+                                ?.PlayPreview();
+        }
+
+        // 4b) COMPOSITE PREVIEW: highlight dragged blocks in ANY run
+        var matchedCells = new HashSet<Vector2Int>();
+        foreach (var run in runs)
+            foreach (var cell in run)
+                matchedCells.Add(cell);
+
+        foreach (var nb in children)
+        {
+            var cell = temp[nb];
+            if (matchedCells.Contains(cell))
+                nb.PlayPreview();
+            else
+                nb.StopPreview();
+        }
+
+        _isOverValidSpot = true;
+    }
+
+    public void OnPointerUp(PointerEventData e)
+    {
         // Clear any running preview animations on the grid
         GridManager.Instance.ClearAllPreviews();
+
+        // 0) First: stop *all* play‐preview on the dragged blocks
+        foreach (var nb in children)
+            nb.StopPreview();
+        _isOverValidSpot = false;
 
         if (placed) return;
 

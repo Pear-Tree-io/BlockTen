@@ -362,21 +362,30 @@ public class GridManager : MonoBehaviour
 
     /// <summary>
     /// Returns true if placing these new blocks would create any adjacent
-    /// pair whose values sum exactly to 10.
+    /// pair whose values sum exactly to 10.  Only checks up/right/down/left.
     /// </summary>
     private bool PlacementHasMatch(Dictionary<NumberBlock, Vector2Int> placed)
     {
+        // Only these four directions—no diagonals!
+        Vector2Int[] cardinals = {
+        Vector2Int.up,
+        Vector2Int.right,
+        Vector2Int.down,
+        Vector2Int.left
+    };
+
         foreach (var kv in placed)
         {
             var nb = kv.Key;
             var p = kv.Value;
 
-            foreach (var d in new[]{ Vector2Int.up, Vector2Int.right,
-                                      Vector2Int.down, Vector2Int.left })
+            foreach (var d in cardinals)
             {
                 var np = p + d;
+                // bounds check
                 if (np.x < 0 || np.x >= columns ||
-                    np.y < 0 || np.y >= rows) continue;
+                    np.y < 0 || np.y >= rows)
+                    continue;
 
                 var neighbor = gridBlocks[np.x, np.y];
                 if (neighbor == null) continue;
@@ -385,6 +394,7 @@ public class GridManager : MonoBehaviour
                     return true;
             }
         }
+
         return false;
     }
 
