@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
+using System.Collections;
 
 [RequireComponent(typeof(Collider2D))]
 public class NumberBlock : MonoBehaviour
@@ -14,6 +15,8 @@ public class NumberBlock : MonoBehaviour
     public int Value { get; private set; }
     [SerializeField] private TextMeshPro valueText;
     public SpriteRenderer spriteRenderer;
+
+    private Coroutine _previewRoutine;
 
     // 55% chance to pick from [1–4], else [5–9]
     private const float range1to4Chance = 0.55f;
@@ -73,5 +76,46 @@ public class NumberBlock : MonoBehaviour
     {
         get { return valueText; }
         set { valueText = value; }
+    }
+
+    /// <summary>Begin a looping pulse to show this block is in a potential clear.</summary>
+    public void PlayPreview()
+    {
+        StopPreview();
+        _previewRoutine = StartCoroutine(PreviewPulse());
+    }
+
+    /// <summary>Stop any preview animation on this block.</summary>
+    public void StopPreview()
+    {
+        if (_previewRoutine != null)
+            StopCoroutine(_previewRoutine);
+        // restore to default
+        transform.localScale = Vector3.one;
+    }
+
+    private IEnumerator PreviewPulse()
+    {
+        var baseScale = Vector3.one;
+        var maxScale = Vector3.one * 1.2f;
+        while (true)
+        {
+            // scale up
+            float t = 0f;
+            while (t < 0.2f)
+            {
+                transform.localScale = Vector3.Lerp(baseScale, maxScale, t / 0.2f);
+                t += Time.deltaTime;
+                yield return null;
+            }
+            // scale down
+            t = 0f;
+            while (t < 0.2f)
+            {
+                transform.localScale = Vector3.Lerp(maxScale, baseScale, t / 0.2f);
+                t += Time.deltaTime;
+                yield return null;
+            }
+        }
     }
 }

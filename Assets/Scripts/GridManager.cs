@@ -406,7 +406,105 @@ public class GridManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Given a temporary placement of some NumberBlocks (mapping block→grid coord),
+    /// returns all the horizontal/vertical runs (length≥2) that would sum to 10.
+    /// </summary>
+    public List<List<Vector2Int>> GetPreviewRuns(
+        Dictionary<NumberBlock, Vector2Int> tempPlacement)
+    {
+        // 1) copy current occupied & values
+        int[,] vals = new int[columns, rows];
+        bool[,] occ = new bool[columns, rows];
+        for (int x = 0; x < columns; x++)
+            for (int y = 0; y < rows; y++)
+            {
+                if (gridBlocks[x, y] != null)
+                {
+                    vals[x, y] = gridBlocks[x, y].Value;
+                    occ[x, y] = true;
+                }
+            }
+
+        // 2) overlay tempPlacement
+        foreach (var kv in tempPlacement)
+        {
+            var pos = kv.Value;
+            vals[pos.x, pos.y] = kv.Key.Value;
+            occ[pos.x, pos.y] = true;
+        }
+
+        // 3) scan exactly like CheckAndDestroyMatches but collect runs
+        var runs = new List<List<Vector2Int>>();
+
+        // horiz
+        for (int y = 0; y < rows; y++)
+        {
+            for (int xs = 0; xs < columns; xs++)
+            {
+                int sum = 0;
+                for (int x = xs; x < columns; x++)
+                {
+                    if (!occ[x, y]) break;
+                    sum += vals[x, y];
+                    int len = x - xs + 1;
+                    if (len >= 2 && sum == 10)
+                    {
+                        runs.Add(Enumerable.Range(xs, len)
+                                  .Select(i => new Vector2Int(i, y))
+                                  .ToList());
+                        break;
+                    }
+                    else if (sum > 10) break;
+                }
+            }
+        }
+
+        // vert
+        for (int x = 0; x < columns; x++)
+        {
+            for (int ys = 0; ys < rows; ys++)
+            {
+                int sum = 0;
+                for (int y = ys; y < rows; y++)
+                {
+                    if (!occ[x, y]) break;
+                    sum += vals[x, y];
+                    int len = y - ys + 1;
+                    if (len >= 2 && sum == 10)
+                    {
+                        runs.Add(Enumerable.Range(ys, len)
+                                  .Select(i => new Vector2Int(x, i))
+                                  .ToList());
+                        break;
+                    }
+                    else if (sum > 10) break;
+                }
+            }
+        }
+
+        return runs;
+    }
+
+    public void ClearAllPreviews()
+    {
+        for (int x = 0; x < columns; x++)
+            for (int y = 0; y < rows; y++)
+                if (GetBlockAt(x, y) is NumberBlock b)
+                    b.StopPreview();
+    }
+
+    /// <summary>
     /// Set by DraggableCompositeBlock just before we run match‐checking.
     /// </summary>
     public Vector3 LastPlacedPosition { get; set; }
+
+    /// <summary>
+    /// Returns the NumberBlock at (x,y), or null if out of bounds or empty.
+    /// </summary>
+    public NumberBlock GetBlockAt(int x, int y)
+    {
+        if (x < 0 || x >= columns || y < 0 || y >= rows)
+            return null;
+        return gridBlocks[x, y];
+    }
 }
