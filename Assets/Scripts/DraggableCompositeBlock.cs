@@ -10,6 +10,10 @@ public class DraggableCompositeBlock : MonoBehaviour,
     [Header("Color Settings")]
     public Color[] availableColors;
 
+    [Header("Drag Preview")]
+    [Tooltip("Color to tint the composite when over a valid drop spot")]
+    public Color validDropTint = new Color(0f, 1f, 0f, 0.5f);
+
     [HideInInspector] public SpawnManager spawnManager;
     [HideInInspector] public Vector3 startPosition;
     [HideInInspector] public List<NumberBlock> children;
@@ -18,21 +22,28 @@ public class DraggableCompositeBlock : MonoBehaviour,
     private Camera cam;
     private float screenZ;
     private Vector3 offset;
-    private bool _isPreviewActive;
+    
+    private bool _isOverValidSpot = false;
+    private Color[] _originalColors;
 
     private void OnEnable()
     {
-        // gather children and do one “valid” roll
+        // 1) Grab your NumberBlock children
         children = GetComponentsInChildren<NumberBlock>().ToList();
-        AssignValidRandomNumbers();
 
-        // tint
+        // 2) Assign numbers & then tint the entire composite
+        AssignValidRandomNumbers();
         if (availableColors != null && availableColors.Length > 0)
         {
-            var col = availableColors[Random.Range(0, availableColors.Length)];
+            var tint = availableColors[Random.Range(0, availableColors.Length)];
             foreach (var nb in children)
-                nb.SetColor(col);
+                nb.spriteRenderer.color = tint;
         }
+
+        // 3) NOW cache those post-tint colors as your “original” base
+        _originalColors = children
+            .Select(nb => nb.spriteRenderer.color)
+            .ToArray();
     }
 
     private void Start()
@@ -135,18 +146,17 @@ public class DraggableCompositeBlock : MonoBehaviour,
 
     public void OnDrag(PointerEventData e)
     {
-        // 1) Move with pointer
-        Vector3 screenPt = new Vector3(e.position.x, e.position.y, screenZ);
-        Vector3 worldPt = cam.ScreenToWorldPoint(screenPt) + offset;
-        transform.position = worldPt;
+        // 1) Move the composite with the cursor
+        var screenPt = new Vector3(e.position.x, e.position.y, screenZ);
+        transform.position = cam.ScreenToWorldPoint(screenPt) + offset;
 
-        // 2) Compute a temp-placement map
+        // 2) Build a temp-placement to test “canPlace”
         var temp = new Dictionary<NumberBlock, Vector2Int>();
         bool canPlace = true;
         foreach (var nb in children)
         {
-            if (!GridManager.Instance.CanPlaceCell(nb.transform.position,
-                                                   out int gx, out int gy))
+            if (!GridManager.Instance.CanPlaceCell(
+                    nb.transform.position, out int gx, out int gy))
             {
                 canPlace = false;
                 break;
@@ -154,39 +164,60 @@ public class DraggableCompositeBlock : MonoBehaviour,
             temp[nb] = new Vector2Int(gx, gy);
         }
 
-        // 3) Clear previous preview
-        if (_isPreviewActive)
+        // 3) Always clear previous highlights/tints
+        if (_isOverValidSpot)
         {
+            // restore composite blocks to their base colors
+            for (int i = 0; i < children.Count; i++)
+                children[i].spriteRenderer.color = _originalColors[i];
+
+            // clear any grid‐block previews
             GridManager.Instance.ClearAllPreviews();
-            _isPreviewActive = false;
+            _isOverValidSpot = false;
         }
 
+        // 4) If over a valid spot, do both previews
         if (canPlace)
         {
-            // 4a) you’re in a valid drop area
-            //    (you could flash your composite, change cursor, etc.)
-
-            // 4b) find all the runs that WOULD clear
+            // 1) GRID PREVIEW: as before
+            GridManager.Instance.ClearAllPreviews();
             var runs = GridManager.Instance.GetPreviewRuns(temp);
             foreach (var run in runs)
-            {
                 foreach (var cell in run)
-                {
-                    var nb = GridManager.Instance.GetBlockAt(cell.x, cell.y);
-                    if (nb != null)
-                        nb.PlayPreview();
-                }
+                    GridManager.Instance.GetBlockAt(cell.x, cell.y)
+                                ?.PlayPreview();
+
+            // 2) COMPOSITE PREVIEW: find all cells that would clear
+            var matchedCells = new HashSet<Vector2Int>();
+            foreach (var run in runs)
+                foreach (var cell in run)
+                    matchedCells.Add(cell);
+
+            // 3) Tint only those children whose target cell is in matchedCells
+            foreach (var nb in children)
+            {
+                var cell = temp[nb];
+                if (matchedCells.Contains(cell))
+                    nb.spriteRenderer.color = validDropTint;
+                else
+                    nb.spriteRenderer.color = _originalColors[children.IndexOf(nb)];
             }
-            _isPreviewActive = true;
+
+            _isOverValidSpot = true;
         }
-        // else: you’re not near a valid spot → do nothing (or show “no drop” feedback)
     }
+
 
     public void OnPointerUp(PointerEventData e)
     {
-        // ensure previews are cleaned up
-        if (_isPreviewActive)
-            GridManager.Instance.ClearAllPreviews();
+        // on drop, make sure composite is back to its base tint
+        if (_isOverValidSpot)
+        {
+            for (int i = 0; i < children.Count; i++)
+                children[i].spriteRenderer.color = _originalColors[i];
+            _isOverValidSpot = false;
+        }
+        GridManager.Instance.ClearAllPreviews();
 
         if (placed) return;
 
