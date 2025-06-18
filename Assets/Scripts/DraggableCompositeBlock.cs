@@ -187,6 +187,9 @@ public class DraggableCompositeBlock : MonoBehaviour,
         // ——— mark as placed & notify spawner ———
         placed = true;
 
+        // remember this drop pos for the combo popup:
+        GridManager.Instance.LastPlacedPosition = transform.position;
+
         // 4) Clear matches
         GridManager.Instance.CheckAndDestroyMatches();
 

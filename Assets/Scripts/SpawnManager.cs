@@ -13,6 +13,8 @@ public class SpawnManager : MonoBehaviour
     private int placedCount;
     private List<DraggableCompositeBlock> currentBlocks = new();
 
+    public float scaleAtSpawn = 0.7f;
+
     private void Start()
     {
         placedCount = 0;
@@ -48,7 +50,7 @@ public class SpawnManager : MonoBehaviour
                 foreach (var prefab in compositePrefabs.OrderBy(_ => Random.value))
                 {
                     var go = Instantiate(prefab, pos, Quaternion.identity);
-                    go.transform.localScale = Vector3.one * 0.8f;
+                    go.transform.localScale = Vector3.one * scaleAtSpawn;
                     var comp = go.GetComponent<DraggableCompositeBlock>();
                     comp.spawnManager = this;
                     comp.startPosition = pos;
@@ -87,7 +89,7 @@ public class SpawnManager : MonoBehaviour
                     foreach (var prefab in compositePrefabs.OrderBy(_ => Random.value))
                     {
                         var go = Instantiate(prefab, pos, Quaternion.identity);
-                        go.transform.localScale = Vector3.one * 0.8f;
+                        go.transform.localScale = Vector3.one * scaleAtSpawn;
                         var comp = go.GetComponent<DraggableCompositeBlock>();
                         comp.spawnManager = this;
                         comp.startPosition = pos;
@@ -114,7 +116,7 @@ public class SpawnManager : MonoBehaviour
                 // First wave or slots 2+3: pure random
                 var prefab = compositePrefabs[Random.Range(0, compositePrefabs.Count)];
                 var go = Instantiate(prefab, pos, Quaternion.identity);
-                go.transform.localScale = Vector3.one * 0.8f;
+                go.transform.localScale = Vector3.one * scaleAtSpawn;
 
                 var comp = go.GetComponent<DraggableCompositeBlock>();
                 comp.spawnManager = this;

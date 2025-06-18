@@ -404,4 +404,9 @@ public class GridManager : MonoBehaviour
                 if (!occupied[x, y]) free++;
         return free;
     }
+
+    /// <summary>
+    /// Set by DraggableCompositeBlock just before we run match‐checking.
+    /// </summary>
+    public Vector3 LastPlacedPosition { get; set; }
 }

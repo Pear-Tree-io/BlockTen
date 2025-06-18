@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class AutoDestroy : MonoBehaviour
@@ -9,4 +10,5 @@ public class AutoDestroy : MonoBehaviour
     {
         Destroy(gameObject, lifetime);
     }
+
 }
