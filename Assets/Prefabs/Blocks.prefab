@@ -48,12 +48,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   availableColors:
-  - {r: 0.8941177, g: 0.68235296, b: 0.43921572, a: 1}
-  - {r: 0.5294118, g: 0.69803923, b: 0.5803922, a: 1}
-  - {r: 0.45098042, g: 0.65882355, b: 0.6784314, a: 1}
-  - {r: 0.5176471, g: 0.77647066, b: 0.7058824, a: 1}
+  - {r: 0.8862746, g: 0.68235296, b: 0.43529415, a: 1}
+  - {r: 0.5254902, g: 0.69803923, b: 0.5803922, a: 1}
+  - {r: 0.5176471, g: 0.7411765, b: 0.7411765, a: 1}
   - {r: 0.72156864, g: 0.5568628, b: 0.6117647, a: 1}
-  - {r: 0.54901963, g: 0.57254905, b: 0.64705884, a: 1}
+  - {r: 0.54901963, g: 0.5647059, b: 0.64705884, a: 1}
   spawnManager: {fileID: 0}
   startPosition: {x: 0, y: 0, z: 0}
   children: []
@@ -179,29 +178,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4583721792968463117, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
-      propertyPath: valueText
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 4630699909476805297, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: m_Name
       value: Block_Child
       objectReference: {fileID: 0}
-    - target: {fileID: 4848644840010861867, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 2.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4848644840010861867, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 8271018933826811366, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
-      propertyPath: m_IsTrigger
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 8827062160837533708, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}

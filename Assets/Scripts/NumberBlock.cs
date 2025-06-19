@@ -6,10 +6,10 @@ using System.Collections;
 public class NumberBlock : MonoBehaviour
 {
     // --- Composite‐chain links (used by DraggableCompositeBlock) ---
-    [HideInInspector] public NumberBlock neighborUp;
-    [HideInInspector] public NumberBlock neighborDown;
-    [HideInInspector] public NumberBlock neighborLeft;
-    [HideInInspector] public NumberBlock neighborRight;
+     public NumberBlock neighborUp;
+     public NumberBlock neighborDown;
+    public NumberBlock neighborLeft;
+     public NumberBlock neighborRight;
 
     // --- Value and display ---
     public int Value { get; private set; }
@@ -22,7 +22,7 @@ public class NumberBlock : MonoBehaviour
     private Color _originalColor;
 
     // 55% chance to pick from [1–4], else [5–9]
-    private const float range1to4Chance = 0.55f;
+    private const float range1to4Chance = 0.6f;
 
     private void Awake()
     {
