@@ -22,7 +22,7 @@ public class GridManager : MonoBehaviour
     [Tooltip("Color to flash on blocks just before they pop-and-destroy")]
     public Color destroyHighlightColor = Color.red;
     public SpawnManager spawnManager;
-
+    public GameObject currentModeManager;
 
     private void Awake()
     {
@@ -151,7 +151,7 @@ public class GridManager : MonoBehaviour
         int destroyedCount = allCoords.Count;
 
         // 3) scoring/combo
-        ClassicModeManager.Instance?.OnBlocksDestroyed(destroyedCount);
+        currentModeManager.GetComponent<ModeManager>().OnBlocksDestroyed(destroyedCount);
 
         if (destroyedCount > 0)
         {
