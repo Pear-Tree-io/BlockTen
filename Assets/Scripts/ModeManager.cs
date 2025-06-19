@@ -68,4 +68,13 @@ public abstract class ModeManager : MonoBehaviour
         );
         goRect.anchoredPosition = localPoint;
     }
+
+    public virtual void GameOver() 
+    {
+        SaveGame();
+        ResetMode();
+    }
+    protected virtual void SaveGame() { }
+
+    protected virtual void LoadGame() { }
 }

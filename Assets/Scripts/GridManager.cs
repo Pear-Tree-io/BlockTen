@@ -23,6 +23,7 @@ public class GridManager : MonoBehaviour
     public Color destroyHighlightColor = Color.red;
     public SpawnManager spawnManager;
     public GameObject currentModeManager;
+    public bool isDestroyFinished = true;
 
     private void Awake()
     {
@@ -167,6 +168,7 @@ public class GridManager : MonoBehaviour
 
     private IEnumerator PlayDestroySequence(List<List<Vector2Int>> runs)
     {
+        isDestroyFinished = false;
         // Convert runs of coords → runs of NumberBlock
         var allRuns = runs
             .Select(run => run
@@ -205,6 +207,7 @@ public class GridManager : MonoBehaviour
         }
 
         spawnManager.NotifyBlockPlaced();
+        isDestroyFinished = true;
     }
 
     /// <summary>

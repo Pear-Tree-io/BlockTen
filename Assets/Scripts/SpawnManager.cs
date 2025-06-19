@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
 using System.Linq;
+using System.Collections;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -13,7 +14,11 @@ public class SpawnManager : MonoBehaviour
     private int placedCount;
     private List<DraggableCompositeBlock> currentBlocks = new();
 
+    public GameObject modeManager;
+
     public float scaleAtSpawn = 0.7f;
+
+
 
     private void Start()
     {
@@ -27,6 +32,7 @@ public class SpawnManager : MonoBehaviour
         if (!GridManager.Instance.HasFreeSlots(spawnPoints.Length))
         {
             Debug.Log("Game Over: Not enough space for a full wave!");
+            StartCoroutine(SetGameOver());
             return;
         }
 
@@ -107,6 +113,7 @@ public class SpawnManager : MonoBehaviour
                     if (compInstance == null)
                     {
                         Debug.Log("Game Over: No composite can fit in the remaining space!");
+                        StartCoroutine(SetGameOver());
                         return;
                     }
                 }
@@ -166,6 +173,7 @@ public class SpawnManager : MonoBehaviour
             if (!anyFit)
             {
                 Debug.Log("Game Over: No more possible moves!");
+                StartCoroutine(SetGameOver()); 
                 // TODO: your Game Over UI here
                 return;
             }
@@ -192,6 +200,17 @@ public class SpawnManager : MonoBehaviour
         {
             Debug.Log("Game Over: No more possible moves!");
             // TODO: Hook in your Game Over UI / scene here
+            StartCoroutine(SetGameOver());
         }
+    }
+
+    private IEnumerator SetGameOver()
+    {
+        yield return new WaitForSeconds(1f);
+    
+        if(GridManager.Instance.isDestroyFinished)
+        {
+            modeManager.GetComponent<ModeManager>().GameOver();
+        }   
     }
 }
