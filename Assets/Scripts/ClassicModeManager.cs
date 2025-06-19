@@ -2,6 +2,7 @@
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class ClassicModeManager : ModeManager
 {
@@ -26,12 +27,14 @@ public class ClassicModeManager : ModeManager
     public GameObject highScorePanel;
     public TMP_Text bestHighScoreText;
 
+    public GameObject noSpaceLeft;
 
     protected override void Awake()
     {
         LoadGame();
         gameOverPanel.SetActive(false);
         highScorePanel.SetActive(false);
+        noSpaceLeft.SetActive(false);
     }
 
     protected override void Start()
@@ -90,14 +93,14 @@ public class ClassicModeManager : ModeManager
         {
             highScore = currentScore;
             bestHighScoreText.text = highScore.ToString();
-            highScorePanel.SetActive(true);
             //socialObserver.SetLeaderboardScore((int)highScore);
+            StartCoroutine(GameOverPlay(highScorePanel));
         }
         else
         {
             goHighScoreText.text = highScore.ToString();
             goScoreText.text = currentScore.ToString();
-            gameOverPanel.SetActive(true);
+            StartCoroutine(GameOverPlay(gameOverPanel));
         }
 
         base.GameOver();
@@ -116,5 +119,19 @@ public class ClassicModeManager : ModeManager
     public void LoadClassicScene()
     {
         SceneManager.LoadScene("Classic");
+    }
+
+    private IEnumerator GameOverPlay(GameObject objectToActive)
+    {
+        noSpaceLeft.SetActive(true);
+
+        yield return new WaitForSeconds(3f);
+
+        objectToActive.SetActive(true);
+    }
+
+    public void ToMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }
