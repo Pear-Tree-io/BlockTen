@@ -7,6 +7,8 @@ using TMPro;
 /// </summary>
 public abstract class ModeManager : MonoBehaviour
 {
+    public GameObject Settings;
+
     protected virtual void Awake()
     {
         // Optional hook for subclasses (e.g. singleton setup)
@@ -85,4 +87,14 @@ public abstract class ModeManager : MonoBehaviour
     protected virtual void SaveGame() { }
 
     protected virtual void LoadGame() { }
+
+    public virtual void OpenSettings()
+    {
+        Settings.SetActive(true);
+    }
+
+    public virtual void CloseSettings()
+    {
+        Settings.SetActive(false);
+    }
 }
