@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenuManager : MonoBehaviour
+public class MainMenuManager : ModeManager
 {
-    //settings related
-    public GameObject Settings;
-    
-
+    private void Awake()
+    {
+        base.Awake();
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -23,15 +23,5 @@ public class MainMenuManager : MonoBehaviour
     public void EnterClassicMode()
     {
         SceneManager.LoadScene(1);
-    }
-
-    public void OpenSettings()
-    {
-        Settings.SetActive(true);
-    }
-
-    public void CloseSettings()
-    {
-        Settings.SetActive(false);
     }
 }

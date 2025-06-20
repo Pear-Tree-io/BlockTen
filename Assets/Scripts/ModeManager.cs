@@ -1,22 +1,41 @@
 ﻿using UnityEngine;
 using TMPro;
+using System;
+using System.Runtime.InteropServices;
+using Mono.Cecil.Cil;
+using Unity.IO.LowLevel.Unsafe;
 
+[Serializable]
+public class SettingsData
+{
+    public bool Sound = true;
+    public bool BGM = true;
+    public bool Vibration = true;
+}
 /// <summary>
 /// Base class for all game mode managers. Handles score, combos, and UI popups.
 /// Inherit and override scoring logic if needed.
 /// </summary>
 public abstract class ModeManager : MonoBehaviour
 {
-    public GameObject Settings;
+    [Header("Settings UI")]
+    [SerializeField] protected GameObject SettingsPanel;
+    [SerializeField] protected GameObject soundOff;
+    [SerializeField] protected GameObject bgmOff;
+    [SerializeField] protected GameObject vibrateOff;
+
+    private const string SettingsKey = "GameSettings";
+    protected SettingsData settings = new SettingsData();
+      
 
     protected virtual void Awake()
     {
-        // Optional hook for subclasses (e.g. singleton setup)
+        LoadSettings();
     }
 
     protected virtual void Start()
     {
-
+        
     }
 
     /// <summary>
@@ -88,13 +107,66 @@ public abstract class ModeManager : MonoBehaviour
 
     protected virtual void LoadGame() { }
 
+    #region Settings UI Methods
     public virtual void OpenSettings()
     {
-        Settings.SetActive(true);
+        if (SettingsPanel != null)
+            SettingsPanel.SetActive(true);
     }
 
     public virtual void CloseSettings()
     {
-        Settings.SetActive(false);
+        if (SettingsPanel != null)
+            SettingsPanel.SetActive(false);
     }
+
+    public virtual void ToggleSound()
+    {
+        settings.Sound = !settings.Sound;
+        ApplySettings();
+        SaveSettings();
+    }
+    public virtual void ToggleBGM()
+    {
+        settings.BGM = !settings.BGM;
+        ApplySettings();
+        SaveSettings();
+    }
+
+    public virtual void ToggleVibration()
+    {
+        settings.Vibration = !settings.Vibration;
+        ApplySettings();
+        SaveSettings();
+    }
+    #endregion
+
+    #region Persistence
+    protected void SaveSettings()
+    {
+        string json = JsonUtility.ToJson(settings);
+        PlayerPrefs.SetString(SettingsKey, json);
+        PlayerPrefs.Save();
+    }
+
+    protected void LoadSettings()
+    {
+        if (PlayerPrefs.HasKey(SettingsKey))
+        {
+            string json = PlayerPrefs.GetString(SettingsKey);
+            settings = JsonUtility.FromJson<SettingsData>(json) ?? new SettingsData();
+        }
+        ApplySettings();
+    }
+
+    protected void ApplySettings()
+    {
+        if (soundOff != null)
+            soundOff.SetActive(!settings.Sound);
+        if (bgmOff != null)
+            bgmOff.SetActive(!settings.BGM);
+        if (vibrateOff != null)
+            vibrateOff.SetActive(!settings.Vibration);
+    }
+    #endregion
 }

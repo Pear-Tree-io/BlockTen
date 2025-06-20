@@ -31,6 +31,7 @@ public class ClassicModeManager : ModeManager
 
     protected override void Awake()
     {
+        base.Awake();
         LoadGame();
         gameOverPanel.SetActive(false);
         highScorePanel.SetActive(false);
@@ -134,5 +135,10 @@ public class ClassicModeManager : ModeManager
     public void ToMenu()
     {
         SceneManager.LoadScene(0);
+    }
+
+    public void Replay()
+    {
+        SceneManager.LoadScene("Classic");
     }
 }

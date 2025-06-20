@@ -127,9 +127,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 271317553}
     m_Modifications:
+    - target: {fileID: 117834790557086510, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 2556296380631174647, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 697886492}
+    - target: {fileID: 2556296380631174647, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ToggleBGM
+      objectReference: {fileID: 0}
+    - target: {fileID: 3855696816424137435, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 4380266638530158144, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       propertyPath: m_Name
       value: Setting_Panel
+      objectReference: {fileID: 0}
+    - target: {fileID: 4380266638530158144, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5763941621653310721, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -142,6 +162,14 @@ PrefabInstance:
     - target: {fileID: 5763941621653310721, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: MainMenuManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7351182477900664853, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 697886492}
+    - target: {fileID: 7351182477900664853, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ToggleSound
       objectReference: {fileID: 0}
     - target: {fileID: 7542918402794928240, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       propertyPath: m_Pivot.x
@@ -235,6 +263,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: MainMenuManager, Assembly-CSharp
       objectReference: {fileID: 0}
+    - target: {fileID: 9218317279063702894, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 697886492}
+    - target: {fileID: 9218317279063702894, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ToggleVibration
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -248,6 +284,21 @@ GameObject:
 --- !u!224 &41936408 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7542918402794928240, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+  m_PrefabInstance: {fileID: 41936406}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &41936409 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5916773156056630975, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+  m_PrefabInstance: {fileID: 41936406}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &41936410 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3074670440835584023, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+  m_PrefabInstance: {fileID: 41936406}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &41936411 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9041425510718929900, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
   m_PrefabInstance: {fileID: 41936406}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &173786856
@@ -594,7 +645,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00b29a50e87ace64fb6a21c4554700b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Settings: {fileID: 41936407}
+  SettingsPanel: {fileID: 41936407}
+  soundOff: {fileID: 41936411}
+  bgmOff: {fileID: 41936410}
+  vibrateOff: {fileID: 41936409}
 --- !u!4 &697886493
 Transform:
   m_ObjectHideFlags: 0

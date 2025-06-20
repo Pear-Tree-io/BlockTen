@@ -210,6 +210,8 @@ public class GridManager : MonoBehaviour
             gridBlocks[coord.x, coord.y] = null;
             Destroy(b.gameObject);
         }
+        
+        Handheld.Vibrate();
 
         spawnManager.NotifyBlockPlaced();
         inputBlocker.blocksRaycasts = false;
