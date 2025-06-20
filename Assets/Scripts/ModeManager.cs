@@ -26,6 +26,14 @@ public abstract class ModeManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Call for each matches.
+    /// </summary>
+    public virtual void OnMatchDestroyed(int matchCount)
+    {
+
+    }
+
+    /// <summary>
     /// Default scoring: destroyedCount × comboMultiplier.
     /// Override to customize.
     /// </summary>

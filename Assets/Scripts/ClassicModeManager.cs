@@ -48,15 +48,15 @@ public class ClassicModeManager : ModeManager
     /// <summary>
     /// Call this whenever blocks are destroyed.
     /// </summary>
-    public override void OnBlocksDestroyed(int destroyedCount)
+    public override void OnMatchDestroyed(int matchCount)
     {
-        if (destroyedCount <= 0)
+        if (matchCount <= 0)
         {
             comboMultiplier = 1;
         }
         else
         {
-            currentScore += CalculateScore(destroyedCount);
+            currentScore += CalculateScore(matchCount);
             if (scoreText != null)
                 scoreText.text = currentScore.ToString();
 
@@ -72,9 +72,10 @@ public class ClassicModeManager : ModeManager
         }
     }
 
+
     protected override int CalculateScore(int destroyedCount)
     {
-        return destroyedCount * comboMultiplier;
+        return destroyedCount * 10 * comboMultiplier;
     }
 
     /// <summary>
@@ -125,7 +126,7 @@ public class ClassicModeManager : ModeManager
     {
         noSpaceLeft.SetActive(true);
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2f);
 
         objectToActive.SetActive(true);
     }

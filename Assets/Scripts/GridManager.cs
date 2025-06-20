@@ -150,8 +150,10 @@ public class GridManager : MonoBehaviour
 
         // <-- use the Count property here:
         int destroyedCount = allCoords.Count;
+        int matchedCount = runs.Count;
 
         // 3) scoring/combo
+        currentModeManager.GetComponent<ModeManager>().OnMatchDestroyed(matchedCount);
         currentModeManager.GetComponent<ModeManager>().OnBlocksDestroyed(destroyedCount);
 
         if (destroyedCount > 0)
@@ -186,9 +188,9 @@ public class GridManager : MonoBehaviour
             foreach (var b in run)
             {
                 allBlocks.Add(b);
-                StartCoroutine(PopOne(b, 0.2f));
+                StartCoroutine(PopOne(b, 0.4f));
             }
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.5f);
         }
 
         // 2) Final simultaneous pop

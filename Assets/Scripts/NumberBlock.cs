@@ -45,11 +45,13 @@ public class NumberBlock : MonoBehaviour
         if (valueText == null)
             valueText = GetComponentInChildren<TextMeshPro>();
 
+        //Value = Random.Range(1, 8);
+
         float r = Random.value;
         if (r < range1to4Chance)
             Value = Random.Range(1, 5);   // 1,2,3,4
         else
-            Value = Random.Range(5, 10);  // 5,6,7,8,9
+            Value = Random.Range(5, 8);  // 5,6,7,8,9
 
         valueText.text = Value.ToString();
     }
