@@ -256,6 +256,4 @@ public class DraggableCompositeBlock : MonoBehaviour,
             nb.transform.SetParent(GridManager.Instance.transform, true);
         Destroy(gameObject);
     }
-
-
 }

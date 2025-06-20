@@ -23,7 +23,7 @@ public class GridManager : MonoBehaviour
     public Color destroyHighlightColor = Color.red;
     public SpawnManager spawnManager;
     public GameObject currentModeManager;
-    public bool isDestroyFinished = true;
+    [SerializeField] private CanvasGroup inputBlocker;
 
     private void Awake()
     {
@@ -79,6 +79,8 @@ public class GridManager : MonoBehaviour
     /// </summary>
     public void CheckAndDestroyMatches()
     {
+        inputBlocker.blocksRaycasts = true;
+
         var runs = new List<List<Vector2Int>>();
 
         // ── HORIZONTAL ──
@@ -165,12 +167,13 @@ public class GridManager : MonoBehaviour
         {
             // ← re-insert this so that "no clear" also advances the wave
             spawnManager.NotifyBlockPlaced();
+            inputBlocker.blocksRaycasts = false;
         }
     }
 
     private IEnumerator PlayDestroySequence(List<List<Vector2Int>> runs)
     {
-        isDestroyFinished = false;
+        
         // Convert runs of coords → runs of NumberBlock
         var allRuns = runs
             .Select(run => run
@@ -209,7 +212,7 @@ public class GridManager : MonoBehaviour
         }
 
         spawnManager.NotifyBlockPlaced();
-        isDestroyFinished = true;
+        inputBlocker.blocksRaycasts = false;
     }
 
     /// <summary>
