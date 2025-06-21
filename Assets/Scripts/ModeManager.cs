@@ -54,6 +54,11 @@ public abstract class ModeManager : MonoBehaviour
 
     }
 
+    public virtual void OnMatchBlocksDestroyed(int matchCount, int destroyedCount)
+    {
+
+    }
+
     /// <summary>
     /// Default scoring: destroyedCount × comboMultiplier.
     /// Override to customize.
@@ -74,14 +79,14 @@ public abstract class ModeManager : MonoBehaviour
     /// <summary>
     /// Instantiates combo popup at last placed position.
     /// </summary>
-    protected virtual void ShowComboPopup(GameObject comboTextPrefab, Canvas canvas, int multiplier)
+    protected virtual void ShowTextOnCanvas(GameObject textPrefab, Canvas canvas, int number)
     {
-        if (comboTextPrefab == null || canvas == null) return;
+        if (textPrefab == null || canvas == null) return;
 
-        GameObject go = Instantiate(comboTextPrefab, canvas.transform);
+        GameObject go = Instantiate(textPrefab, canvas.transform);
         TMP_Text tmp = go.GetComponent<TMP_Text>();
         if (tmp != null)
-            tmp.text = multiplier.ToString();
+            tmp.text = number.ToString();
 
         // Positioning
         Vector3 worldPos = GridManager.Instance.LastPlacedPosition;

@@ -12,6 +12,7 @@ public class ClassicModeManager : ModeManager
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text highScoreText;
     [SerializeField] private GameObject comboTextPrefab;
+    [SerializeField] private GameObject scoreTextPrefab;
     private Canvas _canvas;
 
     private float highScore = 0f;
@@ -49,30 +50,31 @@ public class ClassicModeManager : ModeManager
     /// <summary>
     /// Call this whenever blocks are destroyed.
     /// </summary>
-    public override void OnMatchDestroyed(int matchCount)
+    public override void OnMatchBlocksDestroyed(int matchCount, int blockCount)
     {
-        if (matchCount <= 0)
+        //comboMultiplier = matchCount;
+
+        var pointsGained = blockCount * matchCount * 10; //CalculateScore(matchCount);
+        int oldScore = currentScore;
+        int newScore = oldScore + pointsGained;
+        currentScore = newScore;
+
+        if (scoreText != null)
+            scoreText.text = currentScore.ToString();
+
+        // Animate score increment
+        StartCoroutine(AnimateScore(oldScore, newScore, 0.5f));
+
+        if (matchCount >= 1)
         {
-            comboMultiplier = 1;
+            StartCoroutine(PlayScoreTexts(matchCount, pointsGained));
         }
-        else
+ 
+        if(currentScore >= highScore)
         {
-            currentScore += CalculateScore(matchCount);
-            if (scoreText != null)
-                scoreText.text = currentScore.ToString();
-
-            if (comboMultiplier >= 2)
-                ShowComboPopup(comboTextPrefab,_canvas,comboMultiplier);
-
-            comboMultiplier++;
-
-            if(currentScore >= highScore)
-            {
-                highScoreText.text = "" + currentScore;
-            }
+            highScoreText.text = "" + currentScore;
         }
     }
-
 
     protected override int CalculateScore(int destroyedCount)
     {
@@ -130,6 +132,36 @@ public class ClassicModeManager : ModeManager
         yield return new WaitForSeconds(2f);
 
         objectToActive.SetActive(true);
+    }
+
+    private IEnumerator PlayScoreTexts(int count, int score)
+    {
+        var waitTime = 0.5f;
+
+        if (count >= 2)
+        {
+            ShowTextOnCanvas(comboTextPrefab, _canvas, count);
+            waitTime = 1f;
+        }
+        yield return new WaitForSeconds(waitTime);
+
+        ShowTextOnCanvas(scoreTextPrefab, _canvas, score);
+    }
+
+    /// <summary>
+    /// Smoothly animates the scoreText from 'start' to 'end' over 'duration' seconds.
+    /// </summary>
+    private IEnumerator AnimateScore(int start, int end, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            int displayValue = Mathf.RoundToInt(Mathf.Lerp(start, end, elapsed / duration));
+            scoreText.text = displayValue.ToString();
+            yield return null;
+        }
+        scoreText.text = end.ToString();
     }
 
     public void ToMenu()

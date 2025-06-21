@@ -19,8 +19,6 @@ public class DraggableCompositeBlock : MonoBehaviour,
     private float screenZ;
     private Vector3 offset;
     
-    private bool _isOverValidSpot = false;
-
     private void OnEnable()
     {
         // 1) Grab your NumberBlock children
@@ -161,7 +159,6 @@ public class DraggableCompositeBlock : MonoBehaviour,
         GridManager.Instance.ClearAllPreviews();
         foreach (var nb in children)
             nb.StopPreview();
-        _isOverValidSpot = false;
 
         if (!canPlace)
             return;
@@ -189,8 +186,6 @@ public class DraggableCompositeBlock : MonoBehaviour,
             else
                 nb.StopPreview();
         }
-
-        _isOverValidSpot = true;
     }
 
     public void OnPointerUp(PointerEventData e)
@@ -201,7 +196,6 @@ public class DraggableCompositeBlock : MonoBehaviour,
         // 0) First: stop *all* play‐preview on the dragged blocks
         foreach (var nb in children)
             nb.StopPreview();
-        _isOverValidSpot = false;
 
         if (placed) return;
 

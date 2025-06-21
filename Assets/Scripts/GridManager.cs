@@ -155,8 +155,8 @@ public class GridManager : MonoBehaviour
         int matchedCount = runs.Count;
 
         // 3) scoring/combo
-        currentModeManager.GetComponent<ModeManager>().OnMatchDestroyed(matchedCount);
-        currentModeManager.GetComponent<ModeManager>().OnBlocksDestroyed(destroyedCount);
+        currentModeManager.GetComponent<ModeManager>().OnMatchBlocksDestroyed(matchedCount, destroyedCount);
+        //currentModeManager.GetComponent<ModeManager>().OnBlocksDestroyed(destroyedCount);
 
         if (destroyedCount > 0)
         {
