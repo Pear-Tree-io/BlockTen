@@ -1,10 +1,22 @@
 fileFormatVersion: 2
-guid: 63dda75e54ca9d74a9b8fd1e697e579f
+guid: 0c8f5f260ce06614b8bec9134cf70b9b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1092000832498938143
-    second: leaderboard_icon 1_0
+      213: 2354101575983191999
+    second: vibrate_icon_0
+  - first:
+      213: -6311504028362118664
+    second: vibrate_icon_1
+  - first:
+      213: -1217748120066603813
+    second: vibrate_icon_2
+  - first:
+      213: 5969124695792918074
+    second: vibrate_icon_3
+  - first:
+      213: -5757595209224473964
+    second: vibrate_icon_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +138,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: leaderboard_icon 1_0
+      name: vibrate_icon_0
       rect:
         serializedVersion: 2
-        x: 44
-        y: 56
-        width: 167
-        height: 137
+        x: 58
+        y: 101
+        width: 22
+        height: 67
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +153,96 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1ee487c470f68d0f0800000000000000
-      internalID: -1092000832498938143
+      spriteID: fb75aa929e27ba020800000000000000
+      internalID: 2354101575983191999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vibrate_icon_1
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 117
+        width: 13
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f96707a6880968a0800000000000000
+      internalID: -6311504028362118664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vibrate_icon_2
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 64
+        width: 80
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd4c7856980b91fe0800000000000000
+      internalID: -1217748120066603813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vibrate_icon_3
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 117
+        width: 13
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3e9fb8f84796d250800000000000000
+      internalID: 5969124695792918074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: vibrate_icon_4
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 101
+        width: 22
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4923fa989a9e810b0800000000000000
+      internalID: -5757595209224473964
       vertices: []
       indices: 
       edges: []
@@ -161,7 +261,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      leaderboard_icon 1_0: -1092000832498938143
+      vibrate_icon_0: 2354101575983191999
+      vibrate_icon_1: -6311504028362118664
+      vibrate_icon_2: -1217748120066603813
+      vibrate_icon_3: 5969124695792918074
+      vibrate_icon_4: -5757595209224473964
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
