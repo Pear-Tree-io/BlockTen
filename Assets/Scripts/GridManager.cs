@@ -154,8 +154,6 @@ public class GridManager : MonoBehaviour
         int destroyedCount = allCoords.Count;
         int matchedCount = runs.Count;
 
-        // 3) scoring/combo
-        currentModeManager.GetComponent<ModeManager>().OnMatchBlocksDestroyed(matchedCount, destroyedCount);
         //currentModeManager.GetComponent<ModeManager>().OnBlocksDestroyed(destroyedCount);
 
         if (destroyedCount > 0)
@@ -169,6 +167,9 @@ public class GridManager : MonoBehaviour
             spawnManager.NotifyBlockPlaced();
             inputBlocker.blocksRaycasts = false;
         }
+
+        // 3) scoring/combo
+        currentModeManager.GetComponent<ModeManager>().OnMatchBlocksDestroyed(matchedCount, destroyedCount);
     }
 
     private IEnumerator PlayDestroySequence(List<List<Vector2Int>> runs)
@@ -231,13 +232,13 @@ public class GridManager : MonoBehaviour
         // scale up
         for (float t = 0; t < half; t += Time.deltaTime)
         {
-            b.transform.localScale = Vector3.one * Mathf.Lerp(1f, 2f, t / half);
+            b.transform.localScale = Vector3.one * Mathf.Lerp(1f, 1.5f, t / half);
             yield return null;
         }
         // scale back
         for (float t = 0; t < half; t += Time.deltaTime)
         {
-            b.transform.localScale = Vector3.one * Mathf.Lerp(2f, 1f, t / half);
+            b.transform.localScale = Vector3.one * Mathf.Lerp(1.5f, 1f, t / half);
             yield return null;
         }
         b.transform.localScale = Vector3.one;

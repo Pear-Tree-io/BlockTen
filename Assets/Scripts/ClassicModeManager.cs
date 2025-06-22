@@ -141,7 +141,7 @@ public class ClassicModeManager : ModeManager
         if (count >= 2)
         {
             ShowTextOnCanvas(comboTextPrefab, _canvas, count);
-            waitTime = 1f;
+            waitTime = 0.75f;
         }
         yield return new WaitForSeconds(waitTime);
 
