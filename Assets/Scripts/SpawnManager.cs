@@ -206,6 +206,7 @@ public class SpawnManager : MonoBehaviour
 
     private void SetGameOver()
     {
+        GridManager.Instance.InitializeEndGrid();
         modeManager.GetComponent<ModeManager>().GameOver();
     }
 }

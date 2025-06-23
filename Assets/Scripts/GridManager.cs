@@ -578,4 +578,30 @@ public class GridManager : MonoBehaviour
             return null;
         return gridBlocks[x, y];
     }
+
+    [Header("End Grid Initialization Settings")]
+    [SerializeField] private float initEndDelay = 0.05f;
+    [SerializeField] private GameObject gameOverTile;
+
+    /// <summary>
+    /// Initializes the grid with an animated fill from bottom to top.
+    /// </summary>
+    public void InitializeEndGrid()
+    {
+        StartCoroutine(InitializeEndGridRoutine());
+    }
+
+    private IEnumerator InitializeEndGridRoutine()
+    {
+        // Delay between instantiating each cell
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < columns; x++)
+            {
+                Vector3 worldPos = origin + new Vector3(x * cellSize, y * cellSize, 0f);
+                Instantiate(gameOverTile, worldPos, Quaternion.identity, transform);
+            }
+            yield return new WaitForSeconds(initEndDelay);
+        }
+    }
 }
