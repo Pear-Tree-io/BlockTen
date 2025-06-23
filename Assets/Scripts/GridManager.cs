@@ -174,6 +174,56 @@ public class GridManager : MonoBehaviour
 
     private IEnumerator PlayDestroySequence(List<List<Vector2Int>> runs)
     {
+        // Convert runs of coords → runs of NumberBlock
+        var allRuns = runs
+            .Select(run => run
+                .Select(p => gridBlocks[p.x, p.y])
+                .Where(b => b != null)
+                .ToList()
+            )
+            .ToList();
+
+        // Flatten into a unique set
+        var allBlocks = new HashSet<NumberBlock>();
+        foreach (var run in allRuns)
+            foreach (var b in run)
+                allBlocks.Add(b);
+
+        // 0) **Compute the geometric center** of all the blocks to be destroyed:
+        Vector3 center = Vector3.zero;
+        foreach (var b in allBlocks)
+            center += b.transform.position;
+        center /= allBlocks.Count;
+        // stash it so ModeManager.ShowTextOnCanvas uses THIS position
+        LastPlacedPosition = center;
+
+        // 1) Animate each run in order
+        foreach (var run in allRuns)
+        {
+            foreach (var b in run)
+                StartCoroutine(PopOne(b, 0.4f));
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        // 2) Spawn VFX, free cells & destroy objects
+        foreach (var b in allBlocks)
+        {
+            Instantiate(destroyVFX, b.transform.position, Quaternion.identity);
+            var coord = FindBlockCoords(b);
+            occupied[coord.x, coord.y] = false;
+            gridBlocks[coord.x, coord.y] = null;
+            Destroy(b.gameObject);
+        }
+
+        Handheld.Vibrate();
+
+        spawnManager.NotifyBlockPlaced();
+        inputBlocker.blocksRaycasts = false;
+    }
+
+
+    /*private IEnumerator PlayDestroySequence(List<List<Vector2Int>> runs)
+    {
         
         // Convert runs of coords → runs of NumberBlock
         var allRuns = runs
@@ -198,9 +248,9 @@ public class GridManager : MonoBehaviour
         }
 
         // 2) Final simultaneous pop
-        /*foreach (var b in allBlocks)
+        *//*foreach (var b in allBlocks)
             StartCoroutine(PopOne(b, 0.2f));
-        yield return new WaitForSeconds(0.25f);*/
+        yield return new WaitForSeconds(0.25f);*//*
 
         // 3) Spawn VFX, free cells & destroy objects
         foreach (var b in allBlocks)
@@ -216,7 +266,7 @@ public class GridManager : MonoBehaviour
 
         spawnManager.NotifyBlockPlaced();
         inputBlocker.blocksRaycasts = false;
-    }
+    }*/
 
     /// <summary>
     /// Scales up then back down over totalDuration seconds.

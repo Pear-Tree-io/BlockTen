@@ -136,15 +136,17 @@ public class ClassicModeManager : ModeManager
 
     private IEnumerator PlayScoreTexts(int count, int score)
     {
-        var waitTime = 0.5f;
+        var waitPopup = 0f;
 
         if (count >= 2)
         {
+            waitPopup = count * 0.4f;
+            yield return new WaitForSeconds(waitPopup);
             ShowTextOnCanvas(comboTextPrefab, _canvas, count);
-            waitTime = 0.75f;
         }
+        
+        var waitTime = (count * 0.5f) + 0.3f - waitPopup;
         yield return new WaitForSeconds(waitTime);
-
         ShowTextOnCanvas(scoreTextPrefab, _canvas, score);
     }
 
