@@ -375,7 +375,7 @@ MonoBehaviour:
   scoreText: {fileID: 1945285625}
   highScoreText: {fileID: 252705770}
   comboTextPrefab: {fileID: 3205873087592322, guid: d5f1dcffee8948b4d9ad2e1f186dfed7, type: 3}
-  scoreTextPrefab: {fileID: 3205873087592322, guid: ceec075cc5b149e4bb806663325d4f77, type: 3}
+  scoreTextPrefab: {fileID: 3381671091952272937, guid: ceec075cc5b149e4bb806663325d4f77, type: 3}
   gameOverPanel: {fileID: 2015470661}
   goScoreText: {fileID: 1596292187}
   goHighScoreText: {fileID: 1463335024}
@@ -819,15 +819,15 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4283870191
-  m_fontColor: {r: 0.93725497, g: 0.67058825, b: 0.3372549, a: 1}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 1
+  m_colorMode: 2
   m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+    topLeft: {r: 1, g: 0.89409864, b: 0.6179246, a: 1}
+    topRight: {r: 1, g: 0.89409864, b: 0.6179246, a: 1}
+    bottomLeft: {r: 0.9294118, g: 0.7294118, b: 0.20784315, a: 1}
+    bottomRight: {r: 0.9294118, g: 0.7294118, b: 0.20784315, a: 1}
   m_fontColorGradientPreset: {fileID: 0}
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
@@ -4686,15 +4686,15 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4283870191
-  m_fontColor: {r: 0.93725497, g: 0.67058825, b: 0.3372549, a: 1}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 1
+  m_colorMode: 2
   m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+    topLeft: {r: 1, g: 0.89409864, b: 0.6179246, a: 1}
+    topRight: {r: 1, g: 0.89409864, b: 0.6179246, a: 1}
+    bottomLeft: {r: 0.9294118, g: 0.7294118, b: 0.20784315, a: 1}
+    bottomRight: {r: 0.9294118, g: 0.7294118, b: 0.20784315, a: 1}
   m_fontColorGradientPreset: {fileID: 0}
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
