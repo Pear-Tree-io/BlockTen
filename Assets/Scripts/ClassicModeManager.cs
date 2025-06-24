@@ -20,6 +20,7 @@ public class ClassicModeManager : ModeManager
     private int comboMultiplier = 1;
 
     private readonly string HighScoreKey = "HighScore";
+    private readonly string TutorialKey = "Tutorial";
 
     public GameObject gameOverPanel;
     public TMP_Text goScoreText;
@@ -29,10 +30,6 @@ public class ClassicModeManager : ModeManager
     public TMP_Text bestHighScoreText;
 
     public GameObject noSpaceLeft;
-
-    public GameObject revivePanel;
-    public bool isRevived = false;
-    [SerializeField] private int reviveCountDown;
 
     protected override void Awake()
     {
@@ -45,6 +42,8 @@ public class ClassicModeManager : ModeManager
 
     protected override void Start()
     {
+        Debug.Log(PlayerPrefs.GetInt(TutorialKey));
+
         // Cache the canvas for world-to-screen conversions
         _canvas = scoreText.GetComponentInParent<Canvas>();
         highScoreText.text = ""+highScore;
@@ -125,6 +124,24 @@ public class ClassicModeManager : ModeManager
         highScore = PlayerPrefs.GetFloat(HighScoreKey, 0f);
     }
 
+    public void TutorialPlayed()
+    {
+        PlayerPrefs.SetInt(TutorialKey, 1);
+        PlayerPrefs.Save();
+    }
+
+    public bool CheckTutorial()
+    {
+        if(PlayerPrefs.GetInt(TutorialKey) == 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
     public void LoadClassicScene()
     {
         SceneManager.LoadScene("Classic");
@@ -183,20 +200,9 @@ public class ClassicModeManager : ModeManager
         SceneManager.LoadScene("Classic");
     }
 
-    public IEnumerator StartReviveCountdown()
-    {
-        isRevived = true;
-        revivePanel.SetActive(true);
-        while (reviveCountDown > 0)
-        {           
-            yield return new WaitForSeconds(1);
-            reviveCountDown--;
-        }
-        if(reviveCountDown == 0)
-        {
-            revivePanel.SetActive(false);
-        }
-    }
+   
+
+
 
     public int Score => currentScore;
 }

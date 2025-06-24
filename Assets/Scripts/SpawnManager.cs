@@ -5,6 +5,8 @@ using Random = UnityEngine.Random;
 using System.Linq;
 using System.Collections;
 using TMPro;
+using static UnityEngine.RuleTile.TilingRuleOutput;
+using Transform = UnityEngine.Transform;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -15,7 +17,7 @@ public class SpawnManager : MonoBehaviour
     private int placedCount;
     private List<DraggableCompositeBlock> currentBlocks = new();
 
-    public GameObject modeManager;
+    private ClassicModeManager modeManager;
 
     public float scaleAtSpawn = 0.7f;
 
@@ -24,14 +26,30 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private int reviveCountDown = 3;
     [SerializeField] private TMP_Text countDownText;
 
+    private bool tutorialActive = true;
+    private Coroutine tutorialCoroutine;
+    private bool isTutorialPlayed = false;
+
     private void Start()
     {
+        modeManager = FindAnyObjectByType<ClassicModeManager>();
         placedCount = 0;
         SpawnAll();
+        
     }
 
     public void SpawnAll()
     {
+        if (!modeManager.CheckTutorial())
+        {
+            tutorialCoroutine = StartCoroutine(TutorialHandLoop());
+            modeManager.TutorialPlayed();
+        }
+        else
+        {
+            StopTutorial();
+        }
+
         // 1) If there's not room for a full wave, Game Over
         if (!GridManager.Instance.HasFreeSlots(spawnPoints.Length))
         {
@@ -310,15 +328,15 @@ public class SpawnManager : MonoBehaviour
 
     private void SetGameOver()
     {
-        if(modeManager.GetComponent<ClassicModeManager>().Score > 1000 && !
+        if (modeManager.Score > 1000 && !
             isRevived)
         {
-            StartCoroutine(StartReviveCountdown());   
+            StartCoroutine(StartReviveCountdown());
         }
         else
         {
             GridManager.Instance.InitializeEndGrid();
-            modeManager.GetComponent<ModeManager>().GameOver();
+            modeManager.GameOver();
         }
     }
 
@@ -346,5 +364,120 @@ public class SpawnManager : MonoBehaviour
     {
         isRevived = true;
         revivePanel.SetActive(false);
+    }
+
+    [Header("Tutorial Hand Settings")]
+    [SerializeField] private GameObject handPrefab;
+    [SerializeField] private Transform tutorialStartPoint;
+    [SerializeField] private float handMoveDuration = 1f;
+
+    /// <summary>
+    /// Animates a hand from a start to end position based on grid state.
+    /// </summary>
+    public void PlayTutorialHandAnimation()
+    {
+        if (handPrefab == null) return;
+        StartCoroutine(PlayTutorialHandRoutine());
+    }
+
+    private IEnumerator PlayTutorialHandRoutine()
+    {
+        var gm = GridManager.Instance;
+        Vector3 startPos = Vector3.zero;
+        Vector3 endPos = Vector3.zero;
+
+        if (gm.HasPlacedBlocks())
+        {
+            bool matchFound = false;
+            // Find a composite and grid block pair summing to 10
+            foreach (var comp in currentBlocks.Where(c => c != null && !c.placed))
+            {
+                if (!gm.CanPlaceCompositeBlockAnywhere(comp)) continue;
+
+                // look through each child block of the composite
+                var childBlocks = comp.GetComponentsInChildren<NumberBlock>();
+                foreach (var nb in childBlocks)
+                {
+                    for (int x = 0; x < gm.columns; x++)
+                    {
+                        for (int y = 0; y < gm.rows; y++)
+                        {
+                            var gridBlock = gm.GetBlockAt(x, y);
+                            if (gridBlock != null && nb.Value + gridBlock.Value == 10)
+                            {
+                                startPos = nb.transform.position;
+                                endPos = gridBlock.transform.position;
+                                matchFound = true;
+                                break;
+                            }
+                        }
+                        if (matchFound) break;
+                    }
+                    if (matchFound) break;
+                }
+                if (matchFound) break;
+            }
+
+            if (!matchFound)
+            {
+                // No valid match: if there are still unplaced spawn blocks, point from first to grid center
+                var remaining = currentBlocks.Where(c => c != null && !c.placed).ToList();
+                if (remaining.Any())
+                {
+                    var comp = remaining.First();
+                    startPos = comp.startPosition;
+                    endPos = gm.transform.position;
+                }
+                else
+                {
+                    // No spawn blocks left: fallback from tutorial start or center spawn to grid center
+                    startPos = tutorialStartPoint != null
+                        ? tutorialStartPoint.position
+                        : spawnPoints[spawnPoints.Length / 2].position;
+                    endPos = gm.transform.position;
+                }
+            }
+        }
+        else
+        {
+            // Grid empty: point from center spawn to grid center
+            startPos = tutorialStartPoint != null
+                ? tutorialStartPoint.position
+                : spawnPoints[spawnPoints.Length / 2].position;
+            endPos = gm.transform.position;
+        }
+
+        // Animate hand
+        var hand = Instantiate(handPrefab, startPos, Quaternion.identity, transform);
+        float elapsed = 0f;
+        while (elapsed < handMoveDuration)
+        {
+            elapsed += Time.deltaTime;
+            hand.transform.position = Vector3.Lerp(startPos, endPos, elapsed / handMoveDuration);
+            yield return null;
+        }
+        hand.transform.position = endPos;
+        Destroy(hand);
+    }
+
+    /// <summary>
+    /// Repeats the tutorial hand animation until the tutorial is stopped.
+    /// </summary>
+    private IEnumerator TutorialHandLoop()
+    {
+        while (tutorialActive)
+        {
+            PlayTutorialHandAnimation();
+            yield return new WaitForSeconds(handMoveDuration + 0.5f);
+        }
+    }
+
+    /// <summary>
+    /// Stops the tutorial hand loop.
+    /// </summary>
+    public void StopTutorial()
+    {
+        tutorialActive = false;
+        if (tutorialCoroutine != null) StopCoroutine(tutorialCoroutine);
     }
 }
