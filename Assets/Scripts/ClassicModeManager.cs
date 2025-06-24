@@ -19,7 +19,7 @@ public class ClassicModeManager : ModeManager
     private int currentScore;
     private int comboMultiplier = 1;
 
-    private string HighScoreKey = "HighScore";
+    private readonly string HighScoreKey = "HighScore";
 
     public GameObject gameOverPanel;
     public TMP_Text goScoreText;
@@ -29,6 +29,10 @@ public class ClassicModeManager : ModeManager
     public TMP_Text bestHighScoreText;
 
     public GameObject noSpaceLeft;
+
+    public GameObject revivePanel;
+    public bool isRevived = false;
+    [SerializeField] private int reviveCountDown;
 
     protected override void Awake()
     {
@@ -44,7 +48,7 @@ public class ClassicModeManager : ModeManager
         // Cache the canvas for world-to-screen conversions
         _canvas = scoreText.GetComponentInParent<Canvas>();
         highScoreText.text = ""+highScore;
-        ResetMode();
+        base.Start();
     }
 
     /// <summary>
@@ -63,7 +67,7 @@ public class ClassicModeManager : ModeManager
             scoreText.text = currentScore.ToString();
 
         // Animate score increment
-        StartCoroutine(AnimateScore(oldScore, newScore, 0.5f));
+        StartCoroutine(AnimateScore(scoreText, oldScore, newScore, 0.5f));
 
         if (matchCount >= 1)
         {
@@ -98,17 +102,18 @@ public class ClassicModeManager : ModeManager
             highScore = currentScore;
             bestHighScoreText.text = highScore.ToString();
             //socialObserver.SetLeaderboardScore((int)highScore);
-            StartCoroutine(GameOverPlay(highScorePanel));
+            StartCoroutine(GameOverPlay(highScorePanel, bestHighScoreText));
         }
         else
         {
             goHighScoreText.text = highScore.ToString();
             goScoreText.text = currentScore.ToString();
-            StartCoroutine(GameOverPlay(gameOverPanel));
+            StartCoroutine(GameOverPlay(gameOverPanel, goScoreText));
         }
 
         base.GameOver();
     }
+
     protected override void SaveGame()
     {
         PlayerPrefs.SetFloat(HighScoreKey, highScore);
@@ -125,24 +130,25 @@ public class ClassicModeManager : ModeManager
         SceneManager.LoadScene("Classic");
     }
 
-    private IEnumerator GameOverPlay(GameObject objectToActive)
+    private IEnumerator GameOverPlay(GameObject objectToActive,TMP_Text text)
     {
         noSpaceLeft.SetActive(true);
 
         yield return new WaitForSeconds(2f);
 
         objectToActive.SetActive(true);
+        StartCoroutine(AnimateScore(text, 0, currentScore, 1));
     }
 
     private IEnumerator PlayScoreTexts(int count, int score)
     {
         var waitPopup = 0f;
-        var waitTime = (count * 0.5f) + 0.2f;
+        var waitTime = (count * 0.4f) + 0.2f;
 
         if (count >= 2)
         {
-            waitPopup = count * 0.4f + 0.2f;
-            waitTime = (count * 0.5f) + 0.75f - waitPopup;
+            waitPopup = count * 0.3f + 0.2f;
+            waitTime = (count * 0.4f) + 0.75f - waitPopup;
             yield return new WaitForSeconds(waitPopup);
             ShowTextOnCanvas(comboTextPrefab, _canvas, count);
         }
@@ -154,17 +160,17 @@ public class ClassicModeManager : ModeManager
     /// <summary>
     /// Smoothly animates the scoreText from 'start' to 'end' over 'duration' seconds.
     /// </summary>
-    private IEnumerator AnimateScore(int start, int end, float duration)
+    private IEnumerator AnimateScore(TMP_Text text, int start, int end, float duration)
     {
         float elapsed = 0f;
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             int displayValue = Mathf.RoundToInt(Mathf.Lerp(start, end, elapsed / duration));
-            scoreText.text = displayValue.ToString();
+            text.text = displayValue.ToString();
             yield return null;
         }
-        scoreText.text = end.ToString();
+        text.text = end.ToString();
     }
 
     public void ToMenu()
@@ -176,4 +182,21 @@ public class ClassicModeManager : ModeManager
     {
         SceneManager.LoadScene("Classic");
     }
+
+    public IEnumerator StartReviveCountdown()
+    {
+        isRevived = true;
+        revivePanel.SetActive(true);
+        while (reviveCountDown > 0)
+        {           
+            yield return new WaitForSeconds(1);
+            reviveCountDown--;
+        }
+        if(reviveCountDown == 0)
+        {
+            revivePanel.SetActive(false);
+        }
+    }
+
+    public int Score => currentScore;
 }

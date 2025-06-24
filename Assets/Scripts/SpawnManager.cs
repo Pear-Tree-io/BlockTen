@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Random = UnityEngine.Random;
 using System.Linq;
 using System.Collections;
+using TMPro;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -18,7 +19,10 @@ public class SpawnManager : MonoBehaviour
 
     public float scaleAtSpawn = 0.7f;
 
-
+    public GameObject revivePanel;
+    public bool isRevived = false;
+    [SerializeField] private int reviveCountDown = 3;
+    [SerializeField] private TMP_Text countDownText;
 
     private void Start()
     {
@@ -141,11 +145,111 @@ public class SpawnManager : MonoBehaviour
         placedCount = 0;
     }
 
+    public void SpawnAllMatch()
+    {
+        // 1) If there's not room for a full wave, Game Over
+        if (!GridManager.Instance.HasFreeSlots(spawnPoints.Length))
+        {
+            Debug.Log("Game Over: Not enough space for a full wave!");
+            SetGameOver();
+            return;
+        }
+
+        // 2) Tear down leftovers
+        foreach (var old in currentBlocks)
+            if (old) Destroy(old.gameObject);
+        currentBlocks.Clear();
+
+        bool gridEmpty = !GridManager.Instance.HasPlacedBlocks();
+
+        // 3) Spawn exactly three composites
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            DraggableCompositeBlock compInstance = null;
+            Vector3 pos = spawnPoints[i].position;
+
+            // Wave-2+: try to fit + match
+            if (!gridEmpty)
+            {
+                // A) Find a prefab that fits & can clear
+                foreach (var prefab in compositePrefabs.OrderBy(_ => Random.value))
+                {
+                    var go = Instantiate(prefab, pos, Quaternion.identity);
+                    go.transform.localScale = Vector3.one * scaleAtSpawn;
+                    var comp = go.GetComponent<DraggableCompositeBlock>();
+                    comp.spawnManager = this;
+                    comp.startPosition = pos;
+
+                    // must fit
+                    if (!GridManager.Instance.CanPlaceCompositeBlockAnywhere(comp))
+                    {
+                        Destroy(go);
+                        continue;
+                    }
+
+                    // reroll numbers up to 20 times until it WILL clear
+                    bool success = false;
+                    for (int attempt = 0; attempt < 20; attempt++)
+                    {
+                        comp.AssignValidRandomNumbers();
+                        if (GridManager.Instance.TryFindPlacementThatMatchesSum10(comp))
+                        {
+                            success = true;
+                            break;
+                        }
+                    }
+
+                    if (success)
+                    {
+                        compInstance = comp;
+                        break;
+                    }
+                    Destroy(go);
+                }
+
+                // B) Fallback: if none both fit+match, pick any *fitting* prefab
+                if (compInstance == null)
+                {
+                    Debug.Log("Fallback: No matchable composite—spawning any that fits.");
+                    foreach (var prefab in compositePrefabs.OrderBy(_ => Random.value))
+                    {
+                        var go = Instantiate(prefab, pos, Quaternion.identity);
+                        go.transform.localScale = Vector3.one * scaleAtSpawn;
+                        var comp = go.GetComponent<DraggableCompositeBlock>();
+                        comp.spawnManager = this;
+                        comp.startPosition = pos;
+
+                        if (GridManager.Instance.CanPlaceCompositeBlockAnywhere(comp))
+                        {
+                            compInstance = comp;
+                            comp.AssignValidRandomNumbers();
+                            break;
+                        }
+                        Destroy(go);
+                    }
+
+                    // C) If STILL nothing fits, that truly is Game Over
+                    if (compInstance == null)
+                    {
+                        Debug.Log("Game Over: No composite can fit in the remaining space!");
+                        SetGameOver();
+                        return;
+                    }
+                }
+            }
+
+            currentBlocks.Add(compInstance);
+        }
+
+        // 4) Reset for this wave
+        placedCount = 0;
+    }
+
     /// <summary>
     /// Call this from your UI Button's OnClick.
     /// Destroys any unplaced composites in the spawn points and refills them.
     /// </summary>
-    public void RerollSpawnBlocks()
+    public void Revive()
     {
         foreach (var comp in currentBlocks)
         {
@@ -154,7 +258,7 @@ public class SpawnManager : MonoBehaviour
         }
         currentBlocks.Clear();
         placedCount = 0;
-        SpawnAll();
+        SpawnAllMatch();
         CheckRemainingSpace();
     }
 
@@ -206,7 +310,41 @@ public class SpawnManager : MonoBehaviour
 
     private void SetGameOver()
     {
-        GridManager.Instance.InitializeEndGrid();
-        modeManager.GetComponent<ModeManager>().GameOver();
+        if(modeManager.GetComponent<ClassicModeManager>().Score > 1000 && !
+            isRevived)
+        {
+            StartCoroutine(StartReviveCountdown());   
+        }
+        else
+        {
+            GridManager.Instance.InitializeEndGrid();
+            modeManager.GetComponent<ModeManager>().GameOver();
+        }
+    }
+
+    public IEnumerator StartReviveCountdown()
+    {
+        revivePanel.SetActive(true);
+        while (reviveCountDown >= 0)
+        {
+            countDownText.text = reviveCountDown.ToString();
+            yield return new WaitForSeconds(1);
+            reviveCountDown--;
+        }
+        SkipRevive();
+        CheckRemainingSpace();
+    }
+
+    public void DoRevive()
+    {
+        isRevived = true;
+        revivePanel.SetActive(false);
+        Revive();
+    }
+
+    public void SkipRevive()
+    {
+        isRevived = true;
+        revivePanel.SetActive(false);
     }
 }

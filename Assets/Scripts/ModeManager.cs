@@ -35,7 +35,7 @@ public abstract class ModeManager : MonoBehaviour
 
     protected virtual void Start()
     {
-        
+        ResetMode();
     }
 
     /// <summary>
@@ -106,7 +106,6 @@ public abstract class ModeManager : MonoBehaviour
     public virtual void GameOver() 
     {
         SaveGame();
-        ResetMode();
     }
     protected virtual void SaveGame() { }
 
