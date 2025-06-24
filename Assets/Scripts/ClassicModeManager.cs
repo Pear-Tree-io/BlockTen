@@ -25,11 +25,15 @@ public class ClassicModeManager : ModeManager
     public GameObject gameOverPanel;
     public TMP_Text goScoreText;
     public TMP_Text goHighScoreText;
-    
+
     public GameObject highScorePanel;
     public TMP_Text bestHighScoreText;
 
     public GameObject noSpaceLeft;
+
+    public GameObject goodStamp;
+    public GameObject greatStamp;
+    public GameObject fantasticStamp;
 
     protected override void Awake()
     {
@@ -46,7 +50,7 @@ public class ClassicModeManager : ModeManager
 
         // Cache the canvas for world-to-screen conversions
         _canvas = scoreText.GetComponentInParent<Canvas>();
-        highScoreText.text = ""+highScore;
+        highScoreText.text = "" + highScore;
         base.Start();
     }
 
@@ -55,6 +59,20 @@ public class ClassicModeManager : ModeManager
     /// </summary>
     public override void OnMatchBlocksDestroyed(int matchCount, int blockCount)
     {
+        if (blockCount >= 7)
+        {
+            PrintStamp(fantasticStamp);
+        }
+        else if (blockCount > 3 && matchCount >= 2)
+        {
+            PrintStamp(greatStamp);
+        }
+        else if (blockCount > 3)
+        {
+            PrintStamp(goodStamp);
+        }
+
+
         //comboMultiplier = matchCount;
 
         var pointsGained = blockCount * matchCount * 10; //CalculateScore(matchCount);
@@ -72,8 +90,8 @@ public class ClassicModeManager : ModeManager
         {
             StartCoroutine(PlayScoreTexts(matchCount, pointsGained));
         }
- 
-        if(currentScore >= highScore)
+
+        if (currentScore >= highScore)
         {
             highScoreText.text = "" + currentScore;
         }
@@ -132,7 +150,7 @@ public class ClassicModeManager : ModeManager
 
     public bool CheckTutorial()
     {
-        if(PlayerPrefs.GetInt(TutorialKey) == 0)
+        if (PlayerPrefs.GetInt(TutorialKey) == 0)
         {
             return false;
         }
@@ -147,7 +165,7 @@ public class ClassicModeManager : ModeManager
         SceneManager.LoadScene("Classic");
     }
 
-    private IEnumerator GameOverPlay(GameObject objectToActive,TMP_Text text)
+    private IEnumerator GameOverPlay(GameObject objectToActive, TMP_Text text)
     {
         noSpaceLeft.SetActive(true);
 
@@ -169,7 +187,7 @@ public class ClassicModeManager : ModeManager
             yield return new WaitForSeconds(waitPopup);
             ShowTextOnCanvas(comboTextPrefab, _canvas, count);
         }
-        
+
         yield return new WaitForSeconds(waitTime);
         ShowTextOnCanvas(scoreTextPrefab, _canvas, score);
     }
@@ -200,9 +218,13 @@ public class ClassicModeManager : ModeManager
         SceneManager.LoadScene("Classic");
     }
 
-   
-
-
+    private void PrintStamp(GameObject stamp)
+    {
+        Camera cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        Vector3 targetPos = GridManager.Instance.transform.position;
+        Vector3 pos = cam.WorldToScreenPoint(targetPos);
+        Instantiate(stamp, pos, Quaternion.identity,_canvas.transform);
+    }
 
     public int Score => currentScore;
 }
