@@ -385,6 +385,7 @@ MonoBehaviour:
   goodStamp: {fileID: 5157014998035839403, guid: 4dae3a152885b86478e9ce975cdbd1bd, type: 3}
   greatStamp: {fileID: 786215060330830302, guid: 4124b46bfa89a8c43aad3978af40bb09, type: 3}
   fantasticStamp: {fileID: 8256514513457483845, guid: 905f873a6a2793e448c89be3f73b269b, type: 3}
+  fantasticEffect: {fileID: 454027016228271823, guid: c5e8b5b301303564fa977f0e3b53d761, type: 3}
 --- !u!4 &216924798
 Transform:
   m_ObjectHideFlags: 0
@@ -2093,7 +2094,7 @@ MonoBehaviour:
   spawnManager: {fileID: 737700784}
   currentModeManager: {fileID: 216924796}
   inputBlocker: {fileID: 1761285946}
-  initEndDelay: 0.03
+  initEndDelay: 0.05
   gameOverTile: {fileID: 4630699909476805297, guid: 5a9bb2ace39d92b4d8dce66555671415, type: 3}
 --- !u!4 &859904051
 Transform:

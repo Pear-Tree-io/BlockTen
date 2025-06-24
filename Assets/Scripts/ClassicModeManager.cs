@@ -34,6 +34,7 @@ public class ClassicModeManager : ModeManager
     public GameObject goodStamp;
     public GameObject greatStamp;
     public GameObject fantasticStamp;
+    public GameObject fantasticEffect;
 
     protected override void Awake()
     {
@@ -59,11 +60,12 @@ public class ClassicModeManager : ModeManager
     /// </summary>
     public override void OnMatchBlocksDestroyed(int matchCount, int blockCount)
     {
-        if (blockCount >= 7)
+        if (blockCount >= 6)
         {
             PrintStamp(fantasticStamp);
+            Instantiate(fantasticEffect, GridManager.Instance.transform.position, Quaternion.identity);
         }
-        else if (blockCount > 3 && matchCount >= 2)
+        else if (blockCount > 4 || matchCount >= 2)
         {
             PrintStamp(greatStamp);
         }

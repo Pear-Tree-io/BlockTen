@@ -82,9 +82,9 @@ MonoBehaviour:
   m_colorMode: 2
   m_fontColorGradient:
     topLeft: {r: 0.7877358, g: 1, b: 0.7995283, a: 1}
-    topRight: {r: 0.7877358, g: 1, b: 0.7995283, a: 1}
+    topRight: {r: 0.80622846, g: 0.5613208, b: 1, a: 1}
     bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 0.93565094, g: 0.8820755, b: 1, a: 1}
   m_fontColorGradientPreset: {fileID: 0}
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 245065c685e65834db4a074487bc3141, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifetime: 1
+  lifetime: 0.5
 --- !u!95 &4442533941369401724
 Animator:
   serializedVersion: 7
