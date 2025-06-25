@@ -59,6 +59,9 @@ public class AudioManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            // also preserve SFX child:
+            if (sfxSource != null)
+                DontDestroyOnLoad(sfxSource.gameObject);
             LoadSettings();
             PopulateSFXDictionary();
         }

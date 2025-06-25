@@ -182,13 +182,24 @@ public class ClassicModeManager : ModeManager
 
     private IEnumerator GameOverPlay(GameObject objectToActive, TMP_Text text, SFXType type)
     {
-        noSpaceLeft.SetActive(true);
-
+        ToggleNoSpaceLeftMessage();
         yield return new WaitForSeconds(2f);
 
         objectToActive.SetActive(true);
         StartCoroutine(AnimateScore(text, 0, currentScore, 1));
         AudioManager.Instance.PlaySFX(type);
+    }
+
+    public void ToggleNoSpaceLeftMessage()
+    {
+        if (noSpaceLeft.activeSelf)
+        {
+            noSpaceLeft.SetActive(false);
+        }
+        else
+        {
+            noSpaceLeft.SetActive(true);
+        }
     }
 
     private IEnumerator PlayScoreTexts(int count, int score)
