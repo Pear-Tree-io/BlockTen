@@ -121,13 +121,13 @@ public class ClassicModeManager : ModeManager
             highScore = currentScore;
             bestHighScoreText.text = highScore.ToString();
             //socialObserver.SetLeaderboardScore((int)highScore);
-            StartCoroutine(GameOverPlay(highScorePanel, bestHighScoreText));
+            StartCoroutine(GameOverPlay(highScorePanel, bestHighScoreText, SFXType.bestScore));
         }
         else
         {
             goHighScoreText.text = highScore.ToString();
             goScoreText.text = currentScore.ToString();
-            StartCoroutine(GameOverPlay(gameOverPanel, goScoreText));
+            StartCoroutine(GameOverPlay(gameOverPanel, goScoreText, SFXType.goScore));
         }
 
         base.GameOver();
@@ -164,10 +164,11 @@ public class ClassicModeManager : ModeManager
 
     public void LoadClassicScene()
     {
+        AudioManager.Instance.PlaySFX(SFXType.Button);
         SceneManager.LoadScene("Classic");
     }
 
-    private IEnumerator GameOverPlay(GameObject objectToActive, TMP_Text text)
+    private IEnumerator GameOverPlay(GameObject objectToActive, TMP_Text text, SFXType type)
     {
         noSpaceLeft.SetActive(true);
 
@@ -175,6 +176,7 @@ public class ClassicModeManager : ModeManager
 
         objectToActive.SetActive(true);
         StartCoroutine(AnimateScore(text, 0, currentScore, 1));
+        AudioManager.Instance.PlaySFX(type);
     }
 
     private IEnumerator PlayScoreTexts(int count, int score)
@@ -212,11 +214,13 @@ public class ClassicModeManager : ModeManager
 
     public void ToMenu()
     {
+        AudioManager.Instance.PlaySFX(SFXType.Button);
         SceneManager.LoadScene(0);
     }
 
     public void Replay()
     {
+        AudioManager.Instance.PlaySFX(SFXType.Button);
         SceneManager.LoadScene("Classic");
     }
 

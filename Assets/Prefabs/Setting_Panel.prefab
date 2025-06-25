@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.97647065, g: 0.9058824, b: 0.7254902, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -145,7 +145,7 @@ GameObject:
   - component: {fileID: 5358227308995433249}
   - component: {fileID: 9218317279063702894}
   m_Layer: 5
-  m_Name: Vibration
+  m_Name: vibToggleButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -253,19 +253,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5358227308995433249}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ModeManager, Assembly-CSharp
-        m_MethodName: ToggleVibration
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &1437287252600226660
 GameObject:
   m_ObjectHideFlags: 0
@@ -327,7 +315,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.078431375, g: 0.19215688, b: 0.31764707, a: 1}
+  m_Color: {r: 0.098039225, g: 0.3137255, b: 0.41176474, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -431,7 +419,7 @@ GameObject:
   - component: {fileID: 8065732023680663496}
   - component: {fileID: 3882576745102531040}
   m_Layer: 5
-  m_Name: BGMOff
+  m_Name: bgmOffImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -568,8 +556,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4290702590
-  m_fontColor: {r: 0.9960785, g: 0.92549026, b: 0.74509805, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -820,7 +808,7 @@ GameObject:
   - component: {fileID: 8175676971737530636}
   - component: {fileID: 3660159475194200772}
   m_Layer: 5
-  m_Name: VibrateOff
+  m_Name: vibOffImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -971,7 +959,7 @@ GameObject:
   - component: {fileID: 8777447294283947092}
   - component: {fileID: 7351182477900664853}
   m_Layer: 5
-  m_Name: Sound
+  m_Name: sfxToggleButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1079,19 +1067,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8777447294283947092}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ModeManager, Assembly-CSharp
-        m_MethodName: ToggleSound
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &7436012237379768220
 GameObject:
   m_ObjectHideFlags: 0
@@ -1105,7 +1081,7 @@ GameObject:
   - component: {fileID: 1365830382315495463}
   - component: {fileID: 2556296380631174647}
   m_Layer: 5
-  m_Name: BGM
+  m_Name: bgmToggleButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1213,19 +1189,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1365830382315495463}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ModeManager, Assembly-CSharp
-        m_MethodName: ToggleBGM
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &8439242298495394915
 GameObject:
   m_ObjectHideFlags: 0
@@ -1313,7 +1277,7 @@ GameObject:
   - component: {fileID: 8868236993356958490}
   - component: {fileID: 3552230061207536853}
   m_Layer: 5
-  m_Name: SoundOff
+  m_Name: sfxOffImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1437,7 +1401,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.054901965, g: 0.13725491, b: 0.24705884, a: 1}
+  m_Color: {r: 0.050980397, g: 0.18039216, b: 0.28235295, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

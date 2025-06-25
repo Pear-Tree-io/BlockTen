@@ -225,6 +225,8 @@ public class DraggableCompositeBlock : MonoBehaviour,
             return;
         }
 
+        AudioManager.Instance.PlaySFX(SFXType.PlaceBlock);
+
         // 2) ALIGN parent so all children land exactly on their centers
         var localOffset = children[0].transform.localPosition;
         transform.position = centers[0] - localOffset;

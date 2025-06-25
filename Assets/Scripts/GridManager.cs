@@ -215,58 +215,14 @@ public class GridManager : MonoBehaviour
             Destroy(b.gameObject);
         }
 
-        Handheld.Vibrate();
-
+        if (AudioManager.Instance.isVibOn)
+        {
+            Handheld.Vibrate();
+        }
+        
         spawnManager.NotifyBlockPlaced();
         inputBlocker.blocksRaycasts = false;
     }
-
-
-    /*private IEnumerator PlayDestroySequence(List<List<Vector2Int>> runs)
-    {
-        
-        // Convert runs of coords → runs of NumberBlock
-        var allRuns = runs
-            .Select(run => run
-                .Select(p => gridBlocks[p.x, p.y])
-                .Where(b => b != null)
-                .ToList()
-            )
-            .ToList();
-
-        var allBlocks = new HashSet<NumberBlock>();
-
-        // 1) Animate each run in order
-        foreach (var run in allRuns)
-        {
-            foreach (var b in run)
-            {
-                allBlocks.Add(b);
-                StartCoroutine(PopOne(b, 0.4f));
-            }
-            yield return new WaitForSeconds(0.5f);
-        }
-
-        // 2) Final simultaneous pop
-        *//*foreach (var b in allBlocks)
-            StartCoroutine(PopOne(b, 0.2f));
-        yield return new WaitForSeconds(0.25f);*//*
-
-        // 3) Spawn VFX, free cells & destroy objects
-        foreach (var b in allBlocks)
-        {
-            Instantiate(destroyVFX, b.transform.position, Quaternion.identity);
-            var coord = FindBlockCoords(b);
-            occupied[coord.x, coord.y] = false;
-            gridBlocks[coord.x, coord.y] = null;
-            Destroy(b.gameObject);
-        }
-        
-        Handheld.Vibrate();
-
-        spawnManager.NotifyBlockPlaced();
-        inputBlocker.blocksRaycasts = false;
-    }*/
 
     /// <summary>
     /// Scales up then back down over totalDuration seconds.
@@ -589,6 +545,7 @@ public class GridManager : MonoBehaviour
     public void InitializeEndGrid()
     {
         StartCoroutine(InitializeEndGridRoutine());
+        AudioManager.Instance.PlaySFX(SFXType.GameOver);
     }
 
     private IEnumerator InitializeEndGridRoutine()

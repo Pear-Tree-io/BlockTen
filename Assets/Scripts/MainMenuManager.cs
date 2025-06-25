@@ -10,6 +10,7 @@ public class MainMenuManager : ModeManager
 
     public void EnterClassicMode()
     {
+        AudioManager.Instance.PlaySFX(SFXType.Button);
         SceneManager.LoadScene(1);
     }
 }

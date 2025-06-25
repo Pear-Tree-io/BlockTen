@@ -5,13 +5,6 @@ using System.Runtime.InteropServices;
 using Mono.Cecil.Cil;
 using Unity.IO.LowLevel.Unsafe;
 
-[Serializable]
-public class SettingsData
-{
-    public bool Sound = true;
-    public bool BGM = true;
-    public bool Vibration = true;
-}
 /// <summary>
 /// Base class for all game mode managers. Handles score, combos, and UI popups.
 /// Inherit and override scoring logic if needed.
@@ -20,22 +13,21 @@ public abstract class ModeManager : MonoBehaviour
 {
     [Header("Settings UI")]
     [SerializeField] protected GameObject SettingsPanel;
-    [SerializeField] protected GameObject soundOff;
-    [SerializeField] protected GameObject bgmOff;
-    [SerializeField] protected GameObject vibrateOff;
 
-    private const string SettingsKey = "GameSettings";
-    protected SettingsData settings = new SettingsData();
-      
+    public GameObject bgmOff;
+    public GameObject sfxOff;
+    public GameObject vibOff;
 
     protected virtual void Awake()
     {
-        LoadSettings();
+        
     }
 
     protected virtual void Start()
     {
+        SettingsPanel.SetActive(false);
         ResetMode();
+        MenuUpdate();
     }
 
     /// <summary>
@@ -111,66 +103,67 @@ public abstract class ModeManager : MonoBehaviour
 
     protected virtual void LoadGame() { }
 
-    #region Settings UI Methods
-    public virtual void OpenSettings()
+    public virtual void ToggleSettings()
     {
-        if (SettingsPanel != null)
-            SettingsPanel.SetActive(true);
-    }
-
-    public virtual void CloseSettings()
-    {
-        if (SettingsPanel != null)
-            SettingsPanel.SetActive(false);
-    }
-
-    public virtual void ToggleSound()
-    {
-        settings.Sound = !settings.Sound;
-        ApplySettings();
-        SaveSettings();
-    }
-    public virtual void ToggleBGM()
-    {
-        settings.BGM = !settings.BGM;
-        ApplySettings();
-        SaveSettings();
-    }
-
-    public virtual void ToggleVibration()
-    {
-        settings.Vibration = !settings.Vibration;
-        ApplySettings();
-        SaveSettings();
-    }
-    #endregion
-
-    #region Persistence
-    protected void SaveSettings()
-    {
-        string json = JsonUtility.ToJson(settings);
-        PlayerPrefs.SetString(SettingsKey, json);
-        PlayerPrefs.Save();
-    }
-
-    protected void LoadSettings()
-    {
-        if (PlayerPrefs.HasKey(SettingsKey))
+        if (SettingsPanel.activeSelf)
         {
-            string json = PlayerPrefs.GetString(SettingsKey);
-            settings = JsonUtility.FromJson<SettingsData>(json) ?? new SettingsData();
+            SettingsPanel.SetActive(false);
         }
-        ApplySettings();
+        else
+        {
+            SettingsPanel.SetActive(true);
+        }
+        AudioManager.Instance.PlaySFX(SFXType.Button);
     }
 
-    protected void ApplySettings()
+    public void ToggleBGM()
     {
-        if (soundOff != null)
-            soundOff.SetActive(!settings.Sound);
-        if (bgmOff != null)
-            bgmOff.SetActive(!settings.BGM);
-        if (vibrateOff != null)
-            vibrateOff.SetActive(!settings.Vibration);
+        AudioManager.Instance.ToggleBGM();
+        AudioManager.Instance.PlaySFX(SFXType.Button);
+        MenuUpdate();
     }
-    #endregion
+
+    public void ToggleSFX()
+    {
+        AudioManager.Instance.ToggleSFX();
+        AudioManager.Instance.PlaySFX(SFXType.Button);
+        MenuUpdate();
+    }
+
+    public void ToggleVIB()
+    {
+        AudioManager.Instance.ToggleVIB();
+        AudioManager.Instance.PlaySFX(SFXType.Button);
+        MenuUpdate();
+    }
+
+    private void MenuUpdate()
+    {
+        if (AudioManager.Instance.isBgmOn)
+        {
+            bgmOff.SetActive(false);
+        }
+        else
+        {
+            bgmOff.SetActive(true);
+        }
+
+        if (AudioManager.Instance.isSfxOn)
+        {
+            sfxOff.SetActive(false);
+        }
+        else
+        {
+            sfxOff.SetActive(true);
+        }
+
+        if (AudioManager.Instance.isVibOn)
+        {
+            vibOff.SetActive(false);
+        }
+        else
+        {
+            vibOff.SetActive(true);
+        }
+    }
 }
