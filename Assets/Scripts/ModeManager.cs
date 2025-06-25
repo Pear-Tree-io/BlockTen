@@ -28,6 +28,10 @@ public abstract class ModeManager : MonoBehaviour
         SettingsPanel.SetActive(false);
         ResetMode();
         MenuUpdate();
+        if (!AudioManager.Instance.bgmSource.isPlaying)
+        {
+            AudioManager.Instance.PlayMainMenuBGM();
+        }
     }
 
     /// <summary>
@@ -97,6 +101,7 @@ public abstract class ModeManager : MonoBehaviour
 
     public virtual void GameOver() 
     {
+        AudioManager.Instance.StopBGM();
         SaveGame();
     }
     protected virtual void SaveGame() { }
