@@ -8,6 +8,12 @@ public enum SFXType
     GameOver,
     goScore,
     bestScore,
+    brickBreak,
+    pickUp,
+    noStamp,
+    goodStamp,
+    greatStamp,
+    fantasticStamp,
     // Add more as needed
 }
 
@@ -27,7 +33,6 @@ public class AudioManager : MonoBehaviour
     public AudioSource bgmSource;
     // BGM clips for different scenes
     public AudioClip mainMenuBGM;
-    public AudioClip gamePlayBGM;
 
     [Header("SFX Settings")]
     // An AudioSource for one-shot sound effects (SFX)
@@ -109,20 +114,6 @@ public class AudioManager : MonoBehaviour
         bgmSource.clip = mainMenuBGM;
         bgmSource.loop = true;
         bgmSource.Play();
-    }
-
-    /// <summary>
-    /// Play gameplay BGM.
-    /// </summary>
-    public void PlayGamePlayBGM()
-    {
-        if (bgmSource == null || gamePlayBGM == null)
-            return;
-
-        bgmSource.clip = gamePlayBGM;
-        bgmSource.loop = true;
-        if (isBgmOn)
-            bgmSource.Play();
     }
 
     /// <summary>

@@ -127,6 +127,7 @@ public class DraggableCompositeBlock : MonoBehaviour,
     {
         if (placed) return;
 
+        AudioManager.Instance.PlaySFX(SFXType.pickUp);
         // Grow back to full size on grab
         transform.localScale = Vector3.one;
         children.ForEach(i => i.OnDragStart());
@@ -136,7 +137,7 @@ public class DraggableCompositeBlock : MonoBehaviour,
     }
 
     public void OnDrag(PointerEventData e)
-    {
+    { 
         // 1) Move the composite with the cursor
         Vector3 screenPt = new Vector3(e.position.x, e.position.y, screenZ);
         transform.position = cam.ScreenToWorldPoint(screenPt) + offset;

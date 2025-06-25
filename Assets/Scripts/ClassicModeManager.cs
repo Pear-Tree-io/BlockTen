@@ -60,18 +60,30 @@ public class ClassicModeManager : ModeManager
     /// </summary>
     public override void OnMatchBlocksDestroyed(int matchCount, int blockCount)
     {
+        
         if (blockCount >= 6)
         {
             PrintStamp(fantasticStamp);
             Instantiate(fantasticEffect, GridManager.Instance.transform.position, Quaternion.identity);
+            AudioManager.Instance.PlaySFX(SFXType.brickBreak);
+            AudioManager.Instance.PlaySFX(SFXType.fantasticStamp);
         }
         else if (blockCount > 4 || matchCount >= 2)
         {
             PrintStamp(greatStamp);
+            AudioManager.Instance.PlaySFX(SFXType.brickBreak);
+            AudioManager.Instance.PlaySFX(SFXType.greatStamp);
         }
-        else if (blockCount > 3)
+        else if (blockCount > 2)
         {
             PrintStamp(goodStamp);
+            AudioManager.Instance.PlaySFX(SFXType.brickBreak);
+            AudioManager.Instance.PlaySFX(SFXType.goodStamp);
+        }
+        else if (blockCount > 0)
+        {
+            AudioManager.Instance.PlaySFX(SFXType.brickBreak);
+            AudioManager.Instance.PlaySFX(SFXType.noStamp);
         }
 
 

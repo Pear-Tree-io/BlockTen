@@ -6231,15 +6231,19 @@ PrefabInstance:
     - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
       propertyPath: bgmSource
       value: 
-      objectReference: {fileID: 1404506811}
+      objectReference: {fileID: 6999079519920855862}
     - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
       propertyPath: sfxSource
       value: 
-      objectReference: {fileID: 6999079519920855862}
+      objectReference: {fileID: 1404506811}
     - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
       propertyPath: bgmOffImage
       value: 
       objectReference: {fileID: 526742518}
+    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
+      propertyPath: mainMenuBGM
+      value: 
+      objectReference: {fileID: 8300000, guid: 253c22d14e6749541aadac1a2758e08c, type: 3}
     - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
       propertyPath: sfxOffImage
       value: 
