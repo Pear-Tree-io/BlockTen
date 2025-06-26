@@ -45,16 +45,16 @@ public class GridManager : MonoBehaviour
                      h / 2f - cellSize / 2f,
                      0f);
 
-        for (int x = 0; x < columns; x++)
-            for (int y = 0; y < rows; y++)
-            {
-                occupied[x, y] = false;
-                gridBlocks[x, y] = null;
-                Instantiate(cellPrefab,
-                    origin + new Vector3(x * cellSize, y * cellSize, 0f),
-                    Quaternion.identity,
-                    transform);
-            }
+        // for (int x = 0; x < columns; x++)
+        //     for (int y = 0; y < rows; y++)
+        //     {
+        //         occupied[x, y] = false;
+        //         gridBlocks[x, y] = null;
+        //         Instantiate(cellPrefab,
+        //             origin + new Vector3(x * cellSize, y * cellSize, 0f),
+        //             Quaternion.identity,
+        //             transform);
+        //     }
     }
 
     public void RegisterBlock(NumberBlock block, int x, int y)
