@@ -37,6 +37,8 @@ public class ClassicModeManager : ModeManager
     //public GameObject fantasticEffect;
 
     public ParticleSystem fantasticEffect;
+    public ParticleSystem greatEffect;
+    public ParticleSystem goodEffect;
 
     protected override void Awake()
     {
@@ -74,12 +76,14 @@ public class ClassicModeManager : ModeManager
         else if (blockCount > 4 || matchCount >= 2)
         {
             StartCoroutine(PrintStamp(greatStamp));
+            greatEffect.Play();
             AudioManager.Instance.PlaySFX(SFXType.brickBreak);
             AudioManager.Instance.PlaySFX(SFXType.greatStamp);
         }
         else if (blockCount > 2)
         {
             StartCoroutine(PrintStamp(goodStamp));
+            goodEffect.Play();
             AudioManager.Instance.PlaySFX(SFXType.brickBreak);
             AudioManager.Instance.PlaySFX(SFXType.goodStamp);
         }
