@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
+using System.Collections;
 
 /// <summary>
 /// Base class for all game mode managers. Handles score, combos, and UI popups.
@@ -71,12 +72,13 @@ public abstract class ModeManager : MonoBehaviour
     /// <summary>
     /// Instantiates combo popup at last placed position.
     /// </summary>
-    protected virtual void ShowTextOnCanvas(GameObject textPrefab, Canvas canvas, int number)
+    protected virtual IEnumerator ShowTextOnCanvas(GameObject textPrefab, Canvas canvas, int number, float waitTime)
     {
-        if (textPrefab == null || canvas == null) return;
+        if (textPrefab == null || canvas == null) yield break;
 
-        GameObject go = Instantiate(textPrefab, canvas.transform);
-        TMP_Text tmp = go.GetComponent<TMP_Text>();
+        textPrefab.SetActive(true);
+
+        TMP_Text tmp = textPrefab.GetComponent<TMP_Text>();
         if (tmp != null)
             tmp.text = number.ToString();
 
@@ -84,7 +86,7 @@ public abstract class ModeManager : MonoBehaviour
         Vector3 worldPos = GridManager.Instance.LastPlacedPosition;
         Vector2 screenPos = Camera.main.WorldToScreenPoint(worldPos);
         RectTransform canvasRect = canvas.transform as RectTransform;
-        RectTransform goRect = go.GetComponent<RectTransform>();
+        RectTransform goRect = textPrefab.GetComponent<RectTransform>();
         Vector2 localPoint;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             canvasRect,
@@ -93,6 +95,10 @@ public abstract class ModeManager : MonoBehaviour
             out localPoint
         );
         goRect.anchoredPosition = localPoint;
+
+        yield return new WaitForSeconds(waitTime);
+
+        textPrefab.SetActive(false);
     }
 
     public virtual void GameOver() 

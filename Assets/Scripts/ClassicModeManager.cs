@@ -34,7 +34,9 @@ public class ClassicModeManager : ModeManager
     public GameObject goodStamp;
     public GameObject greatStamp;
     public GameObject fantasticStamp;
-    public GameObject fantasticEffect;
+    //public GameObject fantasticEffect;
+
+    public ParticleSystem fantasticEffect;
 
     protected override void Awake()
     {
@@ -53,6 +55,7 @@ public class ClassicModeManager : ModeManager
         _canvas = scoreText.GetComponentInParent<Canvas>();
         highScoreText.text = "" + highScore;
         base.Start();
+
     }
 
     /// <summary>
@@ -63,20 +66,20 @@ public class ClassicModeManager : ModeManager
         
         if (blockCount >= 6)
         {
-            PrintStamp(fantasticStamp);
-            Instantiate(fantasticEffect, GridManager.Instance.transform.position, Quaternion.identity);
+            StartCoroutine(PrintStamp(fantasticStamp));
+            fantasticEffect.Play();
             AudioManager.Instance.PlaySFX(SFXType.brickBreak);
             AudioManager.Instance.PlaySFX(SFXType.fantasticStamp);
         }
         else if (blockCount > 4 || matchCount >= 2)
         {
-            PrintStamp(greatStamp);
+            StartCoroutine(PrintStamp(greatStamp));
             AudioManager.Instance.PlaySFX(SFXType.brickBreak);
             AudioManager.Instance.PlaySFX(SFXType.greatStamp);
         }
         else if (blockCount > 2)
         {
-            PrintStamp(goodStamp);
+            StartCoroutine(PrintStamp(goodStamp));
             AudioManager.Instance.PlaySFX(SFXType.brickBreak);
             AudioManager.Instance.PlaySFX(SFXType.goodStamp);
         }
@@ -212,11 +215,11 @@ public class ClassicModeManager : ModeManager
             waitPopup = count * 0.3f + 0.2f;
             waitTime = (count * 0.4f) + 0.75f - waitPopup;
             yield return new WaitForSeconds(waitPopup);
-            ShowTextOnCanvas(comboTextPrefab, _canvas, count);
+            StartCoroutine(ShowTextOnCanvas(comboTextPrefab, _canvas, count, 0.5f));
         }
 
         yield return new WaitForSeconds(waitTime);
-        ShowTextOnCanvas(scoreTextPrefab, _canvas, score);
+        StartCoroutine(ShowTextOnCanvas(scoreTextPrefab, _canvas, score, 0.5f));
     }
 
     /// <summary>
@@ -247,12 +250,12 @@ public class ClassicModeManager : ModeManager
         SceneManager.LoadScene("Classic");
     }
 
-    private void PrintStamp(GameObject stamp)
+    private IEnumerator PrintStamp(GameObject stamp)
     {
-        Camera cam = GameObject.Find("Main Camera").GetComponent<Camera>();
-        Vector3 targetPos = GridManager.Instance.transform.position;
-        Vector3 pos = cam.WorldToScreenPoint(targetPos);
-        Instantiate(stamp, pos, Quaternion.identity,_canvas.transform);
+        stamp.SetActive(true);
+        stamp.GetComponent<Animator>().Play("StampAnimation");
+        yield return new WaitForSeconds(0.5f);
+        stamp.SetActive(false);
     }
 
     public int Score => currentScore;
