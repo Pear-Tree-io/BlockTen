@@ -36,7 +36,7 @@ public class SpawnManager : MonoBehaviour
         modeManager = FindAnyObjectByType<ClassicModeManager>();
         placedCount = 0;
 
-        if (!modeManager.CheckTutorial())
+        if (ClassicModeManager.CheckTutorial() == false)
         {
             SpawnAllMatch();
         }
@@ -48,7 +48,7 @@ public class SpawnManager : MonoBehaviour
 
     public void SpawnAll()
     {
-        if (modeManager.CheckTutorial())
+        if (ClassicModeManager.CheckTutorial())
         {
             StopTutorial();
         }
@@ -168,7 +168,7 @@ public class SpawnManager : MonoBehaviour
 
     public void SpawnAllMatch()
     {
-        if (!modeManager.CheckTutorial())
+        if (ClassicModeManager.CheckTutorial() == false)
         {
             tutorialCoroutine = StartCoroutine(TutorialHandLoop());
             modeManager.TutorialPlayed();

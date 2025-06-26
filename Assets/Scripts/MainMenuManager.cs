@@ -3,14 +3,22 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : ModeManager
 {
-    protected override void Awake()
-    {
-        base.Awake();
-    }
+	protected override void Awake()
+	{
+		base.Awake();
 
-    public void EnterClassicMode()
-    {
-        AudioManager.Instance.PlaySFX(SFXType.Button);
-        SceneManager.LoadScene(1);
-    }
+		if (ClassicModeManager.CheckTutorial() == false)
+			LoadScene();
+	}
+
+	public void EnterClassicMode()
+	{
+		AudioManager.Instance.PlaySFX(SFXType.Button);
+		LoadScene();
+	}
+
+	private void LoadScene()
+	{
+		SceneManager.LoadScene(1);
+	}
 }

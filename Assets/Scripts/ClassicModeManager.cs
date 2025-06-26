@@ -19,8 +19,8 @@ public class ClassicModeManager : ModeManager
     private int currentScore;
     private int comboMultiplier = 1;
 
-    private readonly string HighScoreKey = "HighScore";
-    private readonly string TutorialKey = "Tutorial";
+    private const string HighScoreKey = "HighScore";
+    private const string TutorialKey = "Tutorial";
 
     public GameObject gameOverPanel;
     public TMP_Text goScoreText;
@@ -169,7 +169,7 @@ public class ClassicModeManager : ModeManager
         PlayerPrefs.Save();
     }
 
-    public bool CheckTutorial()
+    public static bool CheckTutorial()
     {
         if (PlayerPrefs.GetInt(TutorialKey) == 0)
         {
