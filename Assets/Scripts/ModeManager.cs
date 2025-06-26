@@ -1,9 +1,5 @@
 ﻿using UnityEngine;
 using TMPro;
-using System;
-using System.Runtime.InteropServices;
-using Mono.Cecil.Cil;
-using Unity.IO.LowLevel.Unsafe;
 
 /// <summary>
 /// Base class for all game mode managers. Handles score, combos, and UI popups.
