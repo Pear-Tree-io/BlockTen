@@ -1693,17 +1693,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 654207018}
   m_CullTransparentMesh: 1
---- !u!114 &682082559 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 9218317279063702894, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
-  m_PrefabInstance: {fileID: 7591462736374066570}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &714939326
 GameObject:
   m_ObjectHideFlags: 0
@@ -2985,17 +2974,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 737700785}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1375227646 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2556296380631174647, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
-  m_PrefabInstance: {fileID: 7591462736374066570}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1404506806
 GameObject:
   m_ObjectHideFlags: 0
@@ -3675,17 +3653,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1463335022}
   m_CullTransparentMesh: 1
---- !u!114 &1510476885 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7351182477900664853, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
-  m_PrefabInstance: {fileID: 7591462736374066570}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1529155899
 GameObject:
   m_ObjectHideFlags: 0
@@ -5754,66 +5721,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: AudioManager
       objectReference: {fileID: 0}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: bgmSource
-      value: 
-      objectReference: {fileID: 6999079519920855862}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: sfxSource
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: bgmOffImage
-      value: 
-      objectReference: {fileID: 526742518}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: mainMenuBGM
-      value: 
-      objectReference: {fileID: 8300000, guid: 253c22d14e6749541aadac1a2758e08c, type: 3}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: sfxOffImage
-      value: 
-      objectReference: {fileID: 1196350486}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: vibOffImage
-      value: 
-      objectReference: {fileID: 202881663}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: bgmToggleButton
-      value: 
-      objectReference: {fileID: 1375227646}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: sfxToggleButton
-      value: 
-      objectReference: {fileID: 1510476885}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: vibToggleButton
-      value: 
-      objectReference: {fileID: 682082559}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: sfxClips.Array.size
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: 'sfxClips.Array.data[0]'
-      value: 
-      objectReference: {fileID: 8300000, guid: 38edd95952cf77a4b91a2ce1f4a8fd00, type: 3}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: 'sfxClips.Array.data[1]'
-      value: 
-      objectReference: {fileID: 8300000, guid: 57df5b09c06b4ce4a86e4a7a53343126, type: 3}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: 'sfxClips.Array.data[2]'
-      value: 
-      objectReference: {fileID: 8300000, guid: 799084affde9b9b4b8fc2ce8ba121920, type: 3}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: 'sfxClips.Array.data[3]'
-      value: 
-      objectReference: {fileID: 8300000, guid: c180cf5261c6e3d4aa652abe906d78e3, type: 3}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: 'sfxClips.Array.data[4]'
-      value: 
-      objectReference: {fileID: 8300000, guid: d124db7a96f95004bad7fcf5c935da9c, type: 3}
     - target: {fileID: 5422279800677283105, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5859,11 +5766,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
---- !u!82 &6999079519920855862 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 5665091392379009407, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-  m_PrefabInstance: {fileID: 6999079519920855861}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7591462736374066570
 PrefabInstance:
   m_ObjectHideFlags: 0
