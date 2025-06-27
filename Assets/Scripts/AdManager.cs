@@ -19,14 +19,14 @@ namespace ManagersSpace
 		}
 		
 #if UNITY_ANDROID
-		private const string _gameId = "5675513";
-		private const string _appKey = "1f4f5ebbd";
+		private const string _appKey = "2294823c5";
 #elif UNITY_IPHONE
-		private const string _gameId = "";
 		private const string _appKey = "1fad4069d";
 #endif
 
 		private LevelPlayRewardedAd _levelPlayRewardedAd;
+		private LevelPlayInterstitialAd _levelPlayInterstitialAd;
+		private LevelPlayBannerAd _levelPlayBannerAd;
 
 		private void Awake()
 		{
@@ -34,8 +34,16 @@ namespace ManagersSpace
 			
 			LevelPlay.OnInitSuccess += SdkInitializationCompletedEvent;
 			LevelPlay.OnInitFailed += SdkInitializationFailedEvent;
-			LevelPlay.Init(_appKey);
+
+			_levelPlayRewardedAd = new("8937rlb9efrx3270");
+			_levelPlayInterstitialAd = new("qfvaerrxoa4actcz");
+			_levelPlayBannerAd = new("9kkh0ks13rv7r8ov");
 			_levelPlayRewardedAd.OnAdRewarded += OnAdRewarded;
+			_levelPlayInterstitialAd.OnAdClosed += OnAdClosed;
+			
+			_levelPlayBannerAd.ShowAd();
+			
+			LevelPlay.Init(_appKey);
 		}
 
 		private void SdkInitializationCompletedEvent(LevelPlayConfiguration obj)
@@ -56,6 +64,10 @@ namespace ManagersSpace
 			_onAdSuccess = null;
 
 			Debug.Log("OnAdRewarded");
+		}
+
+		private void OnAdClosed(LevelPlayAdInfo obj)
+		{
 		}
 	}
 }
