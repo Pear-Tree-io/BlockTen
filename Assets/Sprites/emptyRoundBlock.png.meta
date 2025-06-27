@@ -1,16 +1,10 @@
 fileFormatVersion: 2
-guid: 2034dcb3782a43a498909e2592086c39
+guid: 2742bafe1fda121479c19cf18ac73f77
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7474525174417501603
-    second: "ChatGPT Image 2025\uB144 6\uC6D4 26\uC77C \uC624\uD6C4 05_48_29_0"
-  - first:
-      213: 5955423419099428181
-    second: "ChatGPT Image 2025\uB144 6\uC6D4 26\uC77C \uC624\uD6C4 05_48_29_1"
-  - first:
-      213: -5149706267978560643
-    second: "ChatGPT Image 2025\uB144 6\uC6D4 26\uC77C \uC624\uD6C4 05_48_29_2"
+      213: -8929465458570500572
+    second: emptyRoundBlock_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +52,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteBorder: {x: 64, y: 64, z: 64, w: 64}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -78,7 +72,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 512
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -132,67 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "ChatGPT Image 2025\uB144 6\uC6D4 26\uC77C \uC624\uD6C4 05_48_29_0"
+      name: emptyRoundBlock_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 847
-        width: 1024
-        height: 684
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3adaedd5b09dab760800000000000000
-      internalID: 7474525174417501603
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: "ChatGPT Image 2025\uB144 6\uC6D4 26\uC77C \uC624\uD6C4 05_48_29_1"
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 8
-        width: 1024
-        height: 1176
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 555b676eb0ae5a250800000000000000
-      internalID: 5955423419099428181
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: "ChatGPT Image 2025\uB144 6\uC6D4 26\uC77C \uC624\uD6C4 05_48_29_2"
-      rect:
-        serializedVersion: 2
-        x: 238
-        y: 367
-        width: 523
-        height: 258
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d7b098ffe619888b0800000000000000
-      internalID: -5149706267978560643
+      spriteID: 426e8cbc97a241480800000000000000
+      internalID: -8929465458570500572
       vertices: []
       indices: 
       edges: []
@@ -202,7 +152,7 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 0
+    internalID: 1537655665
     vertices: []
     indices: 
     edges: []
@@ -211,9 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "ChatGPT Image 2025\uB144 6\uC6D4 26\uC77C \uC624\uD6C4 05_48_29_0": 7474525174417501603
-      "ChatGPT Image 2025\uB144 6\uC6D4 26\uC77C \uC624\uD6C4 05_48_29_1": 5955423419099428181
-      "ChatGPT Image 2025\uB144 6\uC6D4 26\uC77C \uC624\uD6C4 05_48_29_2": -5149706267978560643
+      emptyRoundBlock_0: -8929465458570500572
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
