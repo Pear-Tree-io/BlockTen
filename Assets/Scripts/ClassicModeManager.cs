@@ -70,26 +70,26 @@ public class ClassicModeManager : ModeManager
         {
             StartCoroutine(PrintStamp(fantasticStamp));
             fantasticEffect.Play();
-            AudioManager.Instance.PlaySFX(SFXType.brickBreak);
+            //AudioManager.Instance.PlaySFX(SFXType.brickBreak);
             AudioManager.Instance.PlaySFX(SFXType.fantasticStamp);
         }
         else if (blockCount > 4 || matchCount >= 2)
         {
             StartCoroutine(PrintStamp(greatStamp));
             greatEffect.Play();
-            AudioManager.Instance.PlaySFX(SFXType.brickBreak);
+            //AudioManager.Instance.PlaySFX(SFXType.brickBreak);
             AudioManager.Instance.PlaySFX(SFXType.greatStamp);
         }
         else if (blockCount > 2)
         {
             StartCoroutine(PrintStamp(goodStamp));
             goodEffect.Play();
-            AudioManager.Instance.PlaySFX(SFXType.brickBreak);
+            //AudioManager.Instance.PlaySFX(SFXType.brickBreak);
             AudioManager.Instance.PlaySFX(SFXType.goodStamp);
         }
         else if (blockCount > 0)
         {
-            AudioManager.Instance.PlaySFX(SFXType.brickBreak);
+            //AudioManager.Instance.PlaySFX(SFXType.brickBreak);
             AudioManager.Instance.PlaySFX(SFXType.noStamp);
         }
 

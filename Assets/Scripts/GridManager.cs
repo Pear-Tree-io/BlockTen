@@ -214,7 +214,7 @@ public class GridManager : MonoBehaviour
             gridBlocks[coord.x, coord.y] = null;
             Destroy(b.gameObject);
         }
-
+        AudioManager.Instance.PlaySFX(SFXType.brickBreak);
         if (AudioManager.Instance.isVibOn)
         {
             Handheld.Vibrate();
