@@ -42,6 +42,8 @@ public class ClassicModeManager : ModeManager
 
     protected override void Awake()
     {
+	    Instance = this;
+	    
         base.Awake();
         LoadGame();
         gameOverPanel.SetActive(false);
@@ -104,8 +106,9 @@ public class ClassicModeManager : ModeManager
             StartCoroutine(PlayScoreTexts(matchCount, pointsGained));
         }
 
-        if (currentScore >= highScore)
+        if (currentScore > highScore)
         {
+	        isHighScore = true;
             highScoreText.text = "" + currentScore;
         }
     }
@@ -123,6 +126,7 @@ public class ClassicModeManager : ModeManager
         currentScore = 0;
         comboMultiplier = 1;
         scoreText.text = "0";
+        isHighScore = false;
     }
 
     public override void GameOver()

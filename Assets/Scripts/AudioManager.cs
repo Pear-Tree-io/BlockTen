@@ -6,7 +6,6 @@ public enum SFXType
     Button,
     PlaceBlock,
     GameOver,
-    GameOverHighScore,
     goScore,
     bestScore,
     brickBreak,
@@ -18,6 +17,7 @@ public enum SFXType
     great,
     fantasticStamp,
     fantastic,
+    GameOverHighScore,
     // Add more as needed
 }
 
