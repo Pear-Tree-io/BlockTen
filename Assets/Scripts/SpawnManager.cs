@@ -7,6 +7,7 @@ using System.Collections;
 using TMPro;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 using Transform = UnityEngine.Transform;
+using ManagersSpace;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -385,7 +386,9 @@ public class SpawnManager : MonoBehaviour
         modeManager.ToggleNoSpaceLeftMessage();
     }
 
-    public void DoRevive()
+    public void ReviveAd() => AdManager.Get.ShowRewardAd(DoRevive);
+
+    private void DoRevive()
     {
         isRevive = true;
         revivePanel.SetActive(false);
