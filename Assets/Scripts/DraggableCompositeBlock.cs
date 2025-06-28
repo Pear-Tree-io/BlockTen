@@ -137,51 +137,34 @@ public class DraggableCompositeBlock : MonoBehaviour,
     }
 
     public void OnDrag(PointerEventData e)
-    { 
+    {
         // 1) Move the composite with the cursor
         Vector3 screenPt = new Vector3(e.position.x, e.position.y, screenZ);
         transform.position = cam.ScreenToWorldPoint(screenPt) + offset;
 
-        // 2) Build temp map & test full composite placement
-        var temp = new Dictionary<NumberBlock, Vector2Int>();
-        bool canPlace = true;
-        foreach (var nb in children)
-        {
-            if (!GridManager.Instance.CanPlaceCell(
-                    nb.transform.position, out int gx, out int gy))
-            {
-                canPlace = false;
-                break;
-            }
-            temp[nb] = new Vector2Int(gx, gy);
-        }
+        // 2) Try placing the whole composite in one shot
+        if (!GridManager.Instance.TryPlaceCompositeAt(this, out var placement))
+            return;
 
-        // 3) Clear previous previews on grid & children
+        // 3) Figure out which cells would clear if dropped here
+        var runs = GridManager.Instance.GetPreviewRuns(placement);
+        var matchedCells = new HashSet<Vector2Int>(runs.SelectMany(r => r));
+
+        // 4) Clear any old previews
         GridManager.Instance.ClearAllPreviews();
         foreach (var nb in children)
             nb.StopPreview();
 
-        if (!canPlace)
-            return;
-
-        // 4a) GRID PREVIEW: highlight runs that would clear
-        var runs = GridManager.Instance.GetPreviewRuns(temp);
+        // 5) Show new previews:
+        //  • Grid cells in any run
         foreach (var run in runs)
-        {
             foreach (var cell in run)
                 GridManager.Instance.GetBlockAt(cell.x, cell.y)
-                                ?.PlayPreview();
-        }
-
-        // 4b) COMPOSITE PREVIEW: highlight dragged blocks in ANY run
-        var matchedCells = new HashSet<Vector2Int>();
-        foreach (var run in runs)
-            foreach (var cell in run)
-                matchedCells.Add(cell);
-
+                                    ?.PlayPreview();
+        //  • Composite blocks whose target cell is in a run
         foreach (var nb in children)
         {
-            var cell = temp[nb];
+            var cell = placement[nb];
             if (matchedCells.Contains(cell))
                 nb.PlayPreview();
             else
@@ -200,57 +183,34 @@ public class DraggableCompositeBlock : MonoBehaviour,
 
         if (placed) return;
 
-        int n = children.Count;
-        var gx = new int[n];
-        var gy = new int[n];
-        bool ok = true;
-        var centers = new Vector3[n];
-
-        for (int i = 0; i < n; i++)
+        // new:
+        if (!GridManager.Instance.TryPlaceCompositeAt(this, out var placedGrid))
         {
-            if (!GridManager.Instance.CanPlaceCell(
-                    children[i].transform.position,
-                    out gx[i], out gy[i]))
-            {
-                ok = false;
-                break;
-            }
-            centers[i] = GridManager.Instance.GetCellCenter(gx[i], gy[i]);
-        }
-
-        if (!ok)
-        {
-            // Failed: snap back and shrink
+            // snap back on failure
             transform.position = startPosition;
             transform.localScale = Vector3.one * 0.7f;
             return;
         }
 
-        AudioManager.Instance.PlaySFX(SFXType.PlaceBlock);
+        // align the composite so its first child hits exactly its cell center
+        var first = children[0];
+        var firstGrid = placedGrid[first];
+        var targetPos = GridManager.Instance.GetCellCenter(firstGrid.x, firstGrid.y);
+        transform.position = targetPos - first.transform.localPosition;
 
-        // 2) ALIGN parent so all children land exactly on their centers
-        var localOffset = children[0].transform.localPosition;
-        transform.position = centers[0] - localOffset;
+        // register every block in their mapped cell
+        foreach (var kv in placedGrid)
+            GridManager.Instance.RegisterBlock(kv.Key, kv.Value.x, kv.Value.y);
 
-        // 3) Register each child into the grid
-        for (int i = 0; i < n; i++)
-            GridManager.Instance.RegisterBlock(children[i], gx[i], gy[i]);
-
-        // finish drag visuals
+        // finish the drop
         children.ForEach(i => i.OnDragEnd());
-
-        // ——— mark as placed & notify spawner ———
         placed = true;
-
-        // remember this drop pos for the combo popup:
         GridManager.Instance.LastPlacedPosition = transform.position;
-
-        // 4) Clear matches (this will ultimately call NotifyBlockPlaced)
         GridManager.Instance.CheckAndDestroyMatches();
-
-        // detach blocks and destroy this composite
         foreach (var nb in children)
             nb.transform.SetParent(GridManager.Instance.transform, true);
         Destroy(gameObject);
+
+        AudioManager.Instance.PlaySFX(SFXType.PlaceBlock);
     }
 }

@@ -324,11 +324,35 @@ public class GridManager : MonoBehaviour
         return true;
     }
 
+    public bool TryPlaceCompositeAt(
+    DraggableCompositeBlock comp,
+    out Dictionary<NumberBlock, Vector2Int> placed)
+    {
+        placed = new Dictionary<NumberBlock, Vector2Int>();
+
+        // grab all the child blocks & pick a “root”
+        var blocks = comp.GetComponentsInChildren<NumberBlock>();
+        if (blocks.Length == 0) return false;
+        var root = blocks[0];
+
+        // figure out which cell the root is over
+        if (!CanPlaceCell(root.transform.position, out int gx, out int gy))
+            return false;
+
+        // try the recursive placement
+        if (!TryPlaceRec(root, gx, gy, placed))
+        {
+            placed = null;
+            return false;
+        }
+        return true;
+    }
+
     /// <summary>
     /// Tests whether the world-space position hits an empty cell,
     /// without modifying occupancy. Returns the grid coords in gx, gy.
     /// </summary>
-    public bool CanPlaceCell(Vector3 worldPos, out int gx, out int gy)
+    private bool CanPlaceCell(Vector3 worldPos, out int gx, out int gy)
     {
         Vector3 local = worldPos - origin;
         int x = Mathf.RoundToInt(local.x / cellSize);
@@ -421,15 +445,6 @@ public class GridManager : MonoBehaviour
             for (int y = 0; y < rows; y++)
                 if (occupied[x, y]) return true;
         return false;
-    }
-
-    public int CountFreeCells()
-    {
-        int free = 0;
-        for (int x = 0; x < columns; x++)
-            for (int y = 0; y < rows; y++)
-                if (!occupied[x, y]) free++;
-        return free;
     }
 
     /// <summary>
