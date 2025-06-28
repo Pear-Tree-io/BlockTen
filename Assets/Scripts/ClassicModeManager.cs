@@ -34,7 +34,6 @@ public class ClassicModeManager : ModeManager
     public GameObject goodStamp;
     public GameObject greatStamp;
     public GameObject fantasticStamp;
-    //public GameObject fantasticEffect;
 
     public ParticleSystem fantasticEffect;
     public ParticleSystem greatEffect;
@@ -70,22 +69,22 @@ public class ClassicModeManager : ModeManager
         {
             StartCoroutine(PrintStamp(fantasticStamp));
             fantasticEffect.Play();
-            //AudioManager.Instance.PlaySFX(SFXType.brickBreak);
-            AudioManager.Instance.PlaySFX(SFXType.fantasticStamp);
+            // AudioManager.Instance.PlaySFX(SFXType.brickBreak);
+            AudioManager.Instance.PlaySFX(SFXType.fantastic);
         }
         else if (blockCount > 4 || matchCount >= 2)
         {
             StartCoroutine(PrintStamp(greatStamp));
             greatEffect.Play();
             //AudioManager.Instance.PlaySFX(SFXType.brickBreak);
-            AudioManager.Instance.PlaySFX(SFXType.greatStamp);
+            AudioManager.Instance.PlaySFX(SFXType.great);
         }
         else if (blockCount > 2)
         {
             StartCoroutine(PrintStamp(goodStamp));
             goodEffect.Play();
             //AudioManager.Instance.PlaySFX(SFXType.brickBreak);
-            AudioManager.Instance.PlaySFX(SFXType.goodStamp);
+            AudioManager.Instance.PlaySFX(SFXType.good);
         }
         else if (blockCount > 0)
         {

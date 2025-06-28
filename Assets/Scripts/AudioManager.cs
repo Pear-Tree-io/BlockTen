@@ -12,8 +12,11 @@ public enum SFXType
     pickUp,
     noStamp,
     goodStamp,
+    good,
     greatStamp,
+    great,
     fantasticStamp,
+    fantastic,
     // Add more as needed
 }
 
@@ -41,7 +44,7 @@ public class AudioManager : MonoBehaviour
     public List<SFXItem> sfxItems = new List<SFXItem>();
 
     // Internal dictionary for quick lookup of SFX
-    private Dictionary<SFXType, AudioClip> sfxDictionary = new Dictionary<SFXType, AudioClip>();
+    private Dictionary<SFXType, AudioClip> sfxDictionary = new();
 
     [Header("User Settings")]
     public bool isBgmOn = true;

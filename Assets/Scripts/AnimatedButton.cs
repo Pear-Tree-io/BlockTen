@@ -193,7 +193,8 @@ public class AnimatedButton : UIBehaviour, IPointerDownHandler, IPointerUpHandle
 
 		if (_isHolded)
 			return;
-
+		
+		AudioManager.Instance.PlaySFX(SFXType.Button);
 		pointerUpAction?.Invoke();
 	}
 

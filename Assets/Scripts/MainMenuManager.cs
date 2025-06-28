@@ -1,8 +1,12 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenuManager : ModeManager
 {
+	[SerializeField]
+	private CanvasGroup canvasGroup;
+	
 	protected override void Awake()
 	{
 		base.Awake();
@@ -13,8 +17,7 @@ public class MainMenuManager : ModeManager
 
 	public void EnterClassicMode()
 	{
-		AudioManager.Instance.PlaySFX(SFXType.Button);
-		LoadScene();
+		canvasGroup.DOFade(0f, .3456f).OnComplete(LoadScene);
 	}
 
 	private void LoadScene()
