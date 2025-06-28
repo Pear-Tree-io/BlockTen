@@ -15,7 +15,7 @@ public class ClassicModeManager : ModeManager
     [SerializeField] private GameObject scoreTextPrefab;
     private Canvas _canvas;
 
-    private float highScore = 0f;
+    private int highScore = 0;
     private int currentScore;
     private int comboMultiplier = 1;
 
@@ -38,6 +38,7 @@ public class ClassicModeManager : ModeManager
     public ParticleSystem fantasticEffect;
     public ParticleSystem greatEffect;
     public ParticleSystem goodEffect;
+    public bool isHighScore;
 
     protected override void Awake()
     {
@@ -67,29 +68,21 @@ public class ClassicModeManager : ModeManager
         
         if (blockCount >= 6)
         {
-            StartCoroutine(PrintStamp(fantasticStamp));
-            fantasticEffect.Play();
+            StartCoroutine(PrintStamp(fantasticStamp, SFXType.fantastic));
+            
             // AudioManager.Instance.PlaySFX(SFXType.brickBreak);
-            AudioManager.Instance.PlaySFX(SFXType.fantastic);
         }
         else if (blockCount > 4 || matchCount >= 2)
         {
-            StartCoroutine(PrintStamp(greatStamp));
-            greatEffect.Play();
-            //AudioManager.Instance.PlaySFX(SFXType.brickBreak);
-            AudioManager.Instance.PlaySFX(SFXType.great);
+            StartCoroutine(PrintStamp(greatStamp, SFXType.great));
         }
         else if (blockCount > 2)
         {
-            StartCoroutine(PrintStamp(goodStamp));
-            goodEffect.Play();
-            //AudioManager.Instance.PlaySFX(SFXType.brickBreak);
-            AudioManager.Instance.PlaySFX(SFXType.good);
+            StartCoroutine(PrintStamp(greatStamp, SFXType.good));
         }
         else if (blockCount > 0)
         {
-            //AudioManager.Instance.PlaySFX(SFXType.brickBreak);
-            AudioManager.Instance.PlaySFX(SFXType.noStamp);
+            // AudioManager.Instance.PlaySFX(SFXType.noStamp);
         }
 
 
@@ -159,7 +152,7 @@ public class ClassicModeManager : ModeManager
 
     protected override void LoadGame()
     {
-        highScore = PlayerPrefs.GetFloat(HighScoreKey, 0f);
+        highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
     }
 
     public void TutorialPlayed()
@@ -253,11 +246,28 @@ public class ClassicModeManager : ModeManager
         SceneManager.LoadScene("Classic");
     }
 
-    private IEnumerator PrintStamp(GameObject stamp)
+    private IEnumerator PrintStamp(GameObject stamp ,SFXType type)
     {
         stamp.SetActive(true);
         stamp.GetComponent<Animator>().Play("StampAnimation");
-        yield return new WaitForSeconds(0.5f);
+
+        yield return new WaitForSeconds(0.3456f);
+        switch (type)
+        {
+	        case SFXType.fantastic:
+		        fantasticEffect.Play();
+		        break;
+	        case SFXType.great:
+		        greatEffect.Play();
+		        break;
+	        case SFXType.good:
+		        goodEffect.Play();
+		        break;
+        }
+        
+        AudioManager.Instance.PlaySFX(type);
+        
+        yield return new WaitForSeconds(0.1f);
         stamp.SetActive(false);
     }
 

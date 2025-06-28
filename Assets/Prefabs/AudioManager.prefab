@@ -53,7 +53,7 @@ MonoBehaviour:
   - type: 0
     clip: {fileID: 8300000, guid: 38edd95952cf77a4b91a2ce1f4a8fd00, type: 3}
   - type: 1
-    clip: {fileID: 8300000, guid: 57df5b09c06b4ce4a86e4a7a53343126, type: 3}
+    clip: {fileID: 8300000, guid: 1bd08c969be3c4394af17398e4e9e41a, type: 3}
   - type: 2
     clip: {fileID: 8300000, guid: 799084affde9b9b4b8fc2ce8ba121920, type: 3}
   - type: 3
@@ -72,6 +72,12 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: db66727e2dc4bf947b7e15ed3862fa6c, type: 3}
   - type: 10
     clip: {fileID: 8300000, guid: c7a726e107f0c0f489e5a5612dd6d2a6, type: 3}
+  - type: 9
+    clip: {fileID: 8300000, guid: a155b355f25f548c4a2e8827e595fa56, type: 3}
+  - type: 11
+    clip: {fileID: 8300000, guid: c8d65eefde42f439099e2d71cc37ce37, type: 3}
+  - type: 13
+    clip: {fileID: 8300000, guid: 08c85eb49c0884d03b32d0a8dcee2334, type: 3}
   isBgmOn: 1
   isSfxOn: 1
   isVibOn: 1

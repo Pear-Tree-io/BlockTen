@@ -6,6 +6,7 @@ public enum SFXType
     Button,
     PlaceBlock,
     GameOver,
+    GameOverHighScore,
     goScore,
     bestScore,
     brickBreak,

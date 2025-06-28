@@ -560,7 +560,7 @@ public class GridManager : MonoBehaviour
     public void InitializeEndGrid()
     {
         StartCoroutine(InitializeEndGridRoutine());
-        AudioManager.Instance.PlaySFX(SFXType.GameOver);
+        AudioManager.Instance.PlaySFX(ClassicModeManager.Instance.isHighScore ? SFXType.GameOverHighScore : SFXType.GameOver);
     }
 
     private IEnumerator InitializeEndGridRoutine()

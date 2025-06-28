@@ -567,6 +567,7 @@ MonoBehaviour:
   fantasticEffect: {fileID: 1064949926}
   greatEffect: {fileID: 2135204697}
   goodEffect: {fileID: 5845662905990718948}
+  isHighScore: 0
 --- !u!4 &216924798
 Transform:
   m_ObjectHideFlags: 0
@@ -731,7 +732,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &228774127
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -7226,33 +7227,9 @@ PrefabInstance:
       value: AudioManager
       objectReference: {fileID: 0}
     - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: sfxItems.Array.size
-      value: 14
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: sfxItems.Array.data[11].clip
+      propertyPath: sfxItems.Array.data[2].clip
       value: 
-      objectReference: {fileID: 8300000, guid: a155b355f25f548c4a2e8827e595fa56, type: 3}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: sfxItems.Array.data[11].type
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: sfxItems.Array.data[12].clip
-      value: 
-      objectReference: {fileID: 8300000, guid: c8d65eefde42f439099e2d71cc37ce37, type: 3}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: sfxItems.Array.data[12].type
-      value: 11
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: sfxItems.Array.data[13].clip
-      value: 
-      objectReference: {fileID: 8300000, guid: 08c85eb49c0884d03b32d0a8dcee2334, type: 3}
-    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
-      propertyPath: sfxItems.Array.data[13].type
-      value: 13
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 8300000, guid: 8b3e3b1a191a94f3992646a18692567c, type: 3}
     - target: {fileID: 5422279800677283105, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
