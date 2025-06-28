@@ -172,5 +172,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bfebcf767f111240b6b5ee54d3a7646, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
   cam: {fileID: 0}
   worldTarget: {fileID: 0}
