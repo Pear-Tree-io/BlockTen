@@ -1,6 +1,8 @@
 ﻿using Unity.Services.LevelPlay;
 using UnityEngine.Events;
 using UnityEngine;
+using static com.unity3d.mediation.LevelPlayAdSize;
+using static com.unity3d.mediation.LevelPlayBannerPosition;
 
 namespace ManagersSpace
 {
@@ -8,7 +10,7 @@ namespace ManagersSpace
 	{
 		public static AdManager Get => _instance;
 		private static AdManager _instance;
-		
+
 		public void ShowRewardAd(UnityAction onAdSuccess)
 		{
 			if (_levelPlayRewardedAd.IsAdReady())
@@ -17,7 +19,7 @@ namespace ManagersSpace
 				_levelPlayRewardedAd.ShowAd();
 			}
 		}
-		
+
 #if UNITY_ANDROID
 		private const string _appKey = "2294823c5";
 #elif UNITY_IPHONE
@@ -31,19 +33,19 @@ namespace ManagersSpace
 		private void Awake()
 		{
 			_instance = this;
-			
+
 			LevelPlay.OnInitSuccess += SdkInitializationCompletedEvent;
 			LevelPlay.OnInitFailed += SdkInitializationFailedEvent;
 
 			_levelPlayRewardedAd = new("8937rlb9efrx3270");
 			_levelPlayInterstitialAd = new("qfvaerrxoa4actcz");
-			_levelPlayBannerAd = new("9kkh0ks13rv7r8ov");
+			_levelPlayBannerAd = new("9kkh0ks13rv7r8ov", BANNER, BottomCenter);
 			_levelPlayRewardedAd.OnAdRewarded += OnAdRewarded;
 			_levelPlayInterstitialAd.OnAdClosed += OnAdClosed;
+
+			LevelPlay.Init(_appKey);
 			
 			_levelPlayBannerAd.ShowAd();
-			
-			LevelPlay.Init(_appKey);
 		}
 
 		private void SdkInitializationCompletedEvent(LevelPlayConfiguration obj)
