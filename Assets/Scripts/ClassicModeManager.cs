@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
-using ManagersSpace;
 
 public class ClassicModeManager : ModeManager
 {
@@ -19,11 +18,9 @@ public class ClassicModeManager : ModeManager
     private int highScore = 0;
     private int currentScore;
     private int comboMultiplier = 1;
-    private int adCount = 0;
 
     private const string HighScoreKey = "HighScore";
     private const string TutorialKey = "Tutorial";
-    private const string AdKey = "Ad";
 
     public GameObject gameOverPanel;
     public TMP_Text goScoreText;
@@ -134,15 +131,6 @@ public class ClassicModeManager : ModeManager
 
     public override void GameOver()
     {
-        if(adCount > 2)
-        {
-            AdManager.Get.ShowAd();
-        }
-        else
-        {
-            adCount++;
-        }
-
         if (currentScore > highScore)
         {
             highScore = currentScore;
@@ -162,7 +150,6 @@ public class ClassicModeManager : ModeManager
 
     protected override void SaveGame()
     {
-        PlayerPrefs.SetInt(AdKey, adCount);
         PlayerPrefs.SetInt(HighScoreKey, highScore);
         PlayerPrefs.Save();
     }
@@ -170,7 +157,6 @@ public class ClassicModeManager : ModeManager
     protected override void LoadGame()
     {
         highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
-        adCount = PlayerPrefs.GetInt(AdKey, 0);
     }
 
     public void TutorialPlayed()
