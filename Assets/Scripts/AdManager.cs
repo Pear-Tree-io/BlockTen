@@ -1,8 +1,6 @@
 ﻿using Unity.Services.LevelPlay;
 using UnityEngine.Events;
 using UnityEngine;
-using static com.unity3d.mediation.LevelPlayAdSize;
-using static com.unity3d.mediation.LevelPlayBannerPosition;
 
 namespace ManagersSpace
 {
@@ -18,6 +16,12 @@ namespace ManagersSpace
 				_onAdSuccess = onAdSuccess;
 				_levelPlayRewardedAd.ShowAd();
 			}
+		}
+
+		public void ShowAd()
+		{
+			if (_levelPlayInterstitialAd.IsAdReady())
+				_levelPlayInterstitialAd.ShowAd();
 		}
 
 #if UNITY_ANDROID
@@ -39,12 +43,12 @@ namespace ManagersSpace
 
 			_levelPlayRewardedAd = new("8937rlb9efrx3270");
 			_levelPlayInterstitialAd = new("qfvaerrxoa4actcz");
-			_levelPlayBannerAd = new("9kkh0ks13rv7r8ov", BANNER, BottomCenter);
+			_levelPlayBannerAd = new("9kkh0ks13rv7r8ov");
 			_levelPlayRewardedAd.OnAdRewarded += OnAdRewarded;
 			_levelPlayInterstitialAd.OnAdClosed += OnAdClosed;
 
 			LevelPlay.Init(_appKey);
-			
+
 			_levelPlayBannerAd.ShowAd();
 		}
 
