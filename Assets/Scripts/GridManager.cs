@@ -205,7 +205,7 @@ public class GridManager : MonoBehaviour
                 StartCoroutine(PopOne(b, 0.2f));
 	        }
 	        
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.3f);
         }
 
         // 2) Spawn VFX, free cells & destroy objects

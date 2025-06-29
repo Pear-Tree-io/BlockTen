@@ -70,17 +70,17 @@ public class ClassicModeManager : ModeManager
         
         if (blockCount >= 6)
         {
-            StartCoroutine(PrintStamp(fantasticStamp, SFXType.fantastic));
+            StartCoroutine(PrintStamp(fantasticStamp, SFXType.fantasticStamp));
             
             // AudioManager.Instance.PlaySFX(SFXType.brickBreak);
         }
         else if (blockCount > 4 || matchCount >= 2)
         {
-            StartCoroutine(PrintStamp(greatStamp, SFXType.great));
+            StartCoroutine(PrintStamp(greatStamp, SFXType.greatStamp));
         }
         else if (blockCount > 2)
         {
-            StartCoroutine(PrintStamp(greatStamp, SFXType.good));
+            StartCoroutine(PrintStamp(goodStamp, SFXType.goodStamp));
         }
         else if (blockCount > 0)
         {
@@ -150,7 +150,7 @@ public class ClassicModeManager : ModeManager
 
     protected override void SaveGame()
     {
-        PlayerPrefs.SetFloat(HighScoreKey, highScore);
+        PlayerPrefs.SetInt(HighScoreKey, highScore);
         PlayerPrefs.Save();
     }
 
@@ -258,15 +258,18 @@ public class ClassicModeManager : ModeManager
         yield return new WaitForSeconds(0.3456f);
         switch (type)
         {
-	        case SFXType.fantastic:
+	        case SFXType.fantasticStamp:
 		        fantasticEffect.Play();
+                AudioManager.Instance.PlaySFX(SFXType.fantastic);
 		        break;
-	        case SFXType.great:
+	        case SFXType.greatStamp:
 		        greatEffect.Play();
-		        break;
-	        case SFXType.good:
+                AudioManager.Instance.PlaySFX(SFXType.great);
+                break;
+	        case SFXType.goodStamp:
 		        goodEffect.Play();
-		        break;
+                AudioManager.Instance.PlaySFX(SFXType.good);
+                break;
         }
         
         AudioManager.Instance.PlaySFX(type);
