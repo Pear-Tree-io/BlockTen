@@ -1,10 +1,7 @@
 fileFormatVersion: 2
-guid: 61128ff4560e43ddb606dc203efe7799
+guid: 3bb90109430be1e479084beed822be69
 labels:
-- gvh
-- gvh_version-1.2.182
-- gvhp_exportpath-ExternalDependencyManager/Editor/Google.VersionHandler.dll
-- gvhp_targets-editor
+- gpsr
 PluginImporter:
   externalObjects: {}
   serializedVersion: 3
@@ -23,10 +20,6 @@ PluginImporter:
       enabled: 1
       settings:
         DefaultValueInitialized: true
-    WindowsStoreApps:
-      enabled: 0
-      settings:
-        CPU: AnyCPU
   userData: 
   assetBundleName: 
   assetBundleVariant: 
