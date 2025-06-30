@@ -2,6 +2,7 @@
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using GooglePlayGames;
 using ManagersSpace;
 
 public class ClassicModeManager : ModeManager
@@ -40,6 +41,7 @@ public class ClassicModeManager : ModeManager
     public ParticleSystem fantasticEffect;
     public ParticleSystem greatEffect;
     public ParticleSystem goodEffect;
+    
     public bool isHighScore;
 
     protected override void Awake()
@@ -144,10 +146,10 @@ public class ClassicModeManager : ModeManager
 
         if (currentScore > highScore)
         {
-            highScore = currentScore;
-            bestHighScoreText.text = highScore.ToString();
-            //socialObserver.SetLeaderboardScore((int)highScore);
-            StartCoroutine(GameOverPlay(highScorePanel, bestHighScoreText, SFXType.bestScore));
+	        highScore = currentScore;
+	        bestHighScoreText.text = highScore.ToString();
+	        GoogleManager.Get.ReportScore(highScore);
+	        StartCoroutine(GameOverPlay(highScorePanel, bestHighScoreText, SFXType.bestScore));
         }
         else
         {

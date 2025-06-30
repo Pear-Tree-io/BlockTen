@@ -121,6 +121,14 @@ public class AnimatedButton : UIBehaviour, IPointerDownHandler, IPointerUpHandle
 		traTarget.DOScale(_originScale, .1f);
 	}
 
+	public void SetOnClick(UnityAction action)
+	{
+		_pointerUpAction ??= new();
+
+		_pointerUpAction.RemoveAllListeners();
+		_pointerUpAction.AddListener(action);
+	}
+	
 	public void SetOnClick(UnityEvent action)
 	{
 		_pointerUpAction = action;
