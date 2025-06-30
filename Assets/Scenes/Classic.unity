@@ -732,7 +732,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &228774127
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -7306,6 +7306,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 3365145753290499821, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4380266638530158144, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       propertyPath: m_Name
       value: Setting_Panel
@@ -7476,7 +7480,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6929370114475713043, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 3365145753290499821, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 117834790557086510, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       insertIndex: -1

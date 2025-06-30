@@ -130,6 +130,9 @@ public class DraggableCompositeBlock : MonoBehaviour,
         AudioManager.Instance.PlaySFX(SFXType.pickUp);
         // Grow back to full size on grab
         transform.localScale = Vector3.one;
+
+        Vector3 yUp = new Vector3(0, 3, 0);
+        transform.position = transform.position + yUp;
         children.ForEach(i => i.OnDragStart());
 
         var ps = new Vector3(e.position.x, e.position.y, screenZ);
