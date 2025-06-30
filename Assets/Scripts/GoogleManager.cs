@@ -2,6 +2,7 @@
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GoogleManager : MonoBehaviour
 {
@@ -9,12 +10,15 @@ public class GoogleManager : MonoBehaviour
 	private Action onSuccess;
 	public static GoogleManager Get => _instance;
 	private static GoogleManager _instance;
+	public InputAction cancelAction;
 
 	private void Awake()
 	{
 		if (_instance == null)
 		{
 			_instance = this;
+			cancelAction.Enable();
+			cancelAction.performed += OnBack;
 			DontDestroyOnLoad(gameObject);
 		}
 		else
@@ -30,10 +34,9 @@ public class GoogleManager : MonoBehaviour
 		btLeaderboard.SetOnClick(OnLeaderboard);
 	}
 
-	private void Update()
+	public void OnBack(InputAction.CallbackContext ctx)
 	{
-		if (Input.GetKeyDown(KeyCode.Backspace))
-			InitializeGooglePlayGames();
+		InitializeGooglePlayGames();
 	}
 
 	private void OnLeaderboard()
