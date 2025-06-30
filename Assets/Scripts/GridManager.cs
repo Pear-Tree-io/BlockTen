@@ -202,10 +202,10 @@ public class GridManager : MonoBehaviour
         {
 	        foreach (var b in run)
 	        {
-                StartCoroutine(PopOne(b, 0.2f));
+                StartCoroutine(PopOne(b, 0.3f));
 	        }
 	        
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.4f);
         }
 
         // 2) Spawn VFX, free cells & destroy objects

@@ -279,7 +279,7 @@ GameObject:
   - component: {fileID: 8682930997095065866}
   - component: {fileID: 376363190111040337}
   - component: {fileID: 5358227308995433249}
-  - component: {fileID: 9218317279063702894}
+  - component: {fileID: 3870843779564990263}
   m_Layer: 5
   m_Name: vibToggleButton
   m_TagString: Untagged
@@ -307,7 +307,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 230, y: 200}
-  m_SizeDelta: {x: 300, y: 30}
+  m_SizeDelta: {x: 300, y: 3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &376363190111040337
 CanvasRenderer:
@@ -347,7 +347,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &9218317279063702894
+--- !u!114 &3870843779564990263
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -356,39 +356,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 1088231904421938994}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 853b784f68005114e98d1807c8fcdc59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 5358227308995433249}
-  m_OnClick:
+  _interactable: 1
+  transition: 1
+  isHold: 0
+  holdStartDelay: 0.3
+  holdNextClickDelay: 0.08
+  traTarget: {fileID: 0}
+  targetGraphic: {fileID: 5358227308995433249}
+  spriteEnabled: {fileID: 0}
+  spriteDisabled: {fileID: 0}
+  targetText: {fileID: 0}
+  colorEnabledText: {r: 1, g: 1, b: 1, a: 1}
+  colorDisabledText: {r: 1, g: 1, b: 1, a: 1}
+  objEnabled: {fileID: 0}
+  objDisabled: {fileID: 0}
+  objBadges: []
+  _pointerUpAction:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &1437287252600226660
@@ -860,7 +846,7 @@ GameObject:
   - component: {fileID: 7535320309423357484}
   - component: {fileID: 8268637879289079532}
   - component: {fileID: 7862920596901261646}
-  - component: {fileID: 6991367656990581533}
+  - component: {fileID: 2501111069188145408}
   m_Layer: 5
   m_Name: Button (1)
   m_TagString: Untagged
@@ -926,7 +912,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6991367656990581533
+--- !u!114 &2501111069188145408
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -935,39 +921,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 3365145753290499821}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 853b784f68005114e98d1807c8fcdc59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 7862920596901261646}
-  m_OnClick:
+  _interactable: 1
+  transition: 1
+  isHold: 0
+  holdStartDelay: 0.3
+  holdNextClickDelay: 0.08
+  traTarget: {fileID: 0}
+  targetGraphic: {fileID: 7862920596901261646}
+  spriteEnabled: {fileID: 0}
+  spriteDisabled: {fileID: 0}
+  targetText: {fileID: 0}
+  colorEnabledText: {r: 1, g: 1, b: 1, a: 1}
+  colorDisabledText: {r: 1, g: 1, b: 1, a: 1}
+  objEnabled: {fileID: 0}
+  objDisabled: {fileID: 0}
+  objBadges: []
+  _pointerUpAction:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &4276182042612136467
@@ -1671,7 +1643,7 @@ GameObject:
   - component: {fileID: 403636113555172606}
   - component: {fileID: 556615053500422647}
   - component: {fileID: 8777447294283947092}
-  - component: {fileID: 7351182477900664853}
+  - component: {fileID: 2667875627541646785}
   m_Layer: 5
   m_Name: sfxToggleButton
   m_TagString: Untagged
@@ -1739,7 +1711,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7351182477900664853
+--- !u!114 &2667875627541646785
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1748,39 +1720,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 7142507626587580931}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 853b784f68005114e98d1807c8fcdc59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 8777447294283947092}
-  m_OnClick:
+  _interactable: 1
+  transition: 1
+  isHold: 0
+  holdStartDelay: 0.3
+  holdNextClickDelay: 0.08
+  traTarget: {fileID: 0}
+  targetGraphic: {fileID: 8777447294283947092}
+  spriteEnabled: {fileID: 0}
+  spriteDisabled: {fileID: 0}
+  targetText: {fileID: 0}
+  colorEnabledText: {r: 1, g: 1, b: 1, a: 1}
+  colorDisabledText: {r: 1, g: 1, b: 1, a: 1}
+  objEnabled: {fileID: 0}
+  objDisabled: {fileID: 0}
+  objBadges: []
+  _pointerUpAction:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &7436012237379768220
@@ -1794,7 +1752,7 @@ GameObject:
   - component: {fileID: 2563930200126229413}
   - component: {fileID: 3495726996298874573}
   - component: {fileID: 1365830382315495463}
-  - component: {fileID: 2556296380631174647}
+  - component: {fileID: 4218384856581177225}
   m_Layer: 5
   m_Name: bgmToggleButton
   m_TagString: Untagged
@@ -1822,7 +1780,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 200}
-  m_SizeDelta: {x: 300, y: 30}
+  m_SizeDelta: {x: 300, y: 3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3495726996298874573
 CanvasRenderer:
@@ -1862,7 +1820,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2556296380631174647
+--- !u!114 &4218384856581177225
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1871,39 +1829,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 7436012237379768220}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 853b784f68005114e98d1807c8fcdc59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 1365830382315495463}
-  m_OnClick:
+  _interactable: 1
+  transition: 1
+  isHold: 0
+  holdStartDelay: 0.3
+  holdNextClickDelay: 0.08
+  traTarget: {fileID: 0}
+  targetGraphic: {fileID: 1365830382315495463}
+  spriteEnabled: {fileID: 0}
+  spriteDisabled: {fileID: 0}
+  targetText: {fileID: 0}
+  colorEnabledText: {r: 1, g: 1, b: 1, a: 1}
+  colorDisabledText: {r: 1, g: 1, b: 1, a: 1}
+  objEnabled: {fileID: 0}
+  objDisabled: {fileID: 0}
+  objBadges: []
+  _pointerUpAction:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &8439242298495394915
