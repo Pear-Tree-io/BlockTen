@@ -2,7 +2,6 @@
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class GoogleManager : MonoBehaviour
 {
@@ -10,7 +9,6 @@ public class GoogleManager : MonoBehaviour
 	private Action onSuccess;
 	public static GoogleManager Get => _instance;
 	private static GoogleManager _instance;
-	public InputAction cancelAction;
 
 	private void Awake()
 	{
@@ -18,11 +16,6 @@ public class GoogleManager : MonoBehaviour
 		{
 			_instance = this;
 			DontDestroyOnLoad(gameObject);
-			
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
-			cancelAction.Enable();
-			cancelAction.performed += OnBack;
-#endif
 		}
 		else
 		{
@@ -38,11 +31,6 @@ public class GoogleManager : MonoBehaviour
 		btLeaderboard.SetOnClick(OnLeaderboard);
 	}
 
-	public void OnBack(InputAction.CallbackContext ctx)
-	{
-		InitializeGooglePlayGames();
-	}
-
 	private void OnLeaderboard()
 	{
 		PlayGamesPlatform.Instance.ShowLeaderboardUI();
@@ -53,12 +41,19 @@ public class GoogleManager : MonoBehaviour
 		PlayGamesPlatform.Instance.Authenticate(ProcessAuthentication);
 	}
 
+	private bool _isTryingToManuallyAuthenticate = false;
+
 	internal void ProcessAuthentication(SignInStatus status)
 	{
 		if (status == SignInStatus.Success)
 		{
 			onSuccess?.Invoke();
 			onSuccess = null;
+		}
+		else if (_isTryingToManuallyAuthenticate == false)
+		{
+			_isTryingToManuallyAuthenticate = true;
+			PlayGamesPlatform.Instance.ManuallyAuthenticate(ProcessAuthentication);
 		}
 	}
 
@@ -68,7 +63,7 @@ public class GoogleManager : MonoBehaviour
 			PlayGamesPlatform.Instance.ReportScore(highScore, GPGSIds.leaderboard_highscore, null);
 		else
 		{
-			InitializeGooglePlayGames();
+			PlayGamesPlatform.Instance.ManuallyAuthenticate(ProcessAuthentication);
 			onSuccess = () => { PlayGamesPlatform.Instance.ReportScore(highScore, GPGSIds.leaderboard_highscore, null); };
 		}
 	}

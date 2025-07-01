@@ -9,7 +9,6 @@ Library: /Users/hyun/Projects/BlockTen/Temp/BurstOutput/tempburstlibs/arm64-v8a/
 --target-framework=NetFramework
 --generate-link-xml=Temp/burst.link.xml
 --temp-folder=/Users/hyun/Projects/BlockTen/Temp/Burst
---debug=Full
 --key-folder=/Applications/Unity/Hub/Editor/6000.1.5f1/PlaybackEngines/AndroidPlayer
 --decode-folder=/Users/hyun/Projects/BlockTen/Library/Burst
 --output=/Users/hyun/Projects/BlockTen/Temp/BurstOutput/tempburstlibs/arm64-v8a/lib_burst_generated
@@ -34,7 +33,6 @@ Library: /Users/hyun/Projects/BlockTen/Temp/BurstOutput/tempburstlibs/arm64-v8a/
 --target-framework=NetFramework
 --generate-link-xml=Temp/burst.link.xml
 --temp-folder=/Users/hyun/Projects/BlockTen/Temp/Burst
---debug=Full
 --key-folder=/Applications/Unity/Hub/Editor/6000.1.5f1/PlaybackEngines/AndroidPlayer
 --decode-folder=/Users/hyun/Projects/BlockTen/Library/Burst
 --output=/Users/hyun/Projects/BlockTen/Temp/BurstOutput/tempburstlibs/arm64-v8a/lib_burst_generated
@@ -152,7 +150,6 @@ Library: /Users/hyun/Projects/BlockTen/Temp/BurstOutput/tempburstlibs/arm64-v8a/
 --float-mode=Fast
 --generate-link-xml=Temp/burst.link.xml
 --temp-folder=/Users/hyun/Projects/BlockTen/Temp/Burst
---debug=Full
 --key-folder=/Applications/Unity/Hub/Editor/6000.1.5f1/PlaybackEngines/AndroidPlayer
 --decode-folder=/Users/hyun/Projects/BlockTen/Library/Burst
 --output=/Users/hyun/Projects/BlockTen/Temp/BurstOutput/tempburstlibs/arm64-v8a/lib_burst_generated
