@@ -367,8 +367,6 @@ public class SpawnManager : MonoBehaviour
         modeManager.ToggleNoSpaceLeftMessage();
         SkipRevive();
 
-        yield break;
-        
         yield return new WaitForSeconds(1);
 
         revivePanel.SetActive(true);
