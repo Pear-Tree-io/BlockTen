@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 using System.Collections;
+using Firebase.Analytics;
 using ManagersSpace;
 
 /// <summary>
@@ -69,6 +70,7 @@ public abstract class ModeManager : MonoBehaviour
     {
 #if UNITY_EDITOR == false
 		AdManager.Get.LoadAds();
+	    FirebaseAnalytics.LogEvent("ResetMode", new Parameter("mode", GetType().Name));
 #endif
     }
 
@@ -106,6 +108,8 @@ public abstract class ModeManager : MonoBehaviour
 
     public virtual void GameOver() 
     {
+	    FirebaseAnalytics.LogEvent("GameOver", new Parameter("mode", GetType().Name));
+
         AudioManager.Instance.StopBGM();
         SaveGame();
     }

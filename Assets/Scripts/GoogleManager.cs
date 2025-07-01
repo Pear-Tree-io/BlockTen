@@ -33,7 +33,7 @@ public class GoogleManager : MonoBehaviour
 
 	private void OnLeaderboard()
 	{
-		PlayGamesPlatform.Instance.ShowLeaderboardUI();
+		PlayGamesPlatform.Instance.ShowLeaderboardUI(GPGSIds.leaderboard_highscore);
 	}
 
 	private void InitializeGooglePlayGames()
@@ -45,6 +45,8 @@ public class GoogleManager : MonoBehaviour
 
 	internal void ProcessAuthentication(SignInStatus status)
 	{
+		Debug.Log($"ProcessAuthentication {status}");
+		
 		if (status == SignInStatus.Success)
 		{
 			onSuccess?.Invoke();
