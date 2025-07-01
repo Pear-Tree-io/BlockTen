@@ -2,7 +2,6 @@
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
-using GooglePlayGames;
 using ManagersSpace;
 
 public class ClassicModeManager : ModeManager
@@ -127,6 +126,8 @@ public class ClassicModeManager : ModeManager
     /// </summary>
     public override void ResetMode()
     {
+	    base.ResetMode();
+	    
         currentScore = 0;
         comboMultiplier = 1;
         scoreText.text = "0";

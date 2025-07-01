@@ -17,9 +17,12 @@ public class GoogleManager : MonoBehaviour
 		if (_instance == null)
 		{
 			_instance = this;
+			DontDestroyOnLoad(gameObject);
+			
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
 			cancelAction.Enable();
 			cancelAction.performed += OnBack;
-			DontDestroyOnLoad(gameObject);
+#endif
 		}
 		else
 		{

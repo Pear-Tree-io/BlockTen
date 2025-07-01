@@ -365,6 +365,10 @@ public class SpawnManager : MonoBehaviour
     public IEnumerator StartReviveCountdown()
     {
         modeManager.ToggleNoSpaceLeftMessage();
+        SkipRevive();
+
+        yield break;
+        
         yield return new WaitForSeconds(1);
 
         revivePanel.SetActive(true);

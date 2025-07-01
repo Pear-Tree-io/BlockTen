@@ -10,6 +10,8 @@ public class MainMenuManager : ModeManager
 	protected override void Awake()
 	{
 		base.Awake();
+		
+		Application.targetFrameRate = 240;
 
 		if (ClassicModeManager.CheckTutorial() == false)
 			LoadScene();

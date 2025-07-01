@@ -9,6 +9,13 @@ namespace ManagersSpace
 		public static AdManager Get => _instance;
 		private static AdManager _instance;
 
+		public void LoadAds()
+		{
+			_levelPlayBannerAd.LoadAd();
+			_levelPlayInterstitialAd.LoadAd();
+			_levelPlayRewardedAd.LoadAd();
+		}
+
 		public void ShowRewardAd(UnityAction onAdSuccess)
 		{
 			if (_levelPlayRewardedAd.IsAdReady())
@@ -16,12 +23,16 @@ namespace ManagersSpace
 				_onAdSuccess = onAdSuccess;
 				_levelPlayRewardedAd.ShowAd();
 			}
+			else
+				_levelPlayRewardedAd.LoadAd();
 		}
 
 		public void ShowAd()
 		{
 			if (_levelPlayInterstitialAd.IsAdReady())
 				_levelPlayInterstitialAd.ShowAd();
+			else
+				_levelPlayInterstitialAd.LoadAd();
 		}
 
 #if UNITY_ANDROID
@@ -36,7 +47,16 @@ namespace ManagersSpace
 
 		private void Awake()
 		{
-			_instance = this;
+			if (_instance == null)
+			{
+				_instance = this;
+				DontDestroyOnLoad(gameObject);
+			}
+			else
+			{
+				Destroy(gameObject);
+				return;
+			}
 
 			LevelPlay.OnInitSuccess += SdkInitializationCompletedEvent;
 			LevelPlay.OnInitFailed += SdkInitializationFailedEvent;
@@ -46,9 +66,18 @@ namespace ManagersSpace
 			_levelPlayBannerAd = new("9kkh0ks13rv7r8ov");
 			_levelPlayRewardedAd.OnAdRewarded += OnAdRewarded;
 			_levelPlayInterstitialAd.OnAdClosed += OnAdClosed;
+			_levelPlayBannerAd.OnAdLoaded += OnShowBannerAd;
+
+#if DEVELOPMENT_BUILD
+			LevelPlay.SetMetaData("is_test_suite", "enable");
+#endif
 
 			LevelPlay.Init(_appKey);
+			_levelPlayBannerAd.LoadAd();
+		}
 
+		private void OnShowBannerAd(LevelPlayAdInfo obj)
+		{
 			_levelPlayBannerAd.ShowAd();
 		}
 

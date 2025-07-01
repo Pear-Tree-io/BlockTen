@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 using System.Collections;
+using ManagersSpace;
 
 /// <summary>
 /// Base class for all game mode managers. Handles score, combos, and UI popups.
@@ -66,7 +67,7 @@ public abstract class ModeManager : MonoBehaviour
     /// </summary>
     public virtual void ResetMode()
     {
-
+		AdManager.Get.LoadAds();
     }
 
     /// <summary>
