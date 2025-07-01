@@ -383,7 +383,12 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    public void ReviveAd() => AdManager.Get.ShowRewardAd(DoRevive);
+    public void ReviveAd() =>
+	    AdManager.Get
+#if UNITY_EDITOR
+		    ?
+#endif
+		    .ShowRewardAd(DoRevive);
 
     private void DoRevive()
     {

@@ -138,7 +138,9 @@ public class ClassicModeManager : ModeManager
     {
         if (adCount > 2)
         {
+#if UNITY_EDITOR == false
             AdManager.Get.ShowAd();
+#endif
         }
         else
         {

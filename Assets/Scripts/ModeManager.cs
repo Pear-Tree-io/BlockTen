@@ -67,7 +67,9 @@ public abstract class ModeManager : MonoBehaviour
     /// </summary>
     public virtual void ResetMode()
     {
+#if UNITY_EDITOR == false
 		AdManager.Get.LoadAds();
+#endif
     }
 
     /// <summary>
