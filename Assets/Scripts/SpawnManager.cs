@@ -351,48 +351,43 @@ public class SpawnManager : MonoBehaviour
 
     private void SetGameOver()
     {
-        if (isGameOver)
+        if(!isRevive)
         {
-            GridManager.Instance.InitializeEndGrid();
-            modeManager.GameOver();
+            StartCoroutine(StartReviveCountdown());
         }
         else
         {
-            StartCoroutine(StartReviveCountdown());
+            GridManager.Instance.InitializeEndGrid();
+            modeManager.GameOver();
         }
     }
 
     public IEnumerator StartReviveCountdown()
     {
+        isRevive = true;
+
         modeManager.ToggleNoSpaceLeftMessage();
-        SkipRevive();
 
         yield return new WaitForSeconds(1);
 
         revivePanel.SetActive(true);
-        while (reviveCountDown >= 0 && !isRevive)
+        while (reviveCountDown >= 0 && !isGameOver)
         {
             countDownText.text = reviveCountDown.ToString();
             yield return new WaitForSeconds(1);
             reviveCountDown--;
         }
-        if (!isGameOver && !isRevive)
+        if (!isGameOver)
         {
             SkipRevive();
         }
-        else if (isRevive)
-        {
-            isRevive = false;
-            reviveCountDown = 3;
-        }
-        modeManager.ToggleNoSpaceLeftMessage();
     }
 
     public void ReviveAd() => AdManager.Get.ShowRewardAd(DoRevive);
 
-    private void DoRevive()
+    public void DoRevive()
     {
-        isRevive = true;
+        modeManager.ToggleNoSpaceLeftMessage();
         revivePanel.SetActive(false);
         Revive();
     }
