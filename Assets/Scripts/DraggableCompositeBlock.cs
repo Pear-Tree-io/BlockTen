@@ -18,7 +18,9 @@ public class DraggableCompositeBlock : MonoBehaviour,
     private Camera cam;
     private float screenZ;
     private Vector3 offset;
-    
+    private float dragStartWorldY = 0;
+    private float yOffsetFactor = 0.75f;
+
     private void OnEnable()
     {
         // 1) Grab your NumberBlock children
@@ -131,19 +133,28 @@ public class DraggableCompositeBlock : MonoBehaviour,
         // Grow back to full size on grab
         transform.localScale = Vector3.one;
 
-        Vector3 yUp = new Vector3(0, 3, 0);
-        transform.position = transform.position + yUp;
+        transform.position = transform.position + new Vector3(0, 3,0);
         children.ForEach(i => i.OnDragStart());
 
         var ps = new Vector3(e.position.x, e.position.y, screenZ);
         offset = transform.position - cam.ScreenToWorldPoint(ps);
+
+        // store the starting world Y so we know our baseline
+        dragStartWorldY = transform.position.y;
     }
 
     public void OnDrag(PointerEventData e)
     {
         // 1) Move the composite with the cursor
         Vector3 screenPt = new Vector3(e.position.x, e.position.y, screenZ);
-        transform.position = cam.ScreenToWorldPoint(screenPt) + offset;
+        Vector3 worldPt = cam.ScreenToWorldPoint(screenPt);
+
+        // 2) dynamic extra Y based on how far above the start Y we are
+        float extraY = Mathf.Max(0f, worldPt.y - dragStartWorldY) * yOffsetFactor;
+        Vector3 dynamicOffset = offset + Vector3.up * extraY;
+
+        // 3) move the composite
+        transform.position = worldPt + dynamicOffset;
 
         // 2) Try placing the whole composite in one shot
         if (!GridManager.Instance.TryPlaceCompositeAt(this, out var placement))
