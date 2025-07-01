@@ -1,11 +1,9 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
 using System.Linq;
 using System.Collections;
 using TMPro;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 using Transform = UnityEngine.Transform;
 using ManagersSpace;
 
@@ -384,11 +382,12 @@ public class SpawnManager : MonoBehaviour
     }
 
     public void ReviveAd() =>
-	    AdManager.Get
 #if UNITY_EDITOR
-		    ?
+	    DoRevive();
+#else
+	    AdManager.Get.ShowRewardAd(DoRevive);
 #endif
-		    .ShowRewardAd(DoRevive);
+		    
 
     private void DoRevive()
     {
