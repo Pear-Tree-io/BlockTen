@@ -385,7 +385,7 @@ public class SpawnManager : MonoBehaviour
 
     public void ReviveAd() => AdManager.Get.ShowRewardAd(DoRevive);
 
-    public void DoRevive()
+    private void DoRevive()
     {
         modeManager.ToggleNoSpaceLeftMessage();
         revivePanel.SetActive(false);

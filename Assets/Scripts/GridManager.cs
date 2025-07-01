@@ -218,11 +218,7 @@ public class GridManager : MonoBehaviour
             Destroy(b.gameObject);
         }
         AudioManager.Instance.PlaySFX(SFXType.brickBreak);
-        if (AudioManager.Instance.isVibOn)
-        {
-            Handheld.Vibrate();
-        }
-        
+                
         spawnManager.NotifyBlockPlaced();
         inputBlocker.blocksRaycasts = false;
     }
