@@ -1,38 +1,101 @@
 ﻿using Unity.Services.LevelPlay;
 using UnityEngine.Events;
 using UnityEngine;
+using UnityEngine.Purchasing;
 
 namespace ManagersSpace
 {
 	public class AdManager : MonoBehaviour
 	{
-		public static AdManager Get => _instance;
+		public static AdManager Get => _instance
+#if UNITY_EDITOR
+			??= Resources.Load<GameObject>("AdManager").GetComponent<AdManager>()
+#endif
+		;
 		private static AdManager _instance;
 
 		public void LoadAds()
 		{
+			if (_isAdBlocked)
+				return;
+
 			_levelPlayBannerAd.LoadAd();
 			_levelPlayInterstitialAd.LoadAd();
 			_levelPlayRewardedAd.LoadAd();
 		}
 
+		public bool isRewardAdShowing;
+
 		public void ShowRewardAd(UnityAction onAdSuccess)
 		{
+			if (_isAdBlocked)
+			{
+				onAdSuccess?.Invoke();
+				return;
+			}
+
+			if (isRewardAdShowing)
+			{
+				Debug.LogWarning("Reward ad is already showing.");
+				return;
+			}
+
+			isRewardAdShowing = true;
+			_onAdSuccess = onAdSuccess;
+
 			if (_levelPlayRewardedAd.IsAdReady())
 			{
-				_onAdSuccess = onAdSuccess;
+				_isShowingRewardAd = true;
+				_levelPlayRewardedAd.OnAdLoaded -= RewardAdLoadedAndShow;
+				isRewared = false;
 				_levelPlayRewardedAd.ShowAd();
 			}
 			else
+			{
+				_levelPlayRewardedAd.OnAdLoaded += RewardAdLoadedAndShow;
 				_levelPlayRewardedAd.LoadAd();
+				_isShowingRewardAd = false;
+				Invoke(nameof(CancelShowRewardAd), 3f);
+			}
+		}
+
+		private bool _isShowingRewardAd = false;
+
+		private void CancelShowRewardAd()
+		{
+			if (_isShowingRewardAd == false)
+			{
+				_levelPlayRewardedAd.OnAdLoaded -= RewardAdLoadedAndShow;
+				_onAdSuccess = null;
+				isRewardAdShowing = false;
+			}
 		}
 
 		public void ShowAd()
 		{
+			if (_isAdBlocked)
+				return;
+
 			if (_levelPlayInterstitialAd.IsAdReady())
+			{
+				_levelPlayInterstitialAd.OnAdLoaded -= AdLoadedAndShow;
 				_levelPlayInterstitialAd.ShowAd();
+			}
 			else
+			{
+				_levelPlayInterstitialAd.OnAdLoaded += AdLoadedAndShow;
 				_levelPlayInterstitialAd.LoadAd();
+			}
+		}
+
+		public void AdLoadedAndShow(LevelPlayAdInfo info)
+		{
+			ShowAd();
+		}
+
+		public void RewardAdLoadedAndShow(LevelPlayAdInfo info)
+		{
+			ShowRewardAd(_onAdSuccess);
 		}
 
 #if UNITY_ANDROID
@@ -41,6 +104,7 @@ namespace ManagersSpace
 		private const string _appKey = "1fad4069d";
 #endif
 
+		private bool _isAdBlocked;
 		private LevelPlayRewardedAd _levelPlayRewardedAd;
 		private LevelPlayInterstitialAd _levelPlayInterstitialAd;
 		private LevelPlayBannerAd _levelPlayBannerAd;
@@ -58,22 +122,59 @@ namespace ManagersSpace
 				return;
 			}
 
+			CheckAdBlock();
+
+			if (_isAdBlocked)
+				return;
+
 			LevelPlay.OnInitSuccess += SdkInitializationCompletedEvent;
 			LevelPlay.OnInitFailed += SdkInitializationFailedEvent;
 
-			_levelPlayRewardedAd = new("8937rlb9efrx3270");
-			_levelPlayInterstitialAd = new("qfvaerrxoa4actcz");
 			_levelPlayBannerAd = new("9kkh0ks13rv7r8ov");
-			_levelPlayRewardedAd.OnAdRewarded += OnAdRewarded;
-			_levelPlayInterstitialAd.OnAdClosed += OnAdClosed;
 			_levelPlayBannerAd.OnAdLoaded += OnShowBannerAd;
+
+			_levelPlayInterstitialAd = new("qfvaerrxoa4actcz");
+
+			_levelPlayRewardedAd = new("8937rlb9efrx3270");
+			_levelPlayRewardedAd.OnAdRewarded += OnAdRewarded;
+			_levelPlayRewardedAd.OnAdClosed += OnRewaredAdClosed;
 
 #if DEVELOPMENT_BUILD
 			LevelPlay.SetMetaData("is_test_suite", "enable");
 #endif
 
 			LevelPlay.Init(_appKey);
-			_levelPlayBannerAd.LoadAd();
+		}
+
+		private void CheckAdBlock()
+		{
+#if UNITY_EDITOR
+			_isAdBlocked = true;
+			return;
+#endif
+
+			_isAdBlocked = PlayerPrefs.HasKey("isAdBlocked");
+
+			if (_isAdBlocked)
+				return;
+
+			var product = CodelessIAPStoreListener.Instance.GetProduct("1");
+			_isAdBlocked = product != null && string.IsNullOrEmpty(product.receipt) == false;
+
+			if (_isAdBlocked)
+			{
+				PlayerPrefs.SetInt("isAdBlocked", 1);
+				PlayerPrefs.Save();
+				UIManager.Get.btAdBlock?.SetActive(false);
+			}
+		}
+
+		public void OnAdBlockBought()
+		{
+			_isAdBlocked = true;
+			PlayerPrefs.SetInt("isAdBlocked", 1);
+			PlayerPrefs.Save();
+			Debug.Log("Ads are blocked.");
 		}
 
 		private void OnShowBannerAd(LevelPlayAdInfo obj)
@@ -83,6 +184,7 @@ namespace ManagersSpace
 
 		private void SdkInitializationCompletedEvent(LevelPlayConfiguration obj)
 		{
+			LoadAds();
 			Debug.Log("IronSource SDK initialized successfully.");
 		}
 
@@ -92,17 +194,21 @@ namespace ManagersSpace
 		}
 
 		private UnityAction _onAdSuccess;
+		private bool isRewared;
 
 		private void OnAdRewarded(LevelPlayAdInfo info, LevelPlayReward reward)
 		{
-			_onAdSuccess?.Invoke();
-			_onAdSuccess = null;
-
-			Debug.Log("OnAdRewarded");
+			isRewared = true;
 		}
 
-		private void OnAdClosed(LevelPlayAdInfo obj)
+		private void OnRewaredAdClosed(LevelPlayAdInfo obj)
 		{
+			isRewardAdShowing = false;
+
+			if (isRewared)
+				_onAdSuccess?.Invoke();
+			
+			_onAdSuccess = null;
 		}
 	}
 }

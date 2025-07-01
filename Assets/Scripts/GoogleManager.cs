@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class GoogleManager : MonoBehaviour
 {
-	public AnimatedButton btLeaderboard;
 	private Action onSuccess;
 	public static GoogleManager Get => _instance;
 	private static GoogleManager _instance;
@@ -26,12 +25,7 @@ public class GoogleManager : MonoBehaviour
 		InitializeGooglePlayGames();
 	}
 
-	private void Start()
-	{
-		btLeaderboard.SetOnClick(OnLeaderboard);
-	}
-
-	private void OnLeaderboard()
+	public void OnLeaderboard()
 	{
 		PlayGamesPlatform.Instance.ShowLeaderboardUI(GPGSIds.leaderboard_highscore);
 	}

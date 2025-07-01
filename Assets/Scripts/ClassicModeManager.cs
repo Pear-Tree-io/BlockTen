@@ -138,9 +138,7 @@ public class ClassicModeManager : ModeManager
     {
         if (adCount > 2)
         {
-#if UNITY_EDITOR == false
             AdManager.Get.ShowAd();
-#endif
         }
         else
         {
@@ -203,7 +201,7 @@ public class ClassicModeManager : ModeManager
 
     private IEnumerator GameOverPlay(GameObject objectToActive, TMP_Text text, SFXType type)
     {
-        ToggleNoSpaceLeftMessage();
+        SetNoSpaceLeftMessage(true);
         yield return new WaitForSeconds(2f);
 
         objectToActive.SetActive(true);
@@ -211,16 +209,9 @@ public class ClassicModeManager : ModeManager
         AudioManager.Instance.PlaySFX(type);
     }
 
-    public void ToggleNoSpaceLeftMessage()
+    public void SetNoSpaceLeftMessage(bool active)
     {
-        if (noSpaceLeft.activeSelf)
-        {
-            noSpaceLeft.SetActive(false);
-        }
-        else
-        {
-            noSpaceLeft.SetActive(true);
-        }
+	    noSpaceLeft.SetActive(active);
     }
 
     private IEnumerator PlayScoreTexts(int count, int score)
