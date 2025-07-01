@@ -27,6 +27,7 @@ public class GoogleManager : MonoBehaviour
 		else
 		{
 			Destroy(gameObject);
+			return;
 		}
 
 		InitializeGooglePlayGames();
