@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using ManagersSpace;
+using Unity.Services.LevelPlay;
 using UnityEngine;
 using UnityEngine.Purchasing;
 
@@ -7,9 +8,9 @@ public class UIManager : MonoBehaviour
 {
 	public static UIManager Get => _instance;
 	private static UIManager _instance;
-	
+
 	public CodelessIAPButton btAdBlock;
-	
+
 	[SerializeField]
 	private SpriteRenderer initRenderer;
 	[SerializeField]
@@ -30,12 +31,18 @@ public class UIManager : MonoBehaviour
 
 		if (btAdBlock)
 		{
+#if DEVELOPMENT_BUILD
+			btAdBlock.enabled = false;
+			btAdBlock.button.onClick.RemoveAllListeners();
+			btAdBlock.button.onClick.AddListener(LevelPlay.LaunchTestSuite);
+#else
 			btAdBlock.onPurchaseComplete.RemoveAllListeners();
 			btAdBlock.onPurchaseComplete.AddListener(_ =>
 			{
 				btAdBlock.SetActive(false);
 				AdManager.Get.OnAdBlockBought();
 			});
+#endif
 		}
 
 		foreach (var bt in leaderboardButtons)

@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using UnityEngine;
 using UnityEngine.Purchasing;
+using LevelPlayBannerPosition = com.unity3d.mediation.LevelPlayBannerPosition;
 
 namespace ManagersSpace
 {
@@ -47,7 +48,7 @@ namespace ManagersSpace
 			{
 				_isShowingRewardAd = true;
 				_levelPlayRewardedAd.OnAdLoaded -= RewardAdLoadedAndShow;
-				isRewared = false;
+				isRewarded = false;
 				_levelPlayRewardedAd.ShowAd();
 			}
 			else
@@ -130,14 +131,14 @@ namespace ManagersSpace
 			LevelPlay.OnInitSuccess += SdkInitializationCompletedEvent;
 			LevelPlay.OnInitFailed += SdkInitializationFailedEvent;
 
-			_levelPlayBannerAd = new("9kkh0ks13rv7r8ov");
+			_levelPlayBannerAd = new("9kkh0ks13rv7r8ov", com.unity3d.mediation.LevelPlayAdSize.BANNER, LevelPlayBannerPosition.BottomCenter, "Startup", respectSafeArea: true);
 			_levelPlayBannerAd.OnAdLoaded += OnShowBannerAd;
 
 			_levelPlayInterstitialAd = new("qfvaerrxoa4actcz");
 
 			_levelPlayRewardedAd = new("8937rlb9efrx3270");
 			_levelPlayRewardedAd.OnAdRewarded += OnAdRewarded;
-			_levelPlayRewardedAd.OnAdClosed += OnRewaredAdClosed;
+			_levelPlayRewardedAd.OnAdClosed += OnRewardedAdClosed;
 
 #if DEVELOPMENT_BUILD
 			LevelPlay.SetMetaData("is_test_suite", "enable");
@@ -172,6 +173,7 @@ namespace ManagersSpace
 		public void OnAdBlockBought()
 		{
 			_isAdBlocked = true;
+			_levelPlayBannerAd.DestroyAd();
 			PlayerPrefs.SetInt("isAdBlocked", 1);
 			PlayerPrefs.Save();
 			Debug.Log("Ads are blocked.");
@@ -179,6 +181,7 @@ namespace ManagersSpace
 
 		private void OnShowBannerAd(LevelPlayAdInfo obj)
 		{
+			Debug.Log("OnShowBannerAd");
 			_levelPlayBannerAd.ShowAd();
 		}
 
@@ -194,20 +197,20 @@ namespace ManagersSpace
 		}
 
 		private UnityAction _onAdSuccess;
-		private bool isRewared;
+		private bool isRewarded;
 
 		private void OnAdRewarded(LevelPlayAdInfo info, LevelPlayReward reward)
 		{
-			isRewared = true;
+			isRewarded = true;
 		}
 
-		private void OnRewaredAdClosed(LevelPlayAdInfo obj)
+		private void OnRewardedAdClosed(LevelPlayAdInfo obj)
 		{
 			isRewardAdShowing = false;
 
-			if (isRewared)
+			if (isRewarded)
 				_onAdSuccess?.Invoke();
-			
+
 			_onAdSuccess = null;
 		}
 	}
