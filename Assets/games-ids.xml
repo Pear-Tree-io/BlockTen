@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Google Play game services IDs. Save this file as res/values/games-ids.xml in your project.-->
+<resources>
+  <!--app_id-->
+  <string name="app_id" translatable="false">343009979230</string>
+  <!--package_name-->
+  <string name="package_name" translatable="false">com.PearTree.BlockTen</string>
+  <!--leaderboard HighScore-->
+  <string name="leaderboard_highscore" translatable="false">CgkI3tbz5_0JEAIQAQ</string>
+</resources>
