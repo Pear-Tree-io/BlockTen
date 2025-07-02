@@ -2498,8 +2498,6 @@ MonoBehaviour:
   - {fileID: 1635143764}
   scaleAtSpawn: 0.7
   revivePanel: {fileID: 3409296709116003785}
-  reviveCountDown: 3
-  countDownText: {fileID: 1653693490}
   handPrefab: {fileID: 5317685900206151128, guid: 8d28c7129f53b964c8fce8826f31e485, type: 3}
   tutorialStartPoint: {fileID: 1985337837}
   handMoveDuration: 1
@@ -3762,7 +3760,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.78431374}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.39215687}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5254,17 +5252,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &1653693490 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8230889642053032905, guid: 215c7194d01080940af15079ccd2d22f, type: 3}
-  m_PrefabInstance: {fileID: 56760712708139598}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1730308212
 GameObject:
   m_ObjectHideFlags: 0
@@ -7218,6 +7205,10 @@ PrefabInstance:
     - target: {fileID: 2667875627541646785, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       propertyPath: _pointerUpAction.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3074670440835584023, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3365145753290499821, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       propertyPath: m_IsActive

@@ -22,9 +22,6 @@ public class SpawnManager : MonoBehaviour
 
     public GameObject revivePanel;
     private bool isRevive = false;
-    private bool isGameOver = false;
-    [SerializeField] private int reviveCountDown = 3;
-    [SerializeField] private TMP_Text countDownText;
 
     private bool tutorialActive = true;
     private Coroutine tutorialCoroutine;
@@ -285,22 +282,6 @@ public class SpawnManager : MonoBehaviour
         placedCount = 0;
     }
 
-    /// <summary>
-    /// Call this from your UI Button's OnClick.
-    /// Destroys any unplaced composites in the spawn points and refills them.
-    /// </summary>
-    public void Revive()
-    {
-        foreach (var comp in currentBlocks)
-        {
-            if (comp != null)
-                Destroy(comp.gameObject);
-        }
-        currentBlocks.Clear();
-        placedCount = 0;
-        SpawnAllMatch();
-    }
-
     public void NotifyBlockPlaced()
     {
         placedCount++;
@@ -351,7 +332,7 @@ public class SpawnManager : MonoBehaviour
     {
         if(!isRevive)
         {
-            StartCoroutine(StartReviveCountdown());
+            StartCoroutine(AskRevive());
         }
         else
         {
@@ -360,45 +341,45 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    public IEnumerator StartReviveCountdown()
+    private IEnumerator AskRevive()
     {
         isRevive = true;
 
         modeManager.ToggleNoSpaceLeftMessage();
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
 
         revivePanel.SetActive(true);
-        while (reviveCountDown >= 0 && !isGameOver)
-        {
-            countDownText.text = reviveCountDown.ToString();
-            yield return new WaitForSeconds(1);
-            reviveCountDown--;
-        }
-        if (!isGameOver)
-        {
-            SkipRevive();
-        }
     }
 
-    public void ReviveAd() =>
-#if UNITY_EDITOR
-	    DoRevive();
-#else
-	    AdManager.Get.ShowRewardAd(DoRevive);
-#endif
-		    
+    public void ReviveAd() => 
+    #if UNITY_EDITOR
+        Revive();
+    #else
+            AdManager.Get.ShowRewardAd(Revive);
+    #endif
 
-    private void DoRevive()
+    /// <summary>
+    /// Call this from your UI Button's OnClick.
+    /// Destroys any unplaced composites in the spawn points and refills them.
+    /// </summary>
+    public void Revive()
     {
         modeManager.ToggleNoSpaceLeftMessage();
         revivePanel.SetActive(false);
-        Revive();
+
+        foreach (var comp in currentBlocks)
+        {
+            if (comp != null)
+                Destroy(comp.gameObject);
+        }
+        currentBlocks.Clear();
+        placedCount = 0;
+        SpawnAllMatch();
     }
 
     public void SkipRevive()
     {
-        isGameOver = true;
         revivePanel.SetActive(false);
         CheckRemainingSpace();
     }
