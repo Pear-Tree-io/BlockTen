@@ -353,7 +353,7 @@ public class SpawnManager : MonoBehaviour
 		revivePanel.SetActive(true);
 	}
 
-	public void ReviveAd() => AdManager.Get.ShowRewardAd(Revive);
+	public void ReviveAd() => AdManager.Get.ShowAd(Revive);
 
     /// <summary>
     /// Call this from your UI Button's OnClick.

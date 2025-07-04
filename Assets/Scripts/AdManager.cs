@@ -72,7 +72,7 @@ namespace ManagersSpace
 			}
 		}
 
-		public void ShowAd()
+		public void ShowAd(UnityAction onAdSuccess = null)
 		{
 			if (_isAdBlocked)
 				return;
@@ -80,6 +80,8 @@ namespace ManagersSpace
 			if (_levelPlayInterstitialAd.IsAdReady())
 			{
 				_levelPlayInterstitialAd.OnAdLoaded -= AdLoadedAndShow;
+				isRewarded = true;
+				_onAdSuccess = onAdSuccess;
 				_levelPlayInterstitialAd.ShowAd();
 			}
 			else
@@ -135,11 +137,14 @@ namespace ManagersSpace
 			_levelPlayBannerAd.OnAdLoaded += OnShowBannerAd;
 
 			_levelPlayInterstitialAd = new("qfvaerrxoa4actcz");
+			_levelPlayInterstitialAd.OnAdClosed += OnRewardedAdClosed;
 
+			/*
 			_levelPlayRewardedAd = new("8937rlb9efrx3270");
 			_levelPlayRewardedAd.OnAdRewarded += OnAdRewarded;
 			_levelPlayRewardedAd.OnAdClosed += OnRewardedAdClosed;
-
+			*/
+			
 #if DEVELOPMENT_BUILD
 			LevelPlay.SetMetaData("is_test_suite", "enable");
 #endif
