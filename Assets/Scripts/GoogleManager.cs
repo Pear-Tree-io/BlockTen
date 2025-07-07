@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_ANDROID
+using System;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using UnityEngine;
@@ -64,3 +65,4 @@ public class GoogleManager : MonoBehaviour
 		}
 	}
 }
+#endif

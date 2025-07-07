@@ -149,7 +149,7 @@ public class ClassicModeManager : ModeManager
         {
 	        highScore = currentScore;
 	        bestHighScoreText.text = highScore.ToString();
-	        GoogleManager.Get.ReportScore(highScore);
+	        PlatformManager.Get.ReportScore(highScore);
 	        StartCoroutine(GameOverPlay(highScorePanel, bestHighScoreText, SFXType.bestScore));
         }
         else

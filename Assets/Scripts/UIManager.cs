@@ -47,7 +47,7 @@ public class UIManager : MonoBehaviour
 
 		foreach (var bt in leaderboardButtons)
 		{
-			bt.SetOnClick(GoogleManager.Get.OnLeaderboard);
+			bt.SetOnClick(PlatformManager.Get.OnLeaderboard);
 		}
 	}
 }

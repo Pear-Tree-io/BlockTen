@@ -1537,7 +1537,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &495246132
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2338,7 +2338,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &714939327
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3079,6 +3079,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1789ed8f99084169a2a43106ee32438, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  btAdBlock: {fileID: 0}
   initRenderer: {fileID: 228774127}
   leaderboardButtons:
   - {fileID: 495246136}
@@ -3936,7 +3937,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1362982018
 RectTransform:
   m_ObjectHideFlags: 0

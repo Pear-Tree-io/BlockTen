@@ -7,20 +7,22 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:981698220306:android:2acfe9571952b1c8a1e3cb",
+        "mobilesdk_app_id": "1:981698220306:ios:4c0a640743136431a1e3cb",
         "android_client_info": {
           "package_name": "com.PearTree.BlockTen"
         }
       },
-      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCfWwJ04afjct1H-1YrRppLHtBn2Ia70_E"
+          "current_key": "AIzaSyDQyTC1uzcOoY0b8-LqaSqQRf7gB0GDIjc"
         }
       ],
       "services": {
+        "analytics_service": {
+          "status": 0
+        },
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "status": 1
         }
       }
     }
