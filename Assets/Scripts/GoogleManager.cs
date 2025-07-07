@@ -4,29 +4,16 @@ using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using UnityEngine;
 
-public class GoogleManager : MonoBehaviour
+public class AndroidPlatform : PlatformBase
 {
 	private Action onSuccess;
-	public static GoogleManager Get => _instance;
-	private static GoogleManager _instance;
 
-	private void Awake()
+	public AndroidPlatform()
 	{
-		if (_instance == null)
-		{
-			_instance = this;
-			DontDestroyOnLoad(gameObject);
-		}
-		else
-		{
-			Destroy(gameObject);
-			return;
-		}
-
 		InitializeGooglePlayGames();
 	}
-
-	public void OnLeaderboard()
+	
+	public override void OnLeaderboard()
 	{
 		PlayGamesPlatform.Instance.ShowLeaderboardUI(GPGSIds.leaderboard_highscore);
 	}
@@ -54,7 +41,7 @@ public class GoogleManager : MonoBehaviour
 		}
 	}
 
-	public void ReportScore(int highScore)
+	public override void ReportScore(int highScore)
 	{
 		if (PlayGamesPlatform.Instance.IsAuthenticated())
 			PlayGamesPlatform.Instance.ReportScore(highScore, GPGSIds.leaderboard_highscore, null);
