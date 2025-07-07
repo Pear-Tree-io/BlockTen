@@ -75,13 +75,13 @@ public class ClassicModeManager : ModeManager
         if (blockCount >= 6)
         {
             StartCoroutine(PrintStamp(fantasticStamp, SFXType.fantasticStamp));
-            Camera.main.DOShakePosition(0.3f, 0.2f, 50, 180, true);
+            Camera.main.DOShakePosition(0.2f, 0.2f, 50, 180, true);
             // AudioManager.Instance.PlaySFX(SFXType.brickBreak);
         }
         else if (blockCount > 4 || matchCount >= 2)
         {
             StartCoroutine(PrintStamp(greatStamp, SFXType.greatStamp));
-            Camera.main.DOShakePosition(0.3f, 0.1f, 30, 180, true);
+            Camera.main.DOShakePosition(0.2f, 0.1f, 30, 180, true);
         }
         else if (blockCount > 2)
         {
