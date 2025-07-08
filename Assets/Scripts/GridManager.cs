@@ -228,25 +228,35 @@ public class GridManager : MonoBehaviour
     /// </summary>
     private IEnumerator PopOne(NumberBlock b, float totalDuration)
     {
-        // 0) Flash to the destroy color immediately
-        b.SetColor(destroyHighlightColor);
-        b.spriteRenderer.sortingOrder = 3;
-        b.ValueText.sortingOrder = 4;
+	    if (b?.gameObject == false)
+		    yield break;
 
-        float half = totalDuration * 0.5f;
-        // scale up
-        for (float t = 0; t < half; t += Time.deltaTime)
-        {
-            b.transform.localScale = Vector3.one * Mathf.Lerp(1f, 1.5f, t / half);
-            yield return null;
-        }
-        // scale back
-        for (float t = 0; t < half; t += Time.deltaTime)
-        {
-            b.transform.localScale = Vector3.one * Mathf.Lerp(1.5f, 1f, t / half);
-            yield return null;
-        }
-        b.transform.localScale = Vector3.one;
+	    b.SetColor(destroyHighlightColor);
+	    b.spriteRenderer.sortingOrder = 3;
+	    b.ValueText.sortingOrder = 4;
+
+	    var half = totalDuration * 0.5f;
+
+	    for (float t = 0; t < half; t += Time.deltaTime)
+	    {
+		    if (b.gameObject == false)
+			    yield break;
+
+		    b.transform.localScale = Vector3.one * Mathf.Lerp(1f, 1.5f, t / half);
+		    yield return null;
+	    }
+
+	    for (float t = 0; t < half; t += Time.deltaTime)
+	    {
+		    if (b.gameObject == false)
+			    yield break;
+
+		    b.transform.localScale = Vector3.one * Mathf.Lerp(1.5f, 1f, t / half);
+		    yield return null;
+	    }
+
+	    if (b.gameObject == false)
+		    b.transform.localScale = Vector3.one;
     }
 
     // Helper to find a block's grid coords
