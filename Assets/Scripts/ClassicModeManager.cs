@@ -32,6 +32,7 @@ public class ClassicModeManager : ModeManager
     public GameObject highScorePanel;
     public TMP_Text bestHighScoreText;
 
+    public GameObject tutorialPanel;
     public GameObject noSpaceLeft;
 
     public GameObject goodStamp;
@@ -64,6 +65,10 @@ public class ClassicModeManager : ModeManager
         highScoreText.text = "" + highScore;
         base.Start();
 
+        if (!CheckTutorial())
+        {
+            tutorialPanel.SetActive(true);
+        }
     }
 
     /// <summary>
