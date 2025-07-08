@@ -9,6 +9,8 @@ public class PlatformManager : MonoBehaviour
 
 	private void Awake()
 	{
+		_instance = this;
+		
 #if UNITY_ANDROID
 		targetPlatform = new AndroidPlatform();
 #elif UNITY_IOS
