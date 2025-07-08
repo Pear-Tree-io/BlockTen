@@ -129,7 +129,7 @@ public class DraggableCompositeBlock : MonoBehaviour,
     {
         if (placed) return;
 
-        if (ClassicModeManager.CheckTutorial() == true)
+        if (ClassicModeManager.Instance.tutorialPanel.activeSelf)
         {
             ClassicModeManager.Instance.tutorialPanel.SetActive(false);
         }
