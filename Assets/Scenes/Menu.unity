@@ -139,6 +139,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 1437287252600226660, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2556296380631174647, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -217,12 +221,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3365145753290499821, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3712450980141214875, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       propertyPath: m_SizeDelta.y
       value: 750
       objectReference: {fileID: 0}
+    - target: {fileID: 3750601535199584333, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 0a1a2829c8fb9a04d9d480ea3ba26744, type: 3}
     - target: {fileID: 3855696816424137435, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       propertyPath: m_SizeDelta.y
       value: 300
@@ -863,7 +871,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &423891891
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1320,6 +1328,10 @@ PrefabInstance:
     - target: {fileID: 324657559963133899, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
       propertyPath: m_Name
       value: AudioManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 2267895271325434784, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
+      propertyPath: isBgmOn
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5422279800677283105, guid: fc5663b0787d0774da8873b385994b7d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2145,7 +2157,7 @@ SpriteRenderer:
   m_SortingLayerID: -593811443
   m_SortingLayer: -1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1208040086343421634, guid: 946613929327c48029d9b66c82b57417, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 946613929327c48029d9b66c82b57417, type: 3}
   m_Color: {r: 0.81568635, g: 0.5176471, b: 0.9921569, a: 1}
   m_FlipX: 0
   m_FlipY: 0

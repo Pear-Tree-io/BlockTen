@@ -38,6 +38,7 @@ public class ClassicModeManager : ModeManager
     public GameObject goodStamp;
     public GameObject greatStamp;
     public GameObject fantasticStamp;
+    public Animation anim;
 
     public ParticleSystem fantasticEffect;
     public ParticleSystem greatEffect;
@@ -79,6 +80,7 @@ public class ClassicModeManager : ModeManager
         
         if (blockCount >= 6)
         {
+	        anim.Play();
             StartCoroutine(PrintStamp(fantasticStamp, SFXType.fantasticStamp));
             Camera.main.DOShakePosition(0.2f, 0.2f, 50, 180, true);
             // AudioManager.Instance.PlaySFX(SFXType.brickBreak);

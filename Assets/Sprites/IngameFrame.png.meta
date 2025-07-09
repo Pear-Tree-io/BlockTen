@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9433bd41f18d5204b8d18d6b33376aa9
+guid: 5214c5c4b84b169489c981dba60252ea
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5558262114745703997
-    second: Sleepmode_icon_play_0
+      213: -1356739095887486737
+    second: IngameFrame_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,11 +48,11 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteBorder: {x: 70, y: 70, z: 70, w: 70}
   spriteGenerateFallbackPhysicsShape: 0
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -126,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Sleepmode_icon_play_0
+      name: IngameFrame_0
       rect:
         serializedVersion: 2
-        x: 14
-        y: 10
-        width: 22
-        height: 27
+        x: 45
+        y: 44
+        width: 231
+        height: 231
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3c1221a3e061dd2b0800000000000000
-      internalID: -5558262114745703997
+      spriteID: fe0edb80bf4eb2de0800000000000000
+      internalID: -1356739095887486737
       vertices: []
       indices: 
       edges: []
@@ -152,7 +152,7 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 0
+    internalID: 1537655665
     vertices: []
     indices: 
     edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Sleepmode_icon_play_0: -5558262114745703997
+      IngameFrame_0: -1356739095887486737
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

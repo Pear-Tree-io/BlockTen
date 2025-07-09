@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9433bd41f18d5204b8d18d6b33376aa9
+guid: 0e11a37a83ef059459df9647a31abadc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5558262114745703997
-    second: Sleepmode_icon_play_0
+      213: 2406069391815762487
+    second: ingameFrameBackground_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,7 +48,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Sleepmode_icon_play_0
+      name: ingameFrameBackground_0
       rect:
         serializedVersion: 2
-        x: 14
-        y: 10
-        width: 22
-        height: 27
+        x: 3
+        y: 4
+        width: 313
+        height: 313
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3c1221a3e061dd2b0800000000000000
-      internalID: -5558262114745703997
+      spriteID: 7326e1c2d53146120800000000000000
+      internalID: 2406069391815762487
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Sleepmode_icon_play_0: -5558262114745703997
+      ingameFrameBackground_0: 2406069391815762487
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
