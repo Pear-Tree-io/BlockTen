@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4265777920306125360}
   - component: {fileID: 305068191434487538}
   m_Layer: 0
-  m_Name: Blocks 19
+  m_Name: Blocks 24
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,10 +32,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7723113270901706842}
   - {fileID: 5673537225438753337}
   - {fileID: 3304399865411822853}
   - {fileID: 3739272758852625785}
-  - {fileID: 7723113270901706842}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4759030608532138999
@@ -147,7 +147,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 332315775509818947, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 332315775509818947, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: m_LocalPosition.z
@@ -184,7 +184,7 @@ PrefabInstance:
     - target: {fileID: 4583721792968463117, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: neighborLeft
       value: 
-      objectReference: {fileID: 640822880399775799}
+      objectReference: {fileID: 8483741334306557815}
     - target: {fileID: 4630699909476805297, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: m_Name
       value: Block_Child (2)
@@ -224,7 +224,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 332315775509818947, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 332315775509818947, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: m_LocalPosition.y
@@ -265,15 +265,7 @@ PrefabInstance:
     - target: {fileID: 4583721792968463117, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: neighborUp
       value: 
-      objectReference: {fileID: 8483741334306557815}
-    - target: {fileID: 4583721792968463117, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
-      propertyPath: neighborLeft
-      value: 
       objectReference: {fileID: 5777620627207548180}
-    - target: {fileID: 4583721792968463117, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
-      propertyPath: neighborRight
-      value: 
-      objectReference: {fileID: 1647103512689449035}
     - target: {fileID: 4630699909476805297, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: m_Name
       value: Block_Child (1)
@@ -354,7 +346,15 @@ PrefabInstance:
     - target: {fileID: 4583721792968463117, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: neighborDown
       value: 
-      objectReference: {fileID: 640822880399775799}
+      objectReference: {fileID: 0}
+    - target: {fileID: 4583721792968463117, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
+      propertyPath: neighborLeft
+      value: 
+      objectReference: {fileID: 5777620627207548180}
+    - target: {fileID: 4583721792968463117, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
+      propertyPath: neighborRight
+      value: 
+      objectReference: {fileID: 1647103512689449035}
     - target: {fileID: 4630699909476805297, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: m_Name
       value: Block_Child
@@ -398,7 +398,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 332315775509818947, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 332315775509818947, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: m_LocalPosition.z
@@ -433,9 +433,13 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4583721792968463117, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
-      propertyPath: neighborRight
+      propertyPath: neighborDown
       value: 
       objectReference: {fileID: 640822880399775799}
+    - target: {fileID: 4583721792968463117, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
+      propertyPath: neighborRight
+      value: 
+      objectReference: {fileID: 8483741334306557815}
     - target: {fileID: 4630699909476805297, guid: 50cb3965ff7453b4f8f613aada519197, type: 3}
       propertyPath: m_Name
       value: Block_Child (3)

@@ -20,6 +20,7 @@ public class ClassicModeManager : ModeManager
     private int currentScore;
     private int comboMultiplier = 1;
     private int adCount = 0;
+    private int streakMultiplier = 0;
 
     private const string HighScoreKey = "HighScore";
     private const string TutorialKey = "Tutorial";
@@ -38,6 +39,9 @@ public class ClassicModeManager : ModeManager
     public GameObject goodStamp;
     public GameObject greatStamp;
     public GameObject fantasticStamp;
+    public GameObject goodStreak;
+    public GameObject greatStreak;
+    public GameObject fantasticStreak;
     public Animation anim;
 
     public ParticleSystem fantasticEffect;
@@ -77,32 +81,49 @@ public class ClassicModeManager : ModeManager
     /// </summary>
     public override void OnMatchBlocksDestroyed(int matchCount, int blockCount)
     {
-        
+
         if (blockCount >= 6)
         {
-	        anim.Play();
-            StartCoroutine(PrintStamp(fantasticStamp, SFXType.fantasticStamp));
+            streakMultiplier++;
+            anim.Play();
+            StartCoroutine(PrintStamp(fantasticStamp, SFXType.fantasticStamp, fantasticStreak));
             Camera.main.DOShakePosition(0.2f, 0.2f, 50, 180, true);
             // AudioManager.Instance.PlaySFX(SFXType.brickBreak);
         }
         else if (blockCount > 4 || matchCount >= 2)
         {
-            StartCoroutine(PrintStamp(greatStamp, SFXType.greatStamp));
-            Camera.main.DOShakePosition(0.2f, 0.1f, 30, 180, true);
+            streakMultiplier++;
+            StartCoroutine(PrintStamp(greatStamp, SFXType.greatStamp, greatStreak));
+            Camera.main.DOShakePosition(0.2f, 0.1f, 30, 180, true);   
         }
         else if (blockCount > 2)
         {
-            StartCoroutine(PrintStamp(goodStamp, SFXType.goodStamp));
+            streakMultiplier++;
+            StartCoroutine(PrintStamp(goodStamp, SFXType.goodStamp, goodStreak));
         }
         else if (blockCount > 0)
         {
+            streakMultiplier = 0;
             // AudioManager.Instance.PlaySFX(SFXType.noStamp);
         }
-
+        else
+        {
+            streakMultiplier = 0;
+        }
 
         //comboMultiplier = matchCount;
 
-        var pointsGained = blockCount * matchCount * 10; //CalculateScore(matchCount);
+        var pointsGained = 0;
+
+        if(streakMultiplier > 0)
+        {
+            pointsGained = blockCount * matchCount * 10 * streakMultiplier;
+        }
+        else
+        {
+            pointsGained = blockCount * matchCount * 10;
+        }
+
         int oldScore = currentScore;
         int newScore = oldScore + pointsGained;
         currentScore = newScore;
@@ -268,10 +289,16 @@ public class ClassicModeManager : ModeManager
         SceneManager.LoadScene("Classic");
     }
 
-    private IEnumerator PrintStamp(GameObject stamp ,SFXType type)
+    private IEnumerator PrintStamp(GameObject stamp ,SFXType type, GameObject streak)
     {
         stamp.SetActive(true);
         stamp.GetComponent<Animator>().Play("StampAnimation");
+
+        if(streakMultiplier > 1)
+        {
+            streak.SetActive(true);
+            streak.GetComponent<TMP_Text>().text = streakMultiplier.ToString();
+        }
 
         yield return new WaitForSeconds(0.3456f);
         switch (type)
@@ -294,6 +321,7 @@ public class ClassicModeManager : ModeManager
         
         yield return new WaitForSeconds(0.1f);
         stamp.SetActive(false);
+        streak.SetActive(false);
     }
 
     public int Score => currentScore;

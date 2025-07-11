@@ -18,11 +18,11 @@ public class NumberBlock : MonoBehaviour
 
     // --- Preview animation ---
     [SerializeField] private Color previewColor = Color.yellow;
-    private Coroutine _previewRoutine;
+    private readonly Coroutine _previewRoutine;
     private Color _originalColor;
 
     // 55% chance to pick from [1–4], else [5–9]
-    private const float range1to4Chance = 0.6f;
+    //private const float range1to4Chance = 0.6f;
 
     private void Awake()
     {
@@ -45,13 +45,13 @@ public class NumberBlock : MonoBehaviour
         if (valueText == null)
             valueText = GetComponentInChildren<TextMeshPro>();
 
-        //Value = Random.Range(1, 8);
+        Value = Random.Range(1, 8);
 
-        float r = Random.value;
+        /*float r = Random.value;
         if (r < range1to4Chance)
             Value = Random.Range(1, 5);   // 1,2,3,4
         else
-            Value = Random.Range(5, 8);  // 5,6,7,8,9
+            Value = Random.Range(5, 8);  // 5,6,7,8,9*/
 
         valueText.text = Value.ToString();
     }
