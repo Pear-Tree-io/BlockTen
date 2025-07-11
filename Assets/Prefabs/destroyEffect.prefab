@@ -4905,7 +4905,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 245065c685e65834db4a074487bc3141, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifetime: 1
+  lifetime: 2
 --- !u!1001 &1005073780953852966
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4917,6 +4917,10 @@ PrefabInstance:
     - target: {fileID: 164546, guid: e6e6f5beacfc73b41883f0becc4e2a67, type: 3}
       propertyPath: m_Name
       value: FireworkRed
+      objectReference: {fileID: 0}
+    - target: {fileID: 188176, guid: e6e6f5beacfc73b41883f0becc4e2a67, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 476082, guid: e6e6f5beacfc73b41883f0becc4e2a67, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4967,8 +4971,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 19823922, guid: e6e6f5beacfc73b41883f0becc4e2a67, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 19823922, guid: e6e6f5beacfc73b41883f0becc4e2a67, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 19823922, guid: e6e6f5beacfc73b41883f0becc4e2a67, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
-      value: 50
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 19916420, guid: e6e6f5beacfc73b41883f0becc4e2a67, type: 3}
       propertyPath: m_SortingOrder
