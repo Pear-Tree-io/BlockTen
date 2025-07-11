@@ -21,9 +21,6 @@ public class NumberBlock : MonoBehaviour
     private readonly Coroutine _previewRoutine;
     private Color _originalColor;
 
-    // 55% chance to pick from [1–4], else [5–9]
-    //private const float range1to4Chance = 0.6f;
-
     private void Awake()
     {
         // cache sprite renderer
@@ -46,12 +43,6 @@ public class NumberBlock : MonoBehaviour
             valueText = GetComponentInChildren<TextMeshPro>();
 
         Value = Random.Range(1, 8);
-
-        /*float r = Random.value;
-        if (r < range1to4Chance)
-            Value = Random.Range(1, 5);   // 1,2,3,4
-        else
-            Value = Random.Range(5, 8);  // 5,6,7,8,9*/
 
         valueText.text = Value.ToString();
     }
