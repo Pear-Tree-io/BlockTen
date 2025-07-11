@@ -47,7 +47,7 @@ public class ClassicModeManager : ModeManager
     public ParticleSystem fantasticEffect;
     public ParticleSystem greatEffect;
     public ParticleSystem goodEffect;
-    
+
     public bool isHighScore;
 
     protected override void Awake()
@@ -300,7 +300,7 @@ public class ClassicModeManager : ModeManager
             streak.GetComponent<TMP_Text>().text = streakMultiplier.ToString();
         }
 
-        yield return new WaitForSeconds(0.3456f);
+        //yield return new WaitForSeconds(0.3456f);
         switch (type)
         {
 	        case SFXType.fantasticStamp:
@@ -319,7 +319,7 @@ public class ClassicModeManager : ModeManager
         
         AudioManager.Instance.PlaySFX(type);
         
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.5f);
         stamp.SetActive(false);
         streak.SetActive(false);
     }
