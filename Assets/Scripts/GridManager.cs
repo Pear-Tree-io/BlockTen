@@ -28,7 +28,11 @@ public class GridManager : MonoBehaviour
 
 	public bool isPopup = false;
 
-	private void Awake()
+    [Header("Preview Shadows")]
+    public GameObject shadowPrefab;             // assign a semi-transparent sprite prefab
+    private SpriteRenderer[,] shadows;          // one per cell
+
+    private void Awake()
 	{
 		if (Instance != null && Instance != this)
 			Destroy(gameObject);
@@ -48,17 +52,33 @@ public class GridManager : MonoBehaviour
 			         h / 2f - cellSize / 2f,
 			         0f);
 
-		// for (int x = 0; x < columns; x++)
-		//     for (int y = 0; y < rows; y++)
-		//     {
-		//         occupied[x, y] = false;
-		//         gridBlocks[x, y] = null;
-		//         Instantiate(cellPrefab,
-		//             origin + new Vector3(x * cellSize, y * cellSize, 0f),
-		//             Quaternion.identity,
-		//             transform);
-		//     }
-	}
+        // 1) Pre-spawn all shadows
+        shadows = new SpriteRenderer[columns, rows];
+        for (int x = 0; x < columns; x++)
+            for (int y = 0; y < rows; y++)
+            {
+                var go = Instantiate(
+                    shadowPrefab,
+                    GetCellCenter(x, y),
+                    Quaternion.identity,
+                    transform        // parent under your grid
+                );
+                var sr = go.GetComponent<SpriteRenderer>();
+                sr.enabled = false;              // start hidden
+                shadows[x, y] = sr;
+            }
+
+        // for (int x = 0; x < columns; x++)
+        //     for (int y = 0; y < rows; y++)
+        //     {
+        //         occupied[x, y] = false;
+        //         gridBlocks[x, y] = null;
+        //         Instantiate(cellPrefab,
+        //             origin + new Vector3(x * cellSize, y * cellSize, 0f),
+        //             Quaternion.identity,
+        //             transform);
+        //     }
+    }
 
 	public void RegisterBlock(NumberBlock block, int x, int y)
 	{
@@ -601,7 +621,30 @@ public class GridManager : MonoBehaviour
 		return gridBlocks[x, y];
 	}
 
-	[Header("End Grid Initialization Settings")]
+    /// <summary>
+    /// Turns on the shadow at each given cell, and hides the rest.
+    /// </summary>
+    public void ShowShadows(IEnumerable<Vector2Int> cells)
+    {
+        ClearShadows();
+        foreach (var c in cells)
+        {
+            if (c.x >= 0 && c.x < columns && c.y >= 0 && c.y < rows)
+                shadows[c.x, c.y].enabled = true;
+        }
+    }
+
+    /// <summary>
+    /// Hide all preview shadows.
+    /// </summary>
+    public void ClearShadows()
+    {
+        for (int x = 0; x < columns; x++)
+            for (int y = 0; y < rows; y++)
+                shadows[x, y].enabled = false;
+    }
+
+    [Header("End Grid Initialization Settings")]
 	[SerializeField]
 	private float initEndDelay = 0.05f;
 	[SerializeField]

@@ -2857,7 +2857,7 @@ MonoBehaviour:
   _pointerUpAction:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1822594366}
         m_TargetAssemblyTypeName: ModeManager, Assembly-CSharp
         m_MethodName: ToggleSettings
         m_Mode: 1
@@ -3077,6 +3077,7 @@ MonoBehaviour:
   currentModeManager: {fileID: 1822594366}
   inputBlocker: {fileID: 451936142}
   isPopup: 0
+  shadowPrefab: {fileID: 4630699909476805297, guid: a23dd2338b4935a48959f08474b6c091, type: 3}
   initEndDelay: 0.05
   gameOverTile: {fileID: 4630699909476805297, guid: 5a9bb2ace39d92b4d8dce66555671415, type: 3}
 --- !u!4 &859904051
@@ -8430,7 +8431,7 @@ PrefabInstance:
     - target: {fileID: 8407125561130032260, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1822594366}
     - target: {fileID: 8407125561130032260, guid: 6ea239ff6aff9804987e4095da31ab93, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: ToggleSettings

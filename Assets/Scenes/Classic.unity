@@ -2840,6 +2840,7 @@ MonoBehaviour:
   currentModeManager: {fileID: 216924797}
   inputBlocker: {fileID: 451936142}
   isPopup: 1
+  shadowPrefab: {fileID: 4630699909476805297, guid: a23dd2338b4935a48959f08474b6c091, type: 3}
   initEndDelay: 0.05
   gameOverTile: {fileID: 4630699909476805297, guid: 5a9bb2ace39d92b4d8dce66555671415, type: 3}
 --- !u!4 &859904051

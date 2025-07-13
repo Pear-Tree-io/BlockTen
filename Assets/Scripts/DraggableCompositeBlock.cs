@@ -156,11 +156,19 @@ public class DraggableCompositeBlock : MonoBehaviour,
         // 3) move the composite
         transform.position = worldPt + dynamicOffset;
 
+        // 1) clear any old shadows
+        GridManager.Instance.ClearShadows();
+
         // 2) Try placing the whole composite in one shot
         if (!GridManager.Instance.TryPlaceCompositeAt(this, out var placement))
             return;
 
-        // 3) Figure out which cells would clear if dropped here
+        // 3) show shadows at each spot this composite would occupy
+        var landingCells = placement.Values;        // each Vector2Int(x,y)
+        GridManager.Instance.ShowShadows(landingCells);
+
+
+        /*// 3) Figure out which cells would clear if dropped here
         var runs = GridManager.Instance.GetPreviewRuns(placement);
         var matchedCells = new HashSet<Vector2Int>(runs.SelectMany(r => r));
 
@@ -183,13 +191,15 @@ public class DraggableCompositeBlock : MonoBehaviour,
                 nb.PlayPreview();
             else
                 nb.StopPreview();
-        }
+        }*/
     }
 
     public void OnPointerUp(PointerEventData e)
     {
         // Clear any running preview animations on the grid
         GridManager.Instance.ClearAllPreviews();
+        // 1) clear any old shadows
+        GridManager.Instance.ClearShadows();
 
         // 0) First: stop *all* play‐preview on the dragged blocks
         foreach (var nb in children)
