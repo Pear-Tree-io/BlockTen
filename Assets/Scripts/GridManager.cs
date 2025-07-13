@@ -231,10 +231,10 @@ public class GridManager : MonoBehaviour
             {
                 foreach (var b in run)
                 {
-                    StartCoroutine(PopOne(b, 0.3f));
+                    StartCoroutine(PopOne(b, 0.2f));
                 }
             }
-            yield return new WaitForSeconds(0.4f);
+            yield return new WaitForSeconds(0.3f);
         }
 
 		// 2) Spawn VFX, free cells & destroy objects
@@ -288,8 +288,8 @@ public class GridManager : MonoBehaviour
 			b.transform.localScale = Vector3.one;
 	}
 
-	// Helper to find a block's grid coords
-	private Vector2Int FindBlockCoords(NumberBlock b)
+    // Helper to find a block's grid coords
+    private Vector2Int FindBlockCoords(NumberBlock b)
 	{
 		for (int x = 0; x < columns; x++)
 		for (int y = 0; y < rows; y++)
