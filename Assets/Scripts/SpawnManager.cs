@@ -15,39 +15,21 @@ public class SpawnManager : MonoBehaviour
 	private int placedCount;
 	private List<DraggableCompositeBlock> currentBlocks = new();
 
-	private ClassicModeManager modeManager;
+	public ModeManager modeManager;
 
 	public float scaleAtSpawn = 0.7f;
 
 	public GameObject revivePanel;
 	private bool isRevive = false;
 
-	private bool tutorialActive = true;
-	private Coroutine tutorialCoroutine;
-	private bool isTutorialPlayed = false;
-
 	private void Start()
 	{
-		modeManager = FindAnyObjectByType<ClassicModeManager>();
 		placedCount = 0;
-
-		if (ClassicModeManager.CheckTutorial() == false)
-		{
-			SpawnAllMatch();
-		}
-		else
-		{
-			SpawnAll();
-		}
+		SpawnAll();
 	}
 
 	public void SpawnAll()
 	{
-		if (ClassicModeManager.CheckTutorial())
-		{
-			StopTutorial();
-		}
-
 		// 1) If there's not room for a full wave, Game Over
 		if (!GridManager.Instance.HasFreeSlots(spawnPoints.Length))
 		{
@@ -164,12 +146,6 @@ public class SpawnManager : MonoBehaviour
 
 	public void SpawnAllMatch()
 	{
-		if (ClassicModeManager.CheckTutorial() == false)
-		{
-			tutorialCoroutine = StartCoroutine(TutorialHandLoop());
-			modeManager.TutorialPlayed();
-		}
-
 		// 1) If there's not room for a full wave, Game Over
 		if (!GridManager.Instance.HasFreeSlots(spawnPoints.Length))
 		{
@@ -476,26 +452,5 @@ public class SpawnManager : MonoBehaviour
 		}
 		hand.transform.position = endPos;
 		Destroy(hand);
-	}
-
-	/// <summary>
-	/// Repeats the tutorial hand animation until the tutorial is stopped.
-	/// </summary>
-	private IEnumerator TutorialHandLoop()
-	{
-		while (tutorialActive)
-		{
-			PlayTutorialHandAnimation();
-			yield return new WaitForSeconds(handMoveDuration + 0.5f);
-		}
-	}
-
-	/// <summary>
-	/// Stops the tutorial hand loop.
-	/// </summary>
-	public void StopTutorial()
-	{
-		tutorialActive = false;
-		if (tutorialCoroutine != null) StopCoroutine(tutorialCoroutine);
 	}
 }

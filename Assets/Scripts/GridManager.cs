@@ -22,9 +22,11 @@ public class GridManager : MonoBehaviour
 	[Tooltip("Color to flash on blocks just before they pop-and-destroy")]
 	public Color destroyHighlightColor = Color.red;
 	public SpawnManager spawnManager;
-	public GameObject currentModeManager;
+	public ModeManager currentModeManager;
 	[SerializeField]
 	private GameObject inputBlocker;
+
+	public bool isPopup = false;
 
 	private void Awake()
 	{
@@ -179,7 +181,7 @@ public class GridManager : MonoBehaviour
 		}
 
 		// 3) scoring/combo
-		currentModeManager.GetComponent<ModeManager>().OnMatchBlocksDestroyed(matchedCount, destroyedCount);
+		currentModeManager.OnMatchBlocksDestroyed(matchedCount, destroyedCount);
 	}
 
 	private IEnumerator PlayDestroySequence(List<List<Vector2Int>> runs)
@@ -209,16 +211,31 @@ public class GridManager : MonoBehaviour
 		// stash it so ModeManager.ShowTextOnCanvas uses THIS position
 		LastPlacedPosition = center;
 
-		// 1) Animate each run in order
-		foreach (var run in allRuns)
+		if (isPopup)
 		{
-			foreach (var b in run)
+			// 1) Animate each run in order
+			foreach (var run in allRuns)
 			{
-				StartCoroutine(PopOne(b, 0.3f));
-			}
+				foreach (var b in run)
+				{
+					StartCoroutine(PopOne(b, 0.3f));
+				}
 
-			yield return new WaitForSeconds(0.4f);
+				yield return new WaitForSeconds(0.4f);
+			}
 		}
+		else
+		{
+            // 1) Animate each run in order
+            foreach (var run in allRuns)
+            {
+                foreach (var b in run)
+                {
+                    StartCoroutine(PopOne(b, 0.3f));
+                }
+            }
+            yield return new WaitForSeconds(0.4f);
+        }
 
 		// 2) Spawn VFX, free cells & destroy objects
 		foreach (var b in allBlocks)
@@ -596,7 +613,7 @@ public class GridManager : MonoBehaviour
 	public void InitializeEndGrid()
 	{
 		StartCoroutine(InitializeEndGridRoutine());
-		AudioManager.Instance.PlaySFX(ClassicModeManager.Instance.isHighScore ? SFXType.GameOverHighScore : SFXType.GameOver);
+		AudioManager.Instance.PlaySFX(currentModeManager.isHighScore ? SFXType.GameOverHighScore : SFXType.GameOver);
 	}
 
 	private IEnumerator InitializeEndGridRoutine()

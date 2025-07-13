@@ -17,6 +17,8 @@ public abstract class ModeManager : MonoBehaviour
     public GameObject sfxOff;
     public GameObject vibOff;
 
+    public bool isHighScore;
+
     protected virtual void Awake()
     {
         
@@ -105,6 +107,8 @@ public abstract class ModeManager : MonoBehaviour
 
         textPrefab.SetActive(false);
     }
+
+    public virtual void SetNoSpaceLeftMessage(bool active) { }
 
     public virtual void GameOver() 
     {

@@ -129,11 +129,6 @@ public class DraggableCompositeBlock : MonoBehaviour,
     {
         if (placed) return;
 
-        if (ClassicModeManager.Instance.tutorialPanel.activeSelf)
-        {
-            ClassicModeManager.Instance.tutorialPanel.SetActive(false);
-        }
-
         AudioManager.Instance.PlaySFX(SFXType.pickUp);
         // Grow back to full size on grab
         transform.localScale = Vector3.one;

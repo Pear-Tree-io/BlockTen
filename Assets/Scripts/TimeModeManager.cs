@@ -5,25 +5,21 @@ using System.Collections;
 using ManagersSpace;
 using DG.Tweening;
 
-public class ClassicModeManager : ModeManager
+public class TimeModeManager : ModeManager
 {
-    public static ClassicModeManager Instance { get; private set; }
+    public static TimeModeManager Instance { get; private set; }
 
     [Header("UI")]
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text highScoreText;
-    [SerializeField] private GameObject comboTextPrefab;
     [SerializeField] private GameObject scoreTextPrefab;
     private Canvas _canvas;
 
     private int highScore = 0;
     private int currentScore;
-    private int comboMultiplier = 1;
     private int adCount = 0;
-    private int streakMultiplier = 0;
 
-    private const string HighScoreKey = "HighScore";
-    private const string TutorialKey = "Tutorial";
+    private const string HighScoreKey = "TimeHighScore";
     private const string AdKey = "Ad";
 
     public GameObject gameOverPanel;
@@ -33,16 +29,11 @@ public class ClassicModeManager : ModeManager
     public GameObject highScorePanel;
     public TMP_Text bestHighScoreText;
 
-    public GameObject tutorialPanel;
     public GameObject noSpaceLeft;
 
     public GameObject goodStamp;
     public GameObject greatStamp;
     public GameObject fantasticStamp;
-    public GameObject goodStreak;
-    public GameObject greatStreak;
-    public GameObject fantasticStreak;
-    public Animation anim;
 
     public ParticleSystem fantasticEffect;
     public ParticleSystem greatEffect;
@@ -61,17 +52,10 @@ public class ClassicModeManager : ModeManager
 
     protected override void Start()
     {
-        Debug.Log(PlayerPrefs.GetInt(TutorialKey));
-
         // Cache the canvas for world-to-screen conversions
         _canvas = scoreText.GetComponentInParent<Canvas>();
         highScoreText.text = "" + highScore;
         base.Start();
-
-        if (!CheckTutorial())
-        {
-            tutorialPanel.SetActive(true);
-        }
     }
 
     /// <summary>
@@ -82,46 +66,24 @@ public class ClassicModeManager : ModeManager
 
         if (blockCount >= 6)
         {
-            streakMultiplier++;
-            anim.Play();
-            StartCoroutine(PrintStamp(fantasticStamp, SFXType.fantasticStamp, fantasticStreak));
+            StartCoroutine(PrintStamp(fantasticStamp, SFXType.fantasticStamp));
             Camera.main.DOShakePosition(0.2f, 0.2f, 50, 180, true);
             // AudioManager.Instance.PlaySFX(SFXType.brickBreak);
         }
         else if (blockCount > 4 || matchCount >= 2)
         {
-            streakMultiplier++;
-            StartCoroutine(PrintStamp(greatStamp, SFXType.greatStamp, greatStreak));
+            StartCoroutine(PrintStamp(greatStamp, SFXType.greatStamp));
             Camera.main.DOShakePosition(0.2f, 0.1f, 30, 180, true);   
         }
         else if (blockCount > 2)
         {
-            streakMultiplier++;
-            StartCoroutine(PrintStamp(goodStamp, SFXType.goodStamp, goodStreak));
-        }
-        else if (blockCount > 0)
-        {
-            streakMultiplier = 0;
-            // AudioManager.Instance.PlaySFX(SFXType.noStamp);
-        }
-        else
-        {
-            streakMultiplier = 0;
+            StartCoroutine(PrintStamp(goodStamp, SFXType.goodStamp));
         }
 
         //comboMultiplier = matchCount;
 
-        var pointsGained = 0;
-
-        if(streakMultiplier > 0)
-        {
-            pointsGained = blockCount * matchCount * 10 * streakMultiplier;
-        }
-        else
-        {
-            pointsGained = blockCount * matchCount * 10;
-        }
-
+        var pointsGained = blockCount;
+        
         int oldScore = currentScore;
         int newScore = oldScore + pointsGained;
         currentScore = newScore;
@@ -139,14 +101,9 @@ public class ClassicModeManager : ModeManager
 
         if (currentScore > highScore)
         {
-	        isHighScore = true;
+	        base.isHighScore = true;
             highScoreText.text = "" + currentScore;
         }
-    }
-
-    protected override int CalculateScore(int destroyedCount)
-    {
-        return destroyedCount * 10 * comboMultiplier;
     }
 
     /// <summary>
@@ -157,9 +114,8 @@ public class ClassicModeManager : ModeManager
 	    base.ResetMode();
 	    
         currentScore = 0;
-        comboMultiplier = 1;
         scoreText.text = "0";
-        isHighScore = false;
+        base.isHighScore = false;
     }
 
     public override void GameOver()
@@ -203,28 +159,10 @@ public class ClassicModeManager : ModeManager
         highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
     }
 
-    public void TutorialPlayed()
-    {
-        PlayerPrefs.SetInt(TutorialKey, 1);
-        PlayerPrefs.Save();
-    }
-
-    public static bool CheckTutorial()
-    {
-        if (PlayerPrefs.GetInt(TutorialKey) == 0)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
-    public void LoadClassicScene()
+    public void LoadTimeLimitScene()
     {
         AudioManager.Instance.PlaySFX(SFXType.Button);
-        SceneManager.LoadScene("Classic");
+        SceneManager.LoadScene("TimeLimit");
     }
 
     private IEnumerator GameOverPlay(GameObject objectToActive, TMP_Text text, SFXType type)
@@ -252,7 +190,6 @@ public class ClassicModeManager : ModeManager
             waitPopup = count * 0.3f + 0.2f;
             waitTime = (count * 0.4f) + 0.75f - waitPopup;
             yield return new WaitForSeconds(waitPopup);
-            StartCoroutine(ShowTextOnCanvas(comboTextPrefab, _canvas, count, 0.5f));
         }
 
         yield return new WaitForSeconds(waitTime);
@@ -287,16 +224,10 @@ public class ClassicModeManager : ModeManager
         SceneManager.LoadScene("Classic");
     }
 
-    private IEnumerator PrintStamp(GameObject stamp ,SFXType type, GameObject streak)
+    private IEnumerator PrintStamp(GameObject stamp ,SFXType type)
     {
         stamp.SetActive(true);
         stamp.GetComponent<Animator>().Play("StampAnimation");
-
-        if(streakMultiplier > 1)
-        {
-            streak.SetActive(true);
-            streak.GetComponent<TMP_Text>().text = streakMultiplier.ToString();
-        }
 
         //yield return new WaitForSeconds(0.3456f);
         switch (type)
@@ -319,7 +250,6 @@ public class ClassicModeManager : ModeManager
         
         yield return new WaitForSeconds(0.5f);
         stamp.SetActive(false);
-        streak.SetActive(false);
     }
 
     public int Score => currentScore;
