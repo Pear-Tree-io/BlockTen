@@ -2697,6 +2697,8 @@ MonoBehaviour:
   modeManager: {fileID: 216924797}
   scaleAtSpawn: 0.7
   revivePanel: {fileID: 3409296709116003785}
+  isRevive: 0
+  isTimeLimit: 0
   handPrefab: {fileID: 5317685900206151128, guid: 8d28c7129f53b964c8fce8826f31e485, type: 3}
   tutorialStartPoint: {fileID: 1985337837}
   handMoveDuration: 1

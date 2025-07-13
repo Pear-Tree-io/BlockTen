@@ -39,6 +39,8 @@ public class TimeModeManager : ModeManager
     public ParticleSystem greatEffect;
     public ParticleSystem goodEffect;
 
+    public Animator timerAnimation;
+
     protected override void Awake()
     {
 	    Instance = this;
@@ -120,6 +122,8 @@ public class TimeModeManager : ModeManager
 
     public override void GameOver()
     {
+        timerAnimation.enabled = false;
+
         if (adCount > 2)
         {
             AdManager.Get.ShowAd();
@@ -221,7 +225,7 @@ public class TimeModeManager : ModeManager
     public void Replay()
     {
         AudioManager.Instance.PlaySFX(SFXType.Button);
-        SceneManager.LoadScene("Classic");
+        SceneManager.LoadScene("TimeLimit");
     }
 
     private IEnumerator PrintStamp(GameObject stamp ,SFXType type)
