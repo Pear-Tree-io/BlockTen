@@ -2684,12 +2684,6 @@ MonoBehaviour:
   - {fileID: 4958560085060495230, guid: 321b4aaeb856b4546ba694a514576b26, type: 3}
   - {fileID: 4958560085060495230, guid: 6d3d9e4e37e4ae2499b8a8659db89dec, type: 3}
   - {fileID: 4958560085060495230, guid: a647abf3358c4cd4794073b410449e3f, type: 3}
-  - {fileID: 4958560085060495230, guid: a2325b2db56dda4419e9d4b70dd43713, type: 3}
-  - {fileID: 4958560085060495230, guid: 4ece26ac6a398494f9766559f62a3f76, type: 3}
-  - {fileID: 4958560085060495230, guid: 5cff17bc274a6ac49aae17eeb120c512, type: 3}
-  - {fileID: 4958560085060495230, guid: c7eab19deb6262a4780d150c20f58a7a, type: 3}
-  - {fileID: 4958560085060495230, guid: ad0f7dc1af5cabb40b8a82319bfee9fe, type: 3}
-  - {fileID: 4958560085060495230, guid: 8454c52cdb3ad1346bd8f5451ec48b85, type: 3}
   spawnPoints:
   - {fileID: 1985337837}
   - {fileID: 1374260335}
@@ -4576,7 +4570,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
 --- !u!114 &1404506808
 MonoBehaviour:
   m_ObjectHideFlags: 0
