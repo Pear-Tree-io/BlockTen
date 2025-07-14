@@ -5,14 +5,30 @@ using System.Collections;
 [RequireComponent(typeof(Collider2D))]
 public class NumberBlock : MonoBehaviour
 {
-    // --- Composite‐chain links (used by DraggableCompositeBlock) ---
+	private int _editorValue;
+	public int EditorValue
+	{
+		get => _editorValue;
+		set => _editorValue = Value = value;
+	}
+
+	// --- Composite‐chain links (used by DraggableCompositeBlock) ---
      public NumberBlock neighborUp;
      public NumberBlock neighborDown;
     public NumberBlock neighborLeft;
      public NumberBlock neighborRight;
 
     // --- Value and display ---
-    public int Value { get; private set; }
+    private int _value;
+    public int Value
+    {
+	    get => _value;
+	    private set
+	    {
+		    _value = value;
+		    valueText.text = Value.ToString();
+	    }
+    }
     [SerializeField] private TextMeshPro valueText;
     public SpriteRenderer spriteRenderer;
 
@@ -23,28 +39,20 @@ public class NumberBlock : MonoBehaviour
 
     private void Awake()
     {
-        // cache sprite renderer
         if (spriteRenderer == null)
             spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // grab the TMP_Text in your children
         if (valueText == null)
             valueText = GetComponentInChildren<TextMeshPro>();
     }
 
     /// <summary>
-    /// Assigns a random value between 1 and 9 using a 55/45 split,
+    /// Assigns a random value between 1 and 8 using a 55/45 split,
     /// then updates the label.
     /// </summary>
     public void AssignRandom()
     {
-        // ensure we have the text component
-        if (valueText == null)
-            valueText = GetComponentInChildren<TextMeshPro>();
-
         Value = Random.Range(1, 8);
-
-        valueText.text = Value.ToString();
     }
 
     public void OnDragStart()

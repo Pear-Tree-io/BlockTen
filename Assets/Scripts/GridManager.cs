@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using UnityEngine.InputSystem;
 
 public class GridManager : MonoBehaviour
 {
@@ -423,10 +424,10 @@ public class GridManager : MonoBehaviour
 	/// <summary>
 	/// Returns the world-space center of the cell at grid coords (x,y).
 	/// </summary>
-	public Vector3 GetCellCenter(int x, int y)
-	{
-		return origin + new Vector3(x * cellSize, y * cellSize, 0f);
-	}
+	///
+	
+	public Vector3 GetCellCenter(Vector2Int pos) => GetCellCenter(pos.x, pos.y);
+	public Vector3 GetCellCenter(int x, int y) => origin + new Vector3(x * cellSize, y * cellSize, 0f);
 
 	/// <summary>
 	/// Looks for a placement of this composite (by walking neighbor links)
@@ -513,8 +514,7 @@ public class GridManager : MonoBehaviour
 	/// Given a temporary placement of some NumberBlocks (mapping block→grid coord),
 	/// returns all the horizontal/vertical runs (length≥2) that would sum to 10.
 	/// </summary>
-	public List<List<Vector2Int>> GetPreviewRuns(
-		Dictionary<NumberBlock, Vector2Int> tempPlacement)
+	public List<List<Vector2Int>> GetPreviewRuns(Dictionary<NumberBlock, Vector2Int> tempPlacement)
 	{
 		// 1) copy current occupied & values
 		var vals = new int[columns, rows];
@@ -671,4 +671,24 @@ public class GridManager : MonoBehaviour
 	}
 
 	public NumberBlock[,] GetBlocks() => gridBlocks;
+
+	public bool SetBlockData(NumberBlock nb, out Vector2Int pos)
+	{
+		var mouseWorldPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+		mouseWorldPos.z = 0f;
+
+		var local = mouseWorldPos - origin;
+		pos = new(
+			(int)(Mathf.RoundToInt(local.x / cellSize) * cellSize),
+			(int)(Mathf.RoundToInt(local.y / cellSize) * cellSize)
+		);
+
+		if (pos.x < 0 || pos.x >= columns || pos.y < 0 || pos.y >= rows)
+			return false;
+
+		gridBlocks[pos.x, pos.y] = nb;
+		occupied[pos.x, pos.y] = true;
+
+		return true;
+	}
 }

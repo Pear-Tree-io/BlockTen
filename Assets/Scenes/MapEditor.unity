@@ -780,6 +780,8 @@ MonoBehaviour:
   spawnManager: {fileID: 0}
   currentModeManager: {fileID: 0}
   inputBlocker: {fileID: 0}
+  isPopup: 0
+  shadowPrefab: {fileID: 0}
   initEndDelay: 0.05
   gameOverTile: {fileID: 4630699909476805297, guid: 5a9bb2ace39d92b4d8dce66555671415, type: 3}
 --- !u!4 &859904051
@@ -1209,7 +1211,97 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 859904050}
+  objCell: {fileID: 4958560085060495230, guid: 480a53435e2a1ac49b9f6883ffd358dd, type: 3}
   mapName: test
+  input:
+    m_Name: Input
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 67049c35-3361-4347-8a5d-3a96ddb8b919
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: cbb76464-6547-4d7b-9b10-2866d9342192
+      m_Path: <Keyboard>/1
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Input
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 12f39ecd-46b8-458d-b064-50f76adfe569
+      m_Path: <Keyboard>/2
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Input
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 9c844d6b-3b3a-454b-b3df-1bc31a1964c9
+      m_Path: <Keyboard>/3
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Input
+      m_Flags: 0
+    - m_Name: 
+      m_Id: b4edbbbc-f529-41ed-9b1e-c38577c9fc6c
+      m_Path: <Keyboard>/4
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Input
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 41273598-5b03-4be1-8942-9d2d4f22833f
+      m_Path: <Keyboard>/5
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Input
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 89493560-377c-441a-805c-44c1e15fc05d
+      m_Path: <Keyboard>/6
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Input
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 0e6f43be-4725-4081-ba47-ffaa0fbcaad8
+      m_Path: <Keyboard>/7
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Input
+      m_Flags: 0
+    - m_Name: 
+      m_Id: f6e4bcec-d563-48a7-b1a0-e99071381316
+      m_Path: <Keyboard>/8
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Input
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 933a9588-3d84-42a1-8e50-b41a390a6fab
+      m_Path: <Keyboard>/9
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Input
+      m_Flags: 0
+    - m_Name: 
+      m_Id: ffbbcb4c-976f-40bc-a985-f8976a7ec4c0
+      m_Path: <Keyboard>/0
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Input
+      m_Flags: 0
+    m_Flags: 0
 --- !u!4 &1622820507
 Transform:
   m_ObjectHideFlags: 0

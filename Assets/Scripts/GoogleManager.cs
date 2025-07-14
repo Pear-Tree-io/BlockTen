@@ -10,17 +10,17 @@ public class AndroidPlatform : PlatformBase
 
 	public AndroidPlatform()
 	{
-		InitializeGooglePlayGames();
+		Initialize();
 	}
-	
+
+	private void Initialize()
+	{
+		PlayGamesPlatform.Instance.Authenticate(ProcessAuthentication);
+	}
+
 	public override void OnLeaderboard()
 	{
 		PlayGamesPlatform.Instance.ShowLeaderboardUI(GPGSIds.leaderboard_highscore);
-	}
-
-	private void InitializeGooglePlayGames()
-	{
-		PlayGamesPlatform.Instance.Authenticate(ProcessAuthentication);
 	}
 
 	private bool _isTryingToManuallyAuthenticate = false;
@@ -48,7 +48,7 @@ public class AndroidPlatform : PlatformBase
 		else
 		{
 			PlayGamesPlatform.Instance.ManuallyAuthenticate(ProcessAuthentication);
-			onSuccess = () => { PlayGamesPlatform.Instance.ReportScore(highScore, GPGSIds.leaderboard_highscore, null); };
+			onSuccess = () => PlayGamesPlatform.Instance.ReportScore(highScore, GPGSIds.leaderboard_highscore, null);
 		}
 	}
 }

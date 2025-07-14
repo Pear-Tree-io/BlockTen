@@ -133,7 +133,7 @@ public class DraggableCompositeBlock : MonoBehaviour,
         // Grow back to full size on grab
         transform.localScale = Vector3.one;
 
-        transform.position = transform.position + new Vector3(0, 3,0);
+        transform.position += new Vector3(0, 3, 0);
         children.ForEach(i => i.OnDragStart());
 
         var ps = new Vector3(e.position.x, e.position.y, screenZ);
