@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using Random = UnityEngine.Random;
 using System.Linq;
 using System.Collections;
-using Transform = UnityEngine.Transform;
 using ManagersSpace;
+using Random = UnityEngine.Random;
+using Transform = UnityEngine.Transform;
 
 public class SpawnManager : MonoBehaviour
 {

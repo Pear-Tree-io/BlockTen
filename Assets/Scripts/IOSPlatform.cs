@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class IOSPlatform : PlatformBase
 {
-	private const string _leaderboardID = "MyLeaderboard";
+	private const string _leaderboardID = "InfinityMode";
 	
 	private readonly GKLeaderboard _leaderboard;
 	private readonly GKGameCenterViewController _viewController;

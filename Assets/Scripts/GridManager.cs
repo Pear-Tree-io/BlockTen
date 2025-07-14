@@ -47,10 +47,7 @@ public class GridManager : MonoBehaviour
 	{
 		var w = columns * cellSize;
 		var h = rows * cellSize;
-		origin = transform.position
-		         - new Vector3(w / 2f - cellSize / 2f,
-			         h / 2f - cellSize / 2f,
-			         0f);
+		origin = transform.position - new Vector3(w / 2f - cellSize / 2f, h / 2f - cellSize / 2f, 0f);
 
         // 1) Pre-spawn all shadows
         shadows = new SpriteRenderer[columns, rows];
@@ -672,4 +669,6 @@ public class GridManager : MonoBehaviour
 			yield return new WaitForSeconds(initEndDelay);
 		}
 	}
+
+	public NumberBlock[,] GetBlocks() => gridBlocks;
 }
