@@ -13,10 +13,11 @@ public class GridManager : MonoBehaviour
 	public int columns = 8;
 	public float cellSize = 1f;
 	public GameObject cellPrefab;
+	public GameObject blockPrefab;
 
 	private NumberBlock[,] gridBlocks;
 	private bool[,] occupied;
-	private Vector3 origin;
+	public Vector3 origin { get; private set; }
 
 	public GameObject destroyVFX;
 	[Header("Destroy Highlight")]
@@ -672,23 +673,36 @@ public class GridManager : MonoBehaviour
 
 	public NumberBlock[,] GetBlocks() => gridBlocks;
 
-	public bool SetBlockData(NumberBlock nb, out Vector2Int pos)
+	public bool SetBlockData(NumberBlock nb, Vector2Int pos)
 	{
-		var mouseWorldPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-		mouseWorldPos.z = 0f;
-
-		var local = mouseWorldPos - origin;
-		pos = new(
-			(int)(Mathf.RoundToInt(local.x / cellSize) * cellSize),
-			(int)(Mathf.RoundToInt(local.y / cellSize) * cellSize)
-		);
-
 		if (pos.x < 0 || pos.x >= columns || pos.y < 0 || pos.y >= rows)
 			return false;
-
-		gridBlocks[pos.x, pos.y] = nb;
-		occupied[pos.x, pos.y] = true;
-
+		
+		RegisterBlock(nb, pos.x, pos.y);
 		return true;
+	}
+
+	public void SetBlockRemove(Vector2Int pos)
+	{
+		if (pos.x < 0 || pos.x >= columns || pos.y < 0 || pos.y >= rows)
+			return;
+		
+		gridBlocks[pos.x, pos.y] = null;
+		occupied[pos.x, pos.y] = false;
+	}
+
+	public void SetMapData(MapData data)
+	{
+		foreach (var block in data.blocks)
+		{
+			if (block is not { value: > 0 })
+				continue;
+			
+			var obj = Instantiate(blockPrefab, GetCellCenter(block.x, block.y), Quaternion.identity);
+			obj.GetComponent<DraggableCompositeBlock>().placed = true;
+			var nb = obj.GetComponentInChildren<NumberBlock>();
+			nb.EditorValue = block.value;
+			SetBlockData(nb, new(block.x, block.y));
+		}
 	}
 }

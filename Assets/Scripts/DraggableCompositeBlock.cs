@@ -127,7 +127,8 @@ public class DraggableCompositeBlock : MonoBehaviour,
 
     public void OnPointerDown(PointerEventData e)
     {
-        if (placed) return;
+        if (placed)
+	        return;
 
         AudioManager.Instance.PlaySFX(SFXType.pickUp);
         // Grow back to full size on grab

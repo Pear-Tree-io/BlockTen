@@ -775,6 +775,7 @@ MonoBehaviour:
   columns: 8
   cellSize: 1
   cellPrefab: {fileID: 4145093259610895930, guid: 0a6fe3aba94aa0b429fa0b35e6988226, type: 3}
+  blockPrefab: {fileID: 0}
   destroyVFX: {fileID: 7861580100568878158, guid: 31f86a718a2f1ed43b00bdc6c4f4d491, type: 3}
   destroyHighlightColor: {r: 0.99607843, g: 0.25098044, b: 0.27928358, a: 1}
   spawnManager: {fileID: 0}
@@ -1192,7 +1193,7 @@ GameObject:
   - component: {fileID: 1622820507}
   - component: {fileID: 1622820506}
   m_Layer: 0
-  m_Name: MapEditor
+  m_Name: StageEditor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1212,7 +1213,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 859904050}
   objCell: {fileID: 4958560085060495230, guid: 480a53435e2a1ac49b9f6883ffd358dd, type: 3}
-  mapName: test
+  stageName: test
   input:
     m_Name: Input
     m_Type: 0
@@ -1296,6 +1297,14 @@ MonoBehaviour:
     - m_Name: 
       m_Id: ffbbcb4c-976f-40bc-a985-f8976a7ec4c0
       m_Path: <Keyboard>/0
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Input
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 03cad306-e826-4b31-8b83-6dd5730850f5
+      m_Path: <Keyboard>/minus
       m_Interactions: 
       m_Processors: 
       m_Groups: 
