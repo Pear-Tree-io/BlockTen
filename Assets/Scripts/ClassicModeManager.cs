@@ -113,11 +113,11 @@ public class ClassicModeManager : ModeManager
 
         //comboMultiplier = matchCount;
 
-        var pointsGained = 0;
+        var pointsGained = 0f;
 
-        if(streakMultiplier > 0)
+        if(streakMultiplier > 1)
         {
-            pointsGained = blockCount * matchCount * 10 * streakMultiplier;
+            pointsGained = blockCount * matchCount * 10f * (1f + (streakMultiplier/2f));
         }
         else
         {
@@ -125,7 +125,7 @@ public class ClassicModeManager : ModeManager
         }
 
         int oldScore = currentScore;
-        int newScore = oldScore + pointsGained;
+        int newScore = oldScore + (int)pointsGained;
         currentScore = newScore;
 
         if (scoreText != null)
@@ -136,7 +136,7 @@ public class ClassicModeManager : ModeManager
 
         if (matchCount >= 1)
         {
-            StartCoroutine(PlayScoreTexts(matchCount, pointsGained));
+            StartCoroutine(PlayScoreTexts(matchCount, (int)pointsGained));
         }
 
         if (currentScore > highScore)
