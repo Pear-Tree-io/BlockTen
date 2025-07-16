@@ -7,6 +7,8 @@ public class SerializableNumberBlock
 	public int x;
 	public int y;
 	public int value;
+	public string blockName;
+	public int[] values;
 
 	public SerializableNumberBlock(int x, int y, int value)
 	{
@@ -17,6 +19,8 @@ public class SerializableNumberBlock
 
 	public SerializableNumberBlock(DraggableCompositeBlock draggableCompositeBlock)
 	{
+		blockName = draggableCompositeBlock.blockName;
+		values = draggableCompositeBlock.children.Select(i => i.TryGetComponent<StageBlockSetter>(out var setter) ? setter.value : i.Value).ToArray();
 	}
 }
 
@@ -44,6 +48,9 @@ public class MapData : ScriptableObject
 
 	public void SetUpcomingBlocks(DraggableCompositeBlock[] values)
 	{
-		upcomingBlocks = values.Where(i => i.placed == false).Select(i => new SerializableNumberBlock(i)).ToArray();
+		if (values == null || values.Length == 0)
+			return;
+		
+		upcomingBlocks = values.Select(i => new SerializableNumberBlock(i)).ToArray();
 	}
 }

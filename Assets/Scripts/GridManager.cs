@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
-using UnityEngine.InputSystem;
 
 public class GridManager : MonoBehaviour
 {
@@ -30,11 +29,11 @@ public class GridManager : MonoBehaviour
 
 	public bool isPopup = false;
 
-    [Header("Preview Shadows")]
-    public GameObject shadowPrefab;             // assign a semi-transparent sprite prefab
-    private SpriteRenderer[,] shadows;          // one per cell
+	[Header("Preview Shadows")]
+	public GameObject shadowPrefab; // assign a semi-transparent sprite prefab
+	private SpriteRenderer[,] shadows; // one per cell
 
-    private void Awake()
+	private void Awake()
 	{
 		if (Instance != null && Instance != this)
 			Destroy(gameObject);
@@ -43,41 +42,44 @@ public class GridManager : MonoBehaviour
 
 		occupied = new bool[columns, rows];
 		gridBlocks = new NumberBlock[columns, rows];
-	}
 
-	private void Start()
-	{
 		var w = columns * cellSize;
 		var h = rows * cellSize;
 		origin = transform.position - new Vector3(w / 2f - cellSize / 2f, h / 2f - cellSize / 2f, 0f);
 
-        // 1) Pre-spawn all shadows
-        shadows = new SpriteRenderer[columns, rows];
-        for (int x = 0; x < columns; x++)
-            for (int y = 0; y < rows; y++)
-            {
-                var go = Instantiate(
-                    shadowPrefab,
-                    GetCellCenter(x, y),
-                    Quaternion.identity,
-                    transform        // parent under your grid
-                );
-                var sr = go.GetComponent<SpriteRenderer>();
-                sr.enabled = false;              // start hidden
-                shadows[x, y] = sr;
-            }
+		shadows = new SpriteRenderer[columns, rows];
+		for (int x = 0; x < columns; x++)
+		for (int y = 0; y < rows; y++)
+		{
+			var go = Instantiate(
+				shadowPrefab,
+				GetCellCenter(x, y),
+				Quaternion.identity,
+				transform // parent under your grid
+			);
+			var sr = go.GetComponent<SpriteRenderer>();
+			sr.enabled = false; // start hidden
+			shadows[x, y] = sr;
+		}
+	}
 
-        // for (int x = 0; x < columns; x++)
-        //     for (int y = 0; y < rows; y++)
-        //     {
-        //         occupied[x, y] = false;
-        //         gridBlocks[x, y] = null;
-        //         Instantiate(cellPrefab,
-        //             origin + new Vector3(x * cellSize, y * cellSize, 0f),
-        //             Quaternion.identity,
-        //             transform);
-        //     }
-    }
+	/*
+	private void Start()
+	{
+
+
+	    for (int x = 0; x < columns; x++)
+	        for (int y = 0; y < rows; y++)
+	        {
+	            occupied[x, y] = false;
+	            gridBlocks[x, y] = null;
+	            Instantiate(cellPrefab,
+	                origin + new Vector3(x * cellSize, y * cellSize, 0f),
+	                Quaternion.identity,
+	                transform);
+	        }
+	}
+	?*/
 
 	public void RegisterBlock(NumberBlock block, int x, int y)
 	{
@@ -245,16 +247,16 @@ public class GridManager : MonoBehaviour
 		}
 		else
 		{
-            // 1) Animate each run in order
-            foreach (var run in allRuns)
-            {
-                foreach (var b in run)
-                {
-                    StartCoroutine(PopOne(b, 0.2f));
-                }
-            }
-            yield return new WaitForSeconds(0.3f);
-        }
+			// 1) Animate each run in order
+			foreach (var run in allRuns)
+			{
+				foreach (var b in run)
+				{
+					StartCoroutine(PopOne(b, 0.2f));
+				}
+			}
+			yield return new WaitForSeconds(0.3f);
+		}
 
 		// 2) Spawn VFX, free cells & destroy objects
 		foreach (var b in allBlocks)
@@ -307,8 +309,8 @@ public class GridManager : MonoBehaviour
 			b.transform.localScale = Vector3.one;
 	}
 
-    // Helper to find a block's grid coords
-    private Vector2Int FindBlockCoords(NumberBlock b)
+	// Helper to find a block's grid coords
+	private Vector2Int FindBlockCoords(NumberBlock b)
 	{
 		for (int x = 0; x < columns; x++)
 		for (int y = 0; y < rows; y++)
@@ -323,17 +325,18 @@ public class GridManager : MonoBehaviour
 	/// </summary>
 	public bool CanPlaceCompositeBlockAnywhere(DraggableCompositeBlock comp)
 	{
-		var blocks = comp.GetComponentsInChildren<NumberBlock>();
-		foreach (var root in blocks)
+		foreach (var root in comp.children)
 		{
-			for (int x = 0; x < columns; x++)
-			for (int y = 0; y < rows; y++)
+			for (var x = 0; x < columns; x++)
 			{
-				if (occupied[x, y]) continue;
+				for (var y = 0; y < rows; y++)
+				{
+					if (occupied[x, y]) continue;
 
-				var placed = new Dictionary<NumberBlock, Vector2Int>();
-				if (TryPlaceRec(root, x, y, placed))
-					return true;
+					var placed = new Dictionary<NumberBlock, Vector2Int>();
+					if (TryPlaceRec(root, x, y, placed))
+						return true;
+				}
 			}
 		}
 		return false;
@@ -344,12 +347,7 @@ public class GridManager : MonoBehaviour
 	/// Returns false immediately if any neighbor link would land out of bounds
 	/// or on an already occupied cell.
 	/// </summary>
-	private bool TryPlaceRec(
-		NumberBlock node,
-		int gx,
-		int gy,
-		Dictionary<NumberBlock, Vector2Int> placed
-	)
+	private bool TryPlaceRec(NumberBlock node, int gx, int gy, Dictionary<NumberBlock, Vector2Int> placed)
 	{
 		// if already placed, ensure it's consistent
 		if (placed.TryGetValue(node, out var prev))
@@ -381,11 +379,9 @@ public class GridManager : MonoBehaviour
 		return true;
 	}
 
-	public bool TryPlaceCompositeAt(
-		DraggableCompositeBlock comp,
-		out Dictionary<NumberBlock, Vector2Int> placed)
+	public bool TryPlaceCompositeAt(DraggableCompositeBlock comp, out Dictionary<NumberBlock, Vector2Int> placed)
 	{
-		placed = new Dictionary<NumberBlock, Vector2Int>();
+		placed = new();
 
 		// grab all the child blocks & pick a “root”
 		var blocks = comp.GetComponentsInChildren<NumberBlock>();
@@ -426,8 +422,8 @@ public class GridManager : MonoBehaviour
 	/// Returns the world-space center of the cell at grid coords (x,y).
 	/// </summary>
 	///
-	
 	public Vector3 GetCellCenter(Vector2Int pos) => GetCellCenter(pos.x, pos.y);
+
 	public Vector3 GetCellCenter(int x, int y) => origin + new Vector3(x * cellSize, y * cellSize, 0f);
 
 	/// <summary>
@@ -619,30 +615,30 @@ public class GridManager : MonoBehaviour
 		return gridBlocks[x, y];
 	}
 
-    /// <summary>
-    /// Turns on the shadow at each given cell, and hides the rest.
-    /// </summary>
-    public void ShowShadows(IEnumerable<Vector2Int> cells)
-    {
-        ClearShadows();
-        foreach (var c in cells)
-        {
-            if (c.x >= 0 && c.x < columns && c.y >= 0 && c.y < rows)
-                shadows[c.x, c.y].enabled = true;
-        }
-    }
+	/// <summary>
+	/// Turns on the shadow at each given cell, and hides the rest.
+	/// </summary>
+	public void ShowShadows(IEnumerable<Vector2Int> cells)
+	{
+		ClearShadows();
+		foreach (var c in cells)
+		{
+			if (c.x >= 0 && c.x < columns && c.y >= 0 && c.y < rows)
+				shadows[c.x, c.y].enabled = true;
+		}
+	}
 
-    /// <summary>
-    /// Hide all preview shadows.
-    /// </summary>
-    public void ClearShadows()
-    {
-        for (int x = 0; x < columns; x++)
-            for (int y = 0; y < rows; y++)
-                shadows[x, y].enabled = false;
-    }
+	/// <summary>
+	/// Hide all preview shadows.
+	/// </summary>
+	public void ClearShadows()
+	{
+		for (int x = 0; x < columns; x++)
+		for (int y = 0; y < rows; y++)
+			shadows[x, y].enabled = false;
+	}
 
-    [Header("End Grid Initialization Settings")]
+	[Header("End Grid Initialization Settings")]
 	[SerializeField]
 	private float initEndDelay = 0.05f;
 	[SerializeField]
@@ -677,7 +673,7 @@ public class GridManager : MonoBehaviour
 	{
 		if (pos.x < 0 || pos.x >= columns || pos.y < 0 || pos.y >= rows)
 			return false;
-		
+
 		RegisterBlock(nb, pos.x, pos.y);
 		return true;
 	}
@@ -686,7 +682,7 @@ public class GridManager : MonoBehaviour
 	{
 		if (pos.x < 0 || pos.x >= columns || pos.y < 0 || pos.y >= rows)
 			return;
-		
+
 		gridBlocks[pos.x, pos.y] = null;
 		occupied[pos.x, pos.y] = false;
 	}
@@ -697,11 +693,11 @@ public class GridManager : MonoBehaviour
 		{
 			if (block is not { value: > 0 })
 				continue;
-			
+
 			var obj = Instantiate(blockPrefab, GetCellCenter(block.x, block.y), Quaternion.identity);
 			obj.GetComponent<DraggableCompositeBlock>().placed = true;
 			var nb = obj.GetComponentInChildren<NumberBlock>();
-			nb.EditorValue = block.value;
+			nb.Value = block.value;
 			SetBlockData(nb, new(block.x, block.y));
 		}
 	}

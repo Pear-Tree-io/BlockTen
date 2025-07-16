@@ -10,45 +10,69 @@ public class SpawnManager : MonoBehaviour
 {
 	[Header("Spawn Settings")]
 	public List<GameObject> compositePrefabs;
+	private Queue<SerializableNumberBlock> _upcomingBlocks;
 	public Transform[] spawnPoints;
 
 	private int placedCount;
 	private List<DraggableCompositeBlock> currentBlocks = new();
 
-	public ModeManager modeManager;
+	private ModeManager _modeManager;
 
 	public float scaleAtSpawn = 0.7f;
 
 	public GameObject revivePanel;
-    public bool isRevive = false;
+	public bool isRevive = false;
 
 	public bool isTimeLimit = false;
 
-	private void Start()
+	public void Init(ModeManager modeManager)
 	{
-		placedCount = 0;
-
-        SpawnAll();
+		_modeManager = modeManager;
+		InitSpawn();
 	}
 
-	public void SpawnAll()
+	private void InitSpawn()
 	{
-		// 1) If there's not room for a full wave, Game Over
-		if (!GridManager.Instance.HasFreeSlots(spawnPoints.Length))
+		placedCount = 0;
+		SpawnFull();
+	}
+
+	private bool CheckGameOver()
+	{
+		if (_upcomingBlocks is { Count: 0 })
 		{
-			Debug.Log("Game Over: Not enough space for a full wave!");
+			Debug.Log("End of game: No more uncompleted blocks!");
 			SetGameOver();
-			return;
+			return false;
+		}
+		
+		if (_modeManager.CheckGameOver(spawnPoints.Length))
+		{
+			Debug.Log("Game Over: No more possible moves!");
+			SetGameOver();
+			return true;
 		}
 
+		return false;
+	}
+	
+	private void SpawnFull()
+	{
+		if (CheckGameOver())
+			return;
+		
 		// 2) Tear down leftovers
 		foreach (var old in currentBlocks)
+		{
 			if (old)
 				Destroy(old.gameObject);
+		}
 		currentBlocks.Clear();
 
 		bool gridEmpty = !GridManager.Instance.HasPlacedBlocks();
 
+		placedCount = 0;
+		
 		// 3) Spawn exactly three composites
 		for (int i = 0; i < spawnPoints.Length; i++)
 		{
@@ -61,16 +85,15 @@ public class SpawnManager : MonoBehaviour
 				// A) Find a prefab that fits & can clear
 				foreach (var prefab in compositePrefabs.OrderBy(_ => Random.value))
 				{
-					var go = Instantiate(prefab, pos, Quaternion.identity);
-					go.transform.localScale = Vector3.one * scaleAtSpawn;
-					var comp = go.GetComponent<DraggableCompositeBlock>();
-					comp.spawnManager = this;
-					comp.startPosition = pos;
+					if (_upcomingBlocks is { Count: <= 0 })
+						return;
+					
+					var comp = SpawnBlock(prefab, pos);
 
 					// must fit
 					if (!GridManager.Instance.CanPlaceCompositeBlockAnywhere(comp))
 					{
-						Destroy(go);
+						Destroy(comp.gameObject);
 						continue;
 					}
 
@@ -91,7 +114,7 @@ public class SpawnManager : MonoBehaviour
 						compInstance = comp;
 						break;
 					}
-					Destroy(go);
+					Destroy(comp.gameObject);
 				}
 
 				// B) Fallback: if none both fit+match, pick any *fitting* prefab
@@ -100,11 +123,11 @@ public class SpawnManager : MonoBehaviour
 					Debug.Log("Fallback: No matchable composite—spawning any that fits.");
 					foreach (var prefab in compositePrefabs.OrderBy(_ => Random.value))
 					{
+						SpawnBlock(prefab, pos);
 						var go = Instantiate(prefab, pos, Quaternion.identity);
 						go.transform.localScale = Vector3.one * scaleAtSpawn;
 						var comp = go.GetComponent<DraggableCompositeBlock>();
-						comp.spawnManager = this;
-						comp.startPosition = pos;
+						comp.Init(this, pos);
 
 						if (GridManager.Instance.CanPlaceCompositeBlockAnywhere(comp))
 						{
@@ -117,7 +140,7 @@ public class SpawnManager : MonoBehaviour
 
 					// C) If STILL nothing fits, that truly is Game Over
 					if (compInstance == null)
-					{
+					{ 
 						Debug.Log("Game Over: No composite can fit in the remaining space!");
 						SetGameOver();
 						return;
@@ -127,63 +150,55 @@ public class SpawnManager : MonoBehaviour
 			else
 			{
 				// First wave or slots 2+3: pure random
-				var prefab = compositePrefabs[Random.Range(0, compositePrefabs.Count)];
-				var go = Instantiate(prefab, pos, Quaternion.identity);
-				go.transform.localScale = Vector3.one * scaleAtSpawn;
-
-				var comp = go.GetComponent<DraggableCompositeBlock>();
-				comp.spawnManager = this;
-				comp.startPosition = pos;
-
-				comp.AssignValidRandomNumbers();
-
-				compInstance = comp;
+				compInstance = SpawnBlock(compositePrefabs[Random.Range(0, compositePrefabs.Count)], pos);
 			}
 
 			currentBlocks.Add(compInstance);
 		}
+	}
 
-		// 4) Reset for this wave
-		placedCount = 0;
+	private DraggableCompositeBlock SpawnBlock(GameObject prefab, Vector3 pos)
+	{
+		if (_upcomingBlocks != null && _upcomingBlocks.TryDequeue(out var blockData))
+			prefab = compositePrefabs.FirstOrDefault(i => i.name == blockData.blockName) ?? prefab;
+		
+		var comp = Instantiate(prefab, pos, Quaternion.identity).GetComponent<DraggableCompositeBlock>();
+		comp.transform.localScale = Vector3.one * scaleAtSpawn;
+		comp.Init(this, pos);
+		
+		return comp;
 	}
 
 	public void SpawnAllMatch()
 	{
-		// 1) If there's not room for a full wave, Game Over
-		if (!GridManager.Instance.HasFreeSlots(spawnPoints.Length))
-		{
-			Debug.Log("Game Over: Not enough space for a full wave!");
-			SetGameOver();
+		if (CheckGameOver())
 			return;
-		}
 
 		// 2) Tear down leftovers
 		foreach (var old in currentBlocks)
+		{
 			if (old)
 				Destroy(old.gameObject);
+		}
 		currentBlocks.Clear();
 
-		bool gridEmpty = !GridManager.Instance.HasPlacedBlocks();
+		var gridEmpty = !GridManager.Instance.HasPlacedBlocks();
 
 		// 3) Spawn exactly three composites with guaranteed chain‐match
-		for (int i = 0; i < spawnPoints.Length; i++)
+		for (var i = 0; i < spawnPoints.Length; i++)
 		{
 			DraggableCompositeBlock chosen = null;
-			Vector3 pos = spawnPoints[i].position;
+			var pos = spawnPoints[i].position;
 
 			// A) Try to find a fitting + matching block
 			foreach (var prefab in compositePrefabs.OrderBy(_ => Random.value))
 			{
-				var go = Instantiate(prefab, pos, Quaternion.identity);
-				go.transform.localScale = Vector3.one * scaleAtSpawn;
-				var comp = go.GetComponent<DraggableCompositeBlock>();
-				comp.spawnManager = this;
-				comp.startPosition = pos;
+				var comp = SpawnBlock(prefab, pos);
 
 				// must fit somewhere
 				if (!GridManager.Instance.CanPlaceCompositeBlockAnywhere(comp))
 				{
-					Destroy(go);
+					Destroy(comp.gameObject);
 					continue;
 				}
 
@@ -222,7 +237,7 @@ public class SpawnManager : MonoBehaviour
 					break;
 				}
 
-				Destroy(go);
+				Destroy(comp.gameObject);
 			}
 
 			// B) Fallback: spawn any fitting block
@@ -231,11 +246,7 @@ public class SpawnManager : MonoBehaviour
 				Debug.Log("Fallback: No clearable/chainable composite—spawning any that fits.");
 				foreach (var prefab in compositePrefabs.OrderBy(_ => Random.value))
 				{
-					var go = Instantiate(prefab, pos, Quaternion.identity);
-					go.transform.localScale = Vector3.one * scaleAtSpawn;
-					var comp = go.GetComponent<DraggableCompositeBlock>();
-					comp.spawnManager = this;
-					comp.startPosition = pos;
+					var comp = SpawnBlock(prefab, pos);
 
 					if (GridManager.Instance.CanPlaceCompositeBlockAnywhere(comp))
 					{
@@ -243,7 +254,8 @@ public class SpawnManager : MonoBehaviour
 						chosen = comp;
 						break;
 					}
-					Destroy(go);
+					
+					Destroy(comp.gameObject);
 				}
 
 				// C) If STILL nothing fits, Game Over
@@ -262,63 +274,47 @@ public class SpawnManager : MonoBehaviour
 		placedCount = 0;
 	}
 
-    /// <summary>
-    /// Spawns a single new composite into the first empty spawn-point slot.
-    /// An “empty” slot is one where currentBlocks[i] is null or has already been placed.
-    /// </summary>
-    public void SpawnNew()
-    {
-        for (int i = 0; i < spawnPoints.Length; i++)
-        {
-            // empty if we've destroyed it (== null) or it’s already been placed
-            if (currentBlocks[i] == null || currentBlocks[i].placed)
-            {
-                Vector3 pos = spawnPoints[i].position;
-
-                // pick a random prefab
-                var prefab = compositePrefabs[Random.Range(0, compositePrefabs.Count)];
-                var go = Instantiate(prefab, pos, Quaternion.identity);
-                go.transform.localScale = Vector3.one * scaleAtSpawn;
-
-                // hook up the block
-                var comp = go.GetComponent<DraggableCompositeBlock>();
-                comp.spawnManager = this;
-                comp.startPosition = pos;
-                comp.AssignValidRandomNumbers();
-
-                // replace the empty slot
-                currentBlocks[i] = comp;
-                break; // only spawn one
-            }
-        }
-    }
-
-    public void NotifyBlockPlaced()
+	/// <summary>
+	/// Spawns a single new composite into the first empty spawn-point slot.
+	/// An “empty” slot is one where currentBlocks[i] is null or has already been placed.
+	/// </summary>
+	public void SpawnNew()
 	{
-        if (isTimeLimit)
+		for (var i = 0; i < spawnPoints.Length; i++)
+		{
+			// empty if we've destroyed it (== null) or it’s already been placed
+			if (currentBlocks[i] == null || currentBlocks[i].placed)
+			{
+				currentBlocks[i] = SpawnBlock(compositePrefabs[Random.Range(0, compositePrefabs.Count)],spawnPoints[i].position);
+				return;
+			}
+		}
+	}
+
+	public void NotifyBlockPlaced()
+	{
+		if (isTimeLimit)
 		{
 			SpawnNew();
 
-            // Of the *un-placed* composites, is there at least one that fits?
-            bool anyFit = currentBlocks
-                .Where(c => c != null && !c.placed)
-                .Any(c => GridManager.Instance.CanPlaceCompositeBlockAnywhere(c));
+			// Of the *un-placed* composites, is there at least one that fits?
+			var anyFit = currentBlocks.Where(c => c != null && !c.placed).Any(c => GridManager.Instance.CanPlaceCompositeBlockAnywhere(c));
 
-            if (!anyFit)
-            {
-                Debug.Log("Game Over: No more possible moves!");
-                SetGameOver();
-                // TODO: your Game Over UI here
-                return;
-            }
-        }
+			if (!anyFit)
+			{
+				Debug.Log("Game Over: No more possible moves!");
+				SetGameOver();
+				// TODO: your Game Over UI here
+				return;
+			}
+		}
 		else
 		{
-            placedCount++;
+			placedCount++;
 
-            int remaining = spawnPoints.Length - placedCount;
+			int remaining = spawnPoints.Length - placedCount;
 
-            if (remaining > 0)
+			if (remaining > 0)
 			{
 				// Of the *un-placed* composites, is there at least one that fits?
 				bool anyFit = currentBlocks
@@ -337,8 +333,20 @@ public class SpawnManager : MonoBehaviour
 			else
 			{
 				// wave done → spawn three fresh composites
-				SpawnAll();
+				SpawnFull();
 			}
+		}
+	}
+	
+	public void SetUpcomingBlocks(SerializableNumberBlock[] dataUpcomingBlocks)
+	{
+		if (dataUpcomingBlocks == null || dataUpcomingBlocks.Length == 0)
+			return;
+		
+		_upcomingBlocks = new();
+		foreach (var serializableNumberBlock in dataUpcomingBlocks)
+		{
+			_upcomingBlocks.Enqueue(serializableNumberBlock);
 		}
 	}
 
@@ -369,15 +377,17 @@ public class SpawnManager : MonoBehaviour
 		else
 		{
 			GridManager.Instance.InitializeEndGrid();
-			modeManager.GameOver();
+			_modeManager.GameOver();
 		}
 	}
+
+	#region Revive
 
 	public IEnumerator AskRevive()
 	{
 		isRevive = true;
 
-		modeManager.SetNoSpaceLeftMessage(true);
+		_modeManager.SetNoSpaceLeftMessage(true);
 
 		yield return new WaitForSeconds(1.5f);
 
@@ -386,31 +396,35 @@ public class SpawnManager : MonoBehaviour
 
 	public void ReviveAd() => AdManager.Get.ShowAd(Revive);
 
-    /// <summary>
-    /// Call this from your UI Button's OnClick.
-    /// Destroys any unplaced composites in the spawn points and refills them.
-    /// </summary>
-    public void Revive()
-    {
-        modeManager.SetNoSpaceLeftMessage(false);
-        revivePanel.SetActive(false);
+	/// <summary>
+	/// Call this from your UI Button's OnClick.
+	/// Destroys any unplaced composites in the spawn points and refills them.
+	/// </summary>
+	public void Revive()
+	{
+		_modeManager.SetNoSpaceLeftMessage(false);
+		revivePanel.SetActive(false);
 
-        foreach (var comp in currentBlocks)
-        {
-            if (comp != null)
-                Destroy(comp.gameObject);
-        }
+		foreach (var comp in currentBlocks)
+		{
+			if (comp != null)
+				Destroy(comp.gameObject);
+		}
 
-        currentBlocks.Clear();
-        placedCount = 0;
-        SpawnAllMatch();
-    }
+		currentBlocks.Clear();
+		placedCount = 0;
+		SpawnAllMatch();
+	}
 
 	public void SkipRevive()
 	{
 		revivePanel.SetActive(false);
 		CheckRemainingSpace();
 	}
+
+	#endregion
+
+	#region Tutorial
 
 	[Header("Tutorial Hand Settings")]
 	[SerializeField]
@@ -508,4 +522,5 @@ public class SpawnManager : MonoBehaviour
 		hand.transform.position = endPos;
 		Destroy(hand);
 	}
+	#endregion
 }

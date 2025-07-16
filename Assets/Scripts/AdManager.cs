@@ -144,7 +144,7 @@ namespace ManagersSpace
 			_levelPlayRewardedAd.OnAdRewarded += OnAdRewarded;
 			_levelPlayRewardedAd.OnAdClosed += OnRewardedAdClosed;
 			*/
-			
+
 #if DEVELOPMENT_BUILD
 			LevelPlay.SetMetaData("is_test_suite", "enable");
 #endif

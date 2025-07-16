@@ -10,178 +10,164 @@ using ManagersSpace;
 /// </summary>
 public abstract class ModeManager : MonoBehaviour
 {
-    [Header("Settings UI")]
-    [SerializeField] protected GameObject SettingsPanel;
+	public SpawnManager spawnManager;
 
-    public GameObject bgmOff;
-    public GameObject sfxOff;
-    public GameObject vibOff;
+	[Header("Settings UI")]
+	[SerializeField]
+	protected GameObject SettingsPanel;
 
-    public bool isHighScore;
+	public GameObject bgmOff;
+	public GameObject sfxOff;
+	public GameObject vibOff;
 
-    protected virtual void Awake()
-    {
-        
-    }
+	public bool isHighScore;
 
-    protected virtual void Start()
-    {
-        SettingsPanel.SetActive(false);
-        ResetMode();
-        MenuUpdate();
-        if (!AudioManager.Instance.bgmSource.isPlaying)
-        {
-            AudioManager.Instance.PlayMainMenuBGM();
-        }
-    }
+	protected virtual void Awake()
+	{
+	}
 
-    /// <summary>
-    /// Call when blocks are destroyed.
-    /// </summary>
-    public virtual void OnBlocksDestroyed(int destroyedCount)
-    {
-        
-    }
+	protected virtual void Start()
+	{
+		SettingsPanel.SetActive(false);
+		ResetMode();
+		MenuUpdate();
+		if (AudioManager.Instance.bgmSource.isPlaying == false)
+			AudioManager.Instance.PlayMainMenuBGM();
+		spawnManager.Init(this);
+	}
 
-    /// <summary>
-    /// Call for each matches.
-    /// </summary>
-    public virtual void OnMatchDestroyed(int matchCount)
-    {
+	/// <summary>
+	/// Call when blocks are destroyed.
+	/// </summary>
+	public virtual void OnBlocksDestroyed(int destroyedCount)
+	{
+	}
 
-    }
+	/// <summary>
+	/// Call for each matches.
+	/// </summary>
+	public virtual void OnMatchDestroyed(int matchCount)
+	{
+	}
 
-    public virtual void OnMatchBlocksDestroyed(int matchCount, int destroyedCount)
-    {
+	public virtual void OnMatchBlocksDestroyed(int matchCount, int destroyedCount)
+	{
+	}
 
-    }
+	/// <summary>
+	/// Default scoring: destroyedCount × comboMultiplier.
+	/// Override to customize.
+	/// </summary>
+	protected virtual int CalculateScore(int destroyedCount)
+	{
+		return 0;
+	}
 
-    /// <summary>
-    /// Default scoring: destroyedCount × comboMultiplier.
-    /// Override to customize.
-    /// </summary>
-    protected virtual int CalculateScore(int destroyedCount)
-    {
-        return 0;
-    }
-
-    /// <summary>
-    /// Resets score and combo—call at start or on restart.
-    /// </summary>
-    public virtual void ResetMode()
-    {
+	/// <summary>
+	/// Resets score and combo—call at start or on restart.
+	/// </summary>
+	public virtual void ResetMode()
+	{
 		AdManager.Get.LoadAds();
 #if UNITY_EDITOR == false
 	    FirebaseAnalytics.LogEvent("ResetMode", new Parameter("mode", GetType().Name));
 #endif
-    }
+	}
 
-    /// <summary>
-    /// Instantiates combo popup at last placed position.
-    /// </summary>
-    protected virtual IEnumerator ShowTextOnCanvas(GameObject textPrefab, Canvas canvas, int number, float waitTime)
-    {
-        if (textPrefab == null || canvas == null) yield break;
+	/// <summary>
+	/// Instantiates combo popup at last placed position.
+	/// </summary>
+	protected virtual IEnumerator ShowTextOnCanvas(GameObject textPrefab, Canvas canvas, int number, float waitTime)
+	{
+		if (textPrefab == null || canvas == null) yield break;
 
-        textPrefab.SetActive(true);
+		textPrefab.SetActive(true);
 
-        TMP_Text tmp = textPrefab.GetComponent<TMP_Text>();
-        if (tmp != null)
-            tmp.text = number.ToString();
+		TMP_Text tmp = textPrefab.GetComponent<TMP_Text>();
+		if (tmp != null)
+			tmp.text = number.ToString();
 
-        // Positioning
-        Vector3 worldPos = GridManager.Instance.LastPlacedPosition;
-        Vector2 screenPos = Camera.main.WorldToScreenPoint(worldPos);
-        RectTransform canvasRect = canvas.transform as RectTransform;
-        RectTransform goRect = textPrefab.GetComponent<RectTransform>();
-        Vector2 localPoint;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            canvasRect,
-            screenPos,
-            canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : Camera.main,
-            out localPoint
-        );
-        goRect.anchoredPosition = localPoint;
+		// Positioning
+		Vector3 worldPos = GridManager.Instance.LastPlacedPosition;
+		Vector2 screenPos = Camera.main.WorldToScreenPoint(worldPos);
+		RectTransform canvasRect = canvas.transform as RectTransform;
+		RectTransform goRect = textPrefab.GetComponent<RectTransform>();
+		Vector2 localPoint;
+		RectTransformUtility.ScreenPointToLocalPointInRectangle(
+			canvasRect,
+			screenPos,
+			canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : Camera.main,
+			out localPoint
+		);
+		goRect.anchoredPosition = localPoint;
 
-        yield return new WaitForSeconds(waitTime);
+		yield return new WaitForSeconds(waitTime);
 
-        textPrefab.SetActive(false);
-    }
+		textPrefab.SetActive(false);
+	}
 
-    public virtual void SetNoSpaceLeftMessage(bool active) { }
+	public virtual void SetNoSpaceLeftMessage(bool active)
+	{
+	}
 
-    public virtual void GameOver() 
-    {
-	    FirebaseAnalytics.LogEvent("GameOver", new Parameter("mode", GetType().Name));
+	public virtual void GameOver()
+	{
+		FirebaseAnalytics.LogEvent("GameOver", new Parameter("mode", GetType().Name));
 
-        AudioManager.Instance.StopBGM();
-        SaveGame();
-    }
-    protected virtual void SaveGame() { }
+		AudioManager.Instance.StopBGM();
+		SaveGame();
+	}
 
-    protected virtual void LoadGame() { }
+	protected virtual void SaveGame()
+	{
+	}
 
-    public virtual void ToggleSettings()
-    {
-        if (SettingsPanel.activeSelf)
-        {
-            SettingsPanel.SetActive(false);
-        }
-        else
-        {
-            SettingsPanel.SetActive(true);
-        }
-        AudioManager.Instance.PlaySFX(SFXType.Button);
-    }
+	protected virtual void LoadGame()
+	{
+	}
 
-    public void ToggleBGM()
-    {
-        AudioManager.Instance.ToggleBGM();
-        AudioManager.Instance.PlaySFX(SFXType.Button);
-        MenuUpdate();
-    }
+	public virtual void ToggleSettings()
+	{
+		SettingsPanel.SetActive(!SettingsPanel.activeSelf);
+		AudioManager.Instance.PlaySFX(SFXType.Button);
+	}
 
-    public void ToggleSFX()
-    {
-        AudioManager.Instance.ToggleSFX();
-        AudioManager.Instance.PlaySFX(SFXType.Button);
-        MenuUpdate();
-    }
+	public void ToggleBGM()
+	{
+		AudioManager.Instance.ToggleBGM();
+		AudioManager.Instance.PlaySFX(SFXType.Button);
+		MenuUpdate();
+	}
 
-    public void ToggleVIB()
-    {
-        AudioManager.Instance.ToggleVIB();
-        AudioManager.Instance.PlaySFX(SFXType.Button);
-        MenuUpdate();
-    }
+	public void ToggleSFX()
+	{
+		AudioManager.Instance.ToggleSFX();
+		AudioManager.Instance.PlaySFX(SFXType.Button);
+		MenuUpdate();
+	}
 
-    private void MenuUpdate()
-    {
-        if (AudioManager.Instance.isBgmOn)
-        {
-            bgmOff.SetActive(false);
-        }
-        else
-        {
-            bgmOff.SetActive(true);
-        }
+	public void ToggleVIB()
+	{
+		AudioManager.Instance.ToggleVIB();
+		AudioManager.Instance.PlaySFX(SFXType.Button);
+		MenuUpdate();
+	}
 
-        if (AudioManager.Instance.isSfxOn)
-        {
-            sfxOff.SetActive(false);
-        }
-        else
-        {
-            sfxOff.SetActive(true);
-        }
+	private void MenuUpdate()
+	{
+		bgmOff.SetActive(!AudioManager.Instance.isBgmOn);
+		sfxOff.SetActive(!AudioManager.Instance.isSfxOn);
+		vibOff.SetActive(!AudioManager.Instance.isVibOn);
+	}
 
-        if (AudioManager.Instance.isVibOn)
-        {
-            vibOff.SetActive(false);
-        }
-        else
-        {
-            vibOff.SetActive(true);
-        }
-    }
+	public bool CheckGameOver(int needCount)
+	{
+		if (!GridManager.Instance.HasFreeSlots(needCount))
+		{
+			Debug.Log("Game Over: Not enough space for a full wave!");
+			return true;
+		}
+		
+		return false;
+	}
 }

@@ -12,7 +12,7 @@ public class StageBlockSetter : MonoBehaviour
 	private void OnValidate()
 	{
 		blockPrefab ??= GetComponent<NumberBlock>();
-		blockPrefab.EditorValue = value;
+		blockPrefab.Value = value;
 	}
 #endif
 }

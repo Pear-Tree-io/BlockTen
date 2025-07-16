@@ -1,17 +1,16 @@
-﻿using System;
-using System.IO;
-using Sirenix.OdinInspector;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 public class StageModeManager : MonoBehaviour
 {
 	public string stageName;
-	
-	private ModeManager @base;
+	public ModeManager @base;
 
 	private void Start()
 	{
+		if (string.IsNullOrEmpty(stageName))
+			return;
+		
 		LoadMapData();
 	}
 	
@@ -26,7 +25,7 @@ public class StageModeManager : MonoBehaviour
 		}
 		
 		GridManager.Instance.SetMapData(data);
-		
+		@base.spawnManager.SetUpcomingBlocks(data.upcomingBlocks);
 		return data;
 	}
 }

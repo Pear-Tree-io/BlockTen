@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
@@ -38,7 +39,9 @@ public class StageEditor : MonoBehaviour
 
 			if (_cells.TryGetValue(pos, out var nb) == false)
 			{
-				nb = Instantiate(objCell, transform).GetComponentInChildren<NumberBlock>();
+				var draggable = Instantiate(objCell, transform).GetComponent<DraggableCompositeBlock>();
+				draggable.placed = true;
+				nb = draggable.children[0];
 
 				if (grid.SetBlockData(nb, pos))
 				{
@@ -50,7 +53,7 @@ public class StageEditor : MonoBehaviour
 			if (value == 0)
 				grid.SetBlockRemove(pos);
 			else
-				nb.EditorValue = value;
+				nb.Value = value;
 		}
 	}
 
@@ -64,6 +67,7 @@ public class StageEditor : MonoBehaviour
 
 		var asset = ScriptableObject.CreateInstance<MapData>();
 		asset.SetBlocks(grid.GetBlocks());
+		asset.SetUpcomingBlocks(FindObjectsByType<DraggableCompositeBlock>(FindObjectsSortMode.None).Where(i => i.placed == false).ToArray());
 
 		AssetDatabase.CreateAsset(asset, path);
 		EditorUtility.SetDirty(asset);

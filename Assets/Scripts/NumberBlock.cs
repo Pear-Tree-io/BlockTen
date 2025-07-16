@@ -5,13 +5,6 @@ using System.Collections;
 [RequireComponent(typeof(Collider2D))]
 public class NumberBlock : MonoBehaviour
 {
-	private int _editorValue;
-	public int EditorValue
-	{
-		get => _editorValue;
-		set => _editorValue = Value = value;
-	}
-
 	// --- Composite‐chain links (used by DraggableCompositeBlock) ---
      public NumberBlock neighborUp;
      public NumberBlock neighborDown;
@@ -23,7 +16,7 @@ public class NumberBlock : MonoBehaviour
     public int Value
     {
 	    get => _value;
-	    private set
+	    set
 	    {
 		    _value = value;
 		    valueText.text = Value.ToString();

@@ -1,241 +1,271 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Linq;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Collider2D))]
-public class DraggableCompositeBlock : MonoBehaviour,
-    IPointerDownHandler, IDragHandler, IPointerUpHandler
+public class DraggableCompositeBlock : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
-    [Header("Color Settings")]
-    public Color[] availableColors;
+	[Header("Color Settings")]
+	public Color[] availableColors;
 
-    [HideInInspector] public SpawnManager spawnManager;
-    [HideInInspector] public Vector3 startPosition;
-    [HideInInspector] public List<NumberBlock> children;
-    [HideInInspector] public bool placed;
+	[HideInInspector]
+	public SpawnManager spawnManager;
+	[HideInInspector]
+	public Vector3 startPosition;
+	[HideInInspector]
+	public List<NumberBlock> children;
+	[HideInInspector]
+	public bool placed;
+	public string blockName;
 
-    private Camera cam;
-    private float screenZ;
-    private Vector3 offset;
-    private float dragStartWorldY = 0;
-    private float yOffsetFactor = 0.75f;
+#if UNITY_EDITOR
+	private void OnValidate()
+	{
+		children = GetComponentsInChildren<NumberBlock>().ToList();
 
-    private void OnEnable()
-    {
-        // 1) Grab your NumberBlock children
-        children = GetComponentsInChildren<NumberBlock>().ToList();
+		if (string.IsNullOrEmpty(blockName))
+			blockName = gameObject.name;
+	}
+#endif
 
-        // 2) Assign numbers & then tint the entire composite
-        AssignValidRandomNumbers();
-        if (availableColors != null && availableColors.Length > 0)
-        {
-            var tint = availableColors[Random.Range(0, availableColors.Length)];
-            foreach (var nb in children)
-            {
-                nb.spriteRenderer.color = tint;
-                nb.OriginalColor = tint;
-            }      
-        }
-    }
+	private Camera cam;
+	private float screenZ;
+	private Vector3 offset;
+	private float dragStartWorldY = 0;
+	private float yOffsetFactor = 0.75f;
 
-    private void Start()
-    {
-        cam = Camera.main;
-        screenZ = cam.WorldToScreenPoint(transform.position).z;
-    }
+	public void Init(SpawnManager spawnManager, Vector3 pos, int[] values = null)
+	{
+		this.spawnManager = spawnManager;
+		startPosition = pos;
+		
+		SetValues(values);
+		SetColors();
+	}
+	
+	private void SetValues(int[] values)
+	{
+		if (values == null)
+		{
+			AssignValidRandomNumbers();
+			return;
+		}
 
-    /// <summary>
-    /// Public so SpawnManager can invoke it too.
-    /// Keeps re-rolling 1–9 until no internal run (len≥2)
-    /// sums exactly to 10.
-    /// </summary>
-    public void AssignValidRandomNumbers()
-    {
-        bool invalidRun;
-        do
-        {
-            invalidRun = false;
-            // fresh randoms
-            foreach (var nb in children)
-                nb.AssignRandom();
+		for (var index = 0; index < children.Count; index++)
+		{
+			var numberBlock = children[index];
+			numberBlock.Value = values[index];
+		}
+	}
 
-            // check horizontals
-            var seenH = new HashSet<NumberBlock>();
-            foreach (var nb in children)
-            {
-                var head = nb;
-                while (head.neighborLeft != null) head = head.neighborLeft;
-                if (!seenH.Add(head)) continue;
+	private void SetColors()
+	{
+		if (availableColors is { Length: > 0 })
+		{
+			var tint = availableColors[Random.Range(0, availableColors.Length)];
+			foreach (var nb in children)
+			{
+				nb.spriteRenderer.color = tint;
+				nb.OriginalColor = tint;
+			}
+		}
+	}
 
-                var chain = new List<NumberBlock>();
-                var cur = head;
-                while (cur != null)
-                {
-                    chain.Add(cur);
-                    cur = cur.neighborRight;
-                }
-                if (ChainHasInvalidSegment(chain))
-                {
-                    invalidRun = true;
-                    break;
-                }
-            }
-            if (invalidRun) continue;
+	private void Start()
+	{
+		cam = Camera.main;
+		screenZ = cam.WorldToScreenPoint(transform.position).z;
+	}
 
-            // check verticals
-            var seenV = new HashSet<NumberBlock>();
-            foreach (var nb in children)
-            {
-                var head = nb;
-                while (head.neighborDown != null) head = head.neighborDown;
-                if (!seenV.Add(head)) continue;
+	public void AssignValidRandomNumbers()
+	{
+		bool invalidRun;
+		do
+		{
+			invalidRun = false;
 
-                var chain = new List<NumberBlock>();
-                var cur = head;
-                while (cur != null)
-                {
-                    chain.Add(cur);
-                    cur = cur.neighborUp;
-                }
-                if (ChainHasInvalidSegment(chain))
-                {
-                    invalidRun = true;
-                    break;
-                }
-            }
-        } while (invalidRun);
-    }
+			foreach (var nb in children)
+			{
+				nb.AssignRandom();
+			}
+			
+			var seenH = new HashSet<NumberBlock>();
+			foreach (var nb in children)
+			{
+				var head = nb;
+				while (head.neighborLeft != null) head = head.neighborLeft;
+				if (!seenH.Add(head)) continue;
 
-    private bool ChainHasInvalidSegment(List<NumberBlock> chain)
-    {
-        for (int s = 0; s < chain.Count - 1; s++)
-        {
-            int sum = 0;
-            for (int e = s; e < chain.Count; e++)
-            {
-                sum += chain[e].Value;
-                int len = e - s + 1;
-                if (len >= 2 && sum == 10)
-                    return true;
-                if (sum > 10)
-                    break;
-            }
-        }
-        return false;
-    }
+				var chain = new List<NumberBlock>();
+				var cur = head;
+				while (cur != null)
+				{
+					chain.Add(cur);
+					cur = cur.neighborRight;
+				}
+				if (ChainHasInvalidSegment(chain))
+				{
+					invalidRun = true;
+					break;
+				}
+			}
+			if (invalidRun) continue;
 
-    public void OnPointerDown(PointerEventData e)
-    {
-        if (placed)
-	        return;
+			// check verticals
+			var seenV = new HashSet<NumberBlock>();
+			foreach (var nb in children)
+			{
+				var head = nb;
+				while (head.neighborDown != null) head = head.neighborDown;
+				if (!seenV.Add(head)) continue;
 
-        AudioManager.Instance.PlaySFX(SFXType.pickUp);
-        // Grow back to full size on grab
-        transform.localScale = Vector3.one;
+				var chain = new List<NumberBlock>();
+				var cur = head;
+				while (cur != null)
+				{
+					chain.Add(cur);
+					cur = cur.neighborUp;
+				}
+				if (ChainHasInvalidSegment(chain))
+				{
+					invalidRun = true;
+					break;
+				}
+			}
+		} while (invalidRun);
+	}
 
-        transform.position += new Vector3(0, 3, 0);
-        children.ForEach(i => i.OnDragStart());
+	private bool ChainHasInvalidSegment(List<NumberBlock> chain)
+	{
+		for (int s = 0; s < chain.Count - 1; s++)
+		{
+			int sum = 0;
+			for (int e = s; e < chain.Count; e++)
+			{
+				sum += chain[e].Value;
+				int len = e - s + 1;
+				if (len >= 2 && sum == 10)
+					return true;
+				if (sum > 10)
+					break;
+			}
+		}
+		return false;
+	}
 
-        var ps = new Vector3(e.position.x, e.position.y, screenZ);
-        offset = transform.position - cam.ScreenToWorldPoint(ps);
+	public void OnPointerDown(PointerEventData e)
+	{
+		if (placed)
+			return;
 
-        // store the starting world Y so we know our baseline
-        dragStartWorldY = transform.position.y;
-    }
+		AudioManager.Instance.PlaySFX(SFXType.pickUp);
+		// Grow back to full size on grab
+		transform.localScale = Vector3.one;
 
-    public void OnDrag(PointerEventData e)
-    {
-        // 1) Move the composite with the cursor
-        Vector3 screenPt = new Vector3(e.position.x, e.position.y, screenZ);
-        Vector3 worldPt = cam.ScreenToWorldPoint(screenPt);
+		transform.position += new Vector3(0, 3, 0);
+		children.ForEach(i => i.OnDragStart());
 
-        // 2) dynamic extra Y based on how far above the start Y we are
-        float extraY = Mathf.Max(0f, worldPt.y - dragStartWorldY) * yOffsetFactor;
-        Vector3 dynamicOffset = offset + Vector3.up * extraY;
+		var ps = new Vector3(e.position.x, e.position.y, screenZ);
+		offset = transform.position - cam.ScreenToWorldPoint(ps);
 
-        // 3) move the composite
-        transform.position = worldPt + dynamicOffset;
+		// store the starting world Y so we know our baseline
+		dragStartWorldY = transform.position.y;
+	}
 
-        // 1) clear any old shadows
-        GridManager.Instance.ClearShadows();
+	public void OnDrag(PointerEventData e)
+	{
+		// 1) Move the composite with the cursor
+		Vector3 screenPt = new Vector3(e.position.x, e.position.y, screenZ);
+		Vector3 worldPt = cam.ScreenToWorldPoint(screenPt);
 
-        // 2) Try placing the whole composite in one shot
-        if (!GridManager.Instance.TryPlaceCompositeAt(this, out var placement))
-            return;
+		// 2) dynamic extra Y based on how far above the start Y we are
+		float extraY = Mathf.Max(0f, worldPt.y - dragStartWorldY) * yOffsetFactor;
+		Vector3 dynamicOffset = offset + Vector3.up * extraY;
 
-        // 3) show shadows at each spot this composite would occupy
-        var landingCells = placement.Values;        // each Vector2Int(x,y)
-        GridManager.Instance.ShowShadows(landingCells);
+		// 3) move the composite
+		transform.position = worldPt + dynamicOffset;
 
+		// 1) clear any old shadows
+		GridManager.Instance.ClearShadows();
 
-        /*// 3) Figure out which cells would clear if dropped here
-        var runs = GridManager.Instance.GetPreviewRuns(placement);
-        var matchedCells = new HashSet<Vector2Int>(runs.SelectMany(r => r));
+		// 2) Try placing the whole composite in one shot
+		if (!GridManager.Instance.TryPlaceCompositeAt(this, out var placement))
+			return;
 
-        // 4) Clear any old previews
-        GridManager.Instance.ClearAllPreviews();
-        foreach (var nb in children)
-            nb.StopPreview();
+		// 3) show shadows at each spot this composite would occupy
+		var landingCells = placement.Values; // each Vector2Int(x,y)
+		GridManager.Instance.ShowShadows(landingCells);
 
-        // 5) Show new previews:
-        //  • Grid cells in any run
-        foreach (var run in runs)
-            foreach (var cell in run)
-                GridManager.Instance.GetBlockAt(cell.x, cell.y)
-                                    ?.PlayPreview();
-        //  • Composite blocks whose target cell is in a run
-        foreach (var nb in children)
-        {
-            var cell = placement[nb];
-            if (matchedCells.Contains(cell))
-                nb.PlayPreview();
-            else
-                nb.StopPreview();
-        }*/
-    }
+		/*// 3) Figure out which cells would clear if dropped here
+		var runs = GridManager.Instance.GetPreviewRuns(placement);
+		var matchedCells = new HashSet<Vector2Int>(runs.SelectMany(r => r));
 
-    public void OnPointerUp(PointerEventData e)
-    {
-        // Clear any running preview animations on the grid
-        GridManager.Instance.ClearAllPreviews();
-        // 1) clear any old shadows
-        GridManager.Instance.ClearShadows();
+		// 4) Clear any old previews
+		GridManager.Instance.ClearAllPreviews();
+		foreach (var nb in children)
+		    nb.StopPreview();
 
-        // 0) First: stop *all* play‐preview on the dragged blocks
-        foreach (var nb in children)
-            nb.StopPreview();
+		// 5) Show new previews:
+		//  • Grid cells in any run
+		foreach (var run in runs)
+		    foreach (var cell in run)
+		        GridManager.Instance.GetBlockAt(cell.x, cell.y)
+		                            ?.PlayPreview();
+		//  • Composite blocks whose target cell is in a run
+		foreach (var nb in children)
+		{
+		    var cell = placement[nb];
+		    if (matchedCells.Contains(cell))
+		        nb.PlayPreview();
+		    else
+		        nb.StopPreview();
+		}*/
+	}
 
-        if (placed) return;
+	public void OnPointerUp(PointerEventData e)
+	{
+		// Clear any running preview animations on the grid
+		GridManager.Instance.ClearAllPreviews();
+		// 1) clear any old shadows
+		GridManager.Instance.ClearShadows();
 
-        // new:
-        if (!GridManager.Instance.TryPlaceCompositeAt(this, out var placedGrid))
-        {
-            // snap back on failure
-            transform.position = startPosition;
-            transform.localScale = Vector3.one * 0.7f;
-            return;
-        }
+		// 0) First: stop *all* play‐preview on the dragged blocks
+		foreach (var nb in children)
+			nb.StopPreview();
 
-        // align the composite so its first child hits exactly its cell center
-        var first = children[0];
-        var firstGrid = placedGrid[first];
-        var targetPos = GridManager.Instance.GetCellCenter(firstGrid.x, firstGrid.y);
-        transform.position = targetPos - first.transform.localPosition;
+		if (placed) return;
 
-        // register every block in their mapped cell
-        foreach (var kv in placedGrid)
-            GridManager.Instance.RegisterBlock(kv.Key, kv.Value.x, kv.Value.y);
+		// new:
+		if (!GridManager.Instance.TryPlaceCompositeAt(this, out var placedGrid))
+		{
+			// snap back on failure
+			transform.position = startPosition;
+			transform.localScale = Vector3.one * 0.7f;
+			return;
+		}
 
-        // finish the drop
-        children.ForEach(i => i.OnDragEnd());
-        placed = true;
-        GridManager.Instance.LastPlacedPosition = transform.position;
-        GridManager.Instance.CheckAndDestroyMatches();
-        foreach (var nb in children)
-            nb.transform.SetParent(GridManager.Instance.transform, true);
-        Destroy(gameObject);
+		// align the composite so its first child hits exactly its cell center
+		var first = children[0];
+		var firstGrid = placedGrid[first];
+		var targetPos = GridManager.Instance.GetCellCenter(firstGrid.x, firstGrid.y);
+		transform.position = targetPos - first.transform.localPosition;
 
-        AudioManager.Instance.PlaySFX(SFXType.PlaceBlock);
-    }
+		// register every block in their mapped cell
+		foreach (var kv in placedGrid)
+			GridManager.Instance.RegisterBlock(kv.Key, kv.Value.x, kv.Value.y);
+
+		// finish the drop
+		children.ForEach(i => i.OnDragEnd());
+		placed = true;
+		GridManager.Instance.LastPlacedPosition = transform.position;
+		GridManager.Instance.CheckAndDestroyMatches();
+		foreach (var nb in children)
+			nb.transform.SetParent(GridManager.Instance.transform, true);
+		Destroy(gameObject);
+
+		AudioManager.Instance.PlaySFX(SFXType.PlaceBlock);
+	}
 }
