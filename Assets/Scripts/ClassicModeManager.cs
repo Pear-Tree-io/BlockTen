@@ -39,6 +39,7 @@ public class ClassicModeManager : ModeManager
     public GameObject goodStamp;
     public GameObject greatStamp;
     public GameObject fantasticStamp;
+    public GameObject Streak;
     public GameObject goodStreak;
     public GameObject greatStreak;
     public GameObject fantasticStreak;
@@ -101,7 +102,8 @@ public class ClassicModeManager : ModeManager
         }
         else if (blockCount > 0)
         {
-            streakMultiplier = 0;
+            streakMultiplier++;
+            StartCoroutine(PrintStreak(Streak));
             // AudioManager.Instance.PlaySFX(SFXType.noStamp);
         }
         else
@@ -321,6 +323,19 @@ public class ClassicModeManager : ModeManager
         stamp.SetActive(false);
         streak.SetActive(false);
     }
+
+    private IEnumerator PrintStreak(GameObject streak)
+    {
+        if (streakMultiplier > 1)
+        {
+            streak.SetActive(true);
+            streak.GetComponent<TMP_Text>().text = streakMultiplier.ToString();
+        }
+
+        yield return new WaitForSeconds(0.5f);
+        streak.SetActive(false);
+    }
+
 
     public int Score => currentScore;
 }

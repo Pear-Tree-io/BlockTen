@@ -52,7 +52,17 @@ public class NumberBlock : MonoBehaviour
     /// </summary>
     public void AssignRandom()
     {
-        Value = Random.Range(1, 8);
+        //Value = Random.Range(1, 10);
+
+        float ran = Random.Range(0f, 1f);
+        if (ran > 0.8)
+        {
+            Value = Random.Range(7, 10);
+        }
+        else
+        {
+            Value = Random.Range(1, 7);
+        }
     }
 
     public void OnDragStart()
