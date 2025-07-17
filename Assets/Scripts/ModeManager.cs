@@ -3,6 +3,7 @@ using TMPro;
 using System.Collections;
 using Firebase.Analytics;
 using ManagersSpace;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Base class for all game mode managers. Handles score, combos, and UI popups.
@@ -10,6 +11,7 @@ using ManagersSpace;
 /// </summary>
 public abstract class ModeManager : MonoBehaviour
 {
+	public StageModeManager.StageModeType modeType;
 	public SpawnManager spawnManager;
 
 	[Header("Settings UI")]
@@ -21,6 +23,13 @@ public abstract class ModeManager : MonoBehaviour
 	public GameObject vibOff;
 
 	public bool isHighScore;
+	public bool isRevivable = true;
+	public bool ConsumeRevivableState()
+	{
+		var value = isRevivable;
+		isRevivable = false;
+		return value;
+	}
 
 	protected virtual void Awake()
 	{
@@ -68,8 +77,8 @@ public abstract class ModeManager : MonoBehaviour
 	/// </summary>
 	public virtual void ResetMode()
 	{
-		AdManager.Get.LoadAds();
 #if UNITY_EDITOR == false
+		AdManager.Get.LoadAds();
 	    FirebaseAnalytics.LogEvent("ResetMode", new Parameter("mode", GetType().Name));
 #endif
 	}
@@ -112,10 +121,24 @@ public abstract class ModeManager : MonoBehaviour
 
 	public virtual void GameOver()
 	{
-		FirebaseAnalytics.LogEvent("GameOver", new Parameter("mode", GetType().Name));
-
-		AudioManager.Instance.StopBGM();
-		SaveGame();
+		switch (modeType)
+		{
+			case StageModeManager.StageModeType.Classic:
+				GridManager.Instance.InitializeEndGrid();
+		
+				AudioManager.Instance.StopBGM();
+				SaveGame();
+				break;
+			case StageModeManager.StageModeType.Tutorial:
+			case StageModeManager.StageModeType.Clear:
+				if (GridManager.Instance.IsClear())
+					SceneManager.LoadScene("Menu");
+				else
+					SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+				break;
+		}
+		
+		FirebaseAnalytics.LogEvent("GameOver", new Parameter("mode", modeType.ToString()));
 	}
 
 	protected virtual void SaveGame()
@@ -169,5 +192,10 @@ public abstract class ModeManager : MonoBehaviour
 		}
 		
 		return false;
+	}
+
+	public virtual void SetModeType(StageModeManager.StageModeType stageModeType)
+	{
+		modeType = stageModeType;
 	}
 }

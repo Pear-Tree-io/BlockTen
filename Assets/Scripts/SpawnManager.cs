@@ -12,6 +12,8 @@ public class SpawnManager : MonoBehaviour
 	public List<GameObject> compositePrefabs;
 	private Queue<SerializableNumberBlock> _upcomingBlocks;
 	public Transform[] spawnPoints;
+	[HideInInspector]
+	public bool isInfinityMode = true;
 
 	private int placedCount;
 	private List<DraggableCompositeBlock> currentBlocks = new();
@@ -21,7 +23,6 @@ public class SpawnManager : MonoBehaviour
 	public float scaleAtSpawn = 0.7f;
 
 	public GameObject revivePanel;
-	public bool isRevive = false;
 
 	public bool isTimeLimit = false;
 
@@ -45,7 +46,7 @@ public class SpawnManager : MonoBehaviour
 			SetGameOver();
 			return false;
 		}
-		
+
 		if (_modeManager.CheckGameOver(spawnPoints.Length))
 		{
 			Debug.Log("Game Over: No more possible moves!");
@@ -55,12 +56,12 @@ public class SpawnManager : MonoBehaviour
 
 		return false;
 	}
-	
+
 	private void SpawnFull()
 	{
 		if (CheckGameOver())
 			return;
-		
+
 		// 2) Tear down leftovers
 		foreach (var old in currentBlocks)
 		{
@@ -72,10 +73,16 @@ public class SpawnManager : MonoBehaviour
 		bool gridEmpty = !GridManager.Instance.HasPlacedBlocks();
 
 		placedCount = 0;
-		
+
 		// 3) Spawn exactly three composites
 		for (int i = 0; i < spawnPoints.Length; i++)
 		{
+			if (_upcomingBlocks is { Count: 0 })
+			{
+				Debug.Log("No more upcoming blocks to spawn!");
+				return;
+			}
+
 			DraggableCompositeBlock compInstance = null;
 			Vector3 pos = spawnPoints[i].position;
 
@@ -87,7 +94,7 @@ public class SpawnManager : MonoBehaviour
 				{
 					if (_upcomingBlocks is { Count: <= 0 })
 						return;
-					
+
 					var comp = SpawnBlock(prefab, pos);
 
 					// must fit
@@ -140,7 +147,7 @@ public class SpawnManager : MonoBehaviour
 
 					// C) If STILL nothing fits, that truly is Game Over
 					if (compInstance == null)
-					{ 
+					{
 						Debug.Log("Game Over: No composite can fit in the remaining space!");
 						SetGameOver();
 						return;
@@ -160,12 +167,17 @@ public class SpawnManager : MonoBehaviour
 	private DraggableCompositeBlock SpawnBlock(GameObject prefab, Vector3 pos)
 	{
 		if (_upcomingBlocks != null && _upcomingBlocks.TryDequeue(out var blockData))
+		{
 			prefab = compositePrefabs.FirstOrDefault(i => i.name == blockData.blockName) ?? prefab;
-		
+
+			if (isInfinityMode && _upcomingBlocks.Count == 0)
+				_upcomingBlocks = null;
+		}
+
 		var comp = Instantiate(prefab, pos, Quaternion.identity).GetComponent<DraggableCompositeBlock>();
 		comp.transform.localScale = Vector3.one * scaleAtSpawn;
 		comp.Init(this, pos);
-		
+
 		return comp;
 	}
 
@@ -254,7 +266,7 @@ public class SpawnManager : MonoBehaviour
 						chosen = comp;
 						break;
 					}
-					
+
 					Destroy(comp.gameObject);
 				}
 
@@ -285,7 +297,7 @@ public class SpawnManager : MonoBehaviour
 			// empty if we've destroyed it (== null) or it’s already been placed
 			if (currentBlocks[i] == null || currentBlocks[i].placed)
 			{
-				currentBlocks[i] = SpawnBlock(compositePrefabs[Random.Range(0, compositePrefabs.Count)],spawnPoints[i].position);
+				currentBlocks[i] = SpawnBlock(compositePrefabs[Random.Range(0, compositePrefabs.Count)], spawnPoints[i].position);
 				return;
 			}
 		}
@@ -337,12 +349,12 @@ public class SpawnManager : MonoBehaviour
 			}
 		}
 	}
-	
+
 	public void SetUpcomingBlocks(SerializableNumberBlock[] dataUpcomingBlocks)
 	{
 		if (dataUpcomingBlocks == null || dataUpcomingBlocks.Length == 0)
 			return;
-		
+
 		_upcomingBlocks = new();
 		foreach (var serializableNumberBlock in dataUpcomingBlocks)
 		{
@@ -370,27 +382,18 @@ public class SpawnManager : MonoBehaviour
 
 	public void SetGameOver()
 	{
-		if (!isRevive)
-		{
+		if (_modeManager.ConsumeRevivableState())
 			StartCoroutine(AskRevive());
-		}
 		else
-		{
-			GridManager.Instance.InitializeEndGrid();
 			_modeManager.GameOver();
-		}
 	}
 
 	#region Revive
 
 	public IEnumerator AskRevive()
 	{
-		isRevive = true;
-
 		_modeManager.SetNoSpaceLeftMessage(true);
-
 		yield return new WaitForSeconds(1.5f);
-
 		revivePanel.SetActive(true);
 	}
 
@@ -522,5 +525,6 @@ public class SpawnManager : MonoBehaviour
 		hand.transform.position = endPos;
 		Destroy(hand);
 	}
+
 	#endregion
 }

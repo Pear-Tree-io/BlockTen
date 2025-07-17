@@ -842,12 +842,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c5e7395492396f4bbb0712ad32bea37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  modeType: 1
   spawnManager: {fileID: 737700784}
   SettingsPanel: {fileID: 429852302}
   bgmOff: {fileID: 526742518}
   sfxOff: {fileID: 1196350486}
   vibOff: {fileID: 202881663}
   isHighScore: 0
+  isRevivable: 1
   scoreText: {fileID: 1945285625}
   highScoreText: {fileID: 252705770}
   comboTextPrefab: {fileID: 1436282591}
@@ -862,7 +864,7 @@ MonoBehaviour:
   goodStamp: {fileID: 118121193}
   greatStamp: {fileID: 564762076}
   fantasticStamp: {fileID: 121693827}
-  Streak: {fileID: 0}
+  Streak: {fileID: 1436282591}
   goodStreak: {fileID: 148175556}
   greatStreak: {fileID: 1331934588}
   fantasticStreak: {fileID: 1933262093}
@@ -897,8 +899,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30e854364b032184b831e13321663f76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stageName: test
+  stageModeType: 1
+  stageName: tutorial_1
   base: {fileID: 216924797}
+  spawn: {fileID: 737700784}
 --- !u!1 &228774126
 GameObject:
   m_ObjectHideFlags: 0
@@ -1015,12 +1019,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1891025807}
+  m_Children:
+  - {fileID: 1891025807}
+  m_Father: {fileID: 294487108}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 30, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 230, y: -99.99994}
   m_SizeDelta: {x: 636.0657, y: 120}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &252705770
@@ -1152,7 +1157,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1945285624}
-  - {fileID: 1891025807}
+  - {fileID: 252705769}
   - {fileID: 876560761}
   - {fileID: 714939327}
   m_Father: {fileID: 1404506810}
@@ -2608,13 +2613,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 714939326}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: 0.13052656, w: 0.9914449}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 294487108}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 15}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -100, y: -100}
@@ -2759,12 +2764,12 @@ MonoBehaviour:
   - {fileID: 4958560085060495230, guid: 6d3d9e4e37e4ae2499b8a8659db89dec, type: 3}
   - {fileID: 4958560085060495230, guid: a647abf3358c4cd4794073b410449e3f, type: 3}
   spawnPoints:
-  - {fileID: 1985337837}
   - {fileID: 1374260335}
+  - {fileID: 1985337837}
   - {fileID: 1635143764}
+  isInfinityMode: 1
   scaleAtSpawn: 0.7
   revivePanel: {fileID: 3409296709116003785}
-  isRevive: 0
   isTimeLimit: 0
   handPrefab: {fileID: 5317685900206151128, guid: 8d28c7129f53b964c8fce8826f31e485, type: 3}
   tutorialStartPoint: {fileID: 1985337837}
@@ -3360,6 +3365,7 @@ MonoBehaviour:
   leaderboardButtons:
   - {fileID: 495246136}
   - {fileID: 1362982022}
+  objSetting: {fileID: 714939326}
 --- !u!4 &983628106
 Transform:
   m_ObjectHideFlags: 0
@@ -6477,13 +6483,12 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 252705769}
-  m_Father: {fileID: 294487108}
+  m_Children: []
+  m_Father: {fileID: 252705769}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 50, y: -100}
+  m_AnchoredPosition: {x: -180.00002, y: -60.00006}
   m_SizeDelta: {x: 150, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1891025808

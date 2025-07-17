@@ -16,6 +16,7 @@ public class GridManager : MonoBehaviour
 
 	private NumberBlock[,] gridBlocks;
 	private bool[,] occupied;
+	public bool IsClear() => !occupied.Cast<bool>().Any(x => x);
 	public Vector3 origin { get; private set; }
 
 	public GameObject destroyVFX;

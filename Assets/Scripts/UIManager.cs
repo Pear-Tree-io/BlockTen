@@ -15,6 +15,8 @@ public class UIManager : MonoBehaviour
 	private SpriteRenderer initRenderer;
 	[SerializeField]
 	private AnimatedButton[] leaderboardButtons;
+	[SerializeField]
+	private GameObject objSetting;
 
 	private void Awake()
 	{
@@ -49,5 +51,10 @@ public class UIManager : MonoBehaviour
 		{
 			bt.SetOnClick(PlatformManager.Get.OnLeaderboard);
 		}
+	}
+
+	public void SetModeType(StageModeManager.StageModeType stageModeType)
+	{
+		objSetting.SetActive(stageModeType != StageModeManager.StageModeType.Tutorial);
 	}
 }

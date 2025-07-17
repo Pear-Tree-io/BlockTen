@@ -3,14 +3,26 @@
 public class PlatformManager : MonoBehaviour
 {
 	private static PlatformManager _instance;
+#if UNITY_EDITOR
+	public static PlatformManager Get
+	{
+		get
+		{
+			if (_instance == null)
+				throw new("PlatformManager is not initialized. Make sure to call it after the Awake method.");
+			return _instance;
+		}
+	}
+#else
 	public static PlatformManager Get => _instance;
+#endif
 
 	private PlatformBase targetPlatform;
 
 	private void Awake()
 	{
 		_instance = this;
-		
+
 #if UNITY_ANDROID
 		targetPlatform = new AndroidPlatform();
 #elif UNITY_IOS

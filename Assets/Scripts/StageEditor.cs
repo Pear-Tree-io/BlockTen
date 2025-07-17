@@ -9,8 +9,10 @@ using UnityEngine.InputSystem;
 public class StageEditor : MonoBehaviour
 {
 	public GridManager grid;
-	public GameObject objCell;
 	public string stageName;
+
+#if UNITY_EDITOR
+	public GameObject objCell;
 	public InputAction input;
 
 	private readonly Dictionary<Vector2Int, NumberBlock> _cells = new();
@@ -56,11 +58,11 @@ public class StageEditor : MonoBehaviour
 				nb.Value = value;
 		}
 	}
+#endif
 
 	[Button("Save Block Data", ButtonSizes.Large)]
 	public void SaveBlock()
 	{
-#if UNITY_EDITOR
 		var path = $"Assets/Resources/{stageName}_MapData.asset";
 		if (File.Exists(path))
 			AssetDatabase.DeleteAsset(path);
@@ -73,7 +75,7 @@ public class StageEditor : MonoBehaviour
 		EditorUtility.SetDirty(asset);
 		AssetDatabase.SaveAssets();
 		AssetDatabase.Refresh();
+
 		Debug.Log("Save Block Data");
-#endif
 	}
 }

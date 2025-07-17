@@ -66,7 +66,7 @@ public class ClassicModeManager : ModeManager
 
         // Cache the canvas for world-to-screen conversions
         _canvas = scoreText.GetComponentInParent<Canvas>();
-        highScoreText.text = "" + highScore;
+        highScoreText.text = highScore.ToString();
         base.Start();
 
         if (!CheckTutorial())
@@ -166,28 +166,31 @@ public class ClassicModeManager : ModeManager
 
     public override void GameOver()
     {
-        if (adCount > 2)
-        {
-            AdManager.Get.ShowAd();
-        }
-        else
-        {
-            adCount++;
-        }
+	    if (modeType == StageModeManager.StageModeType.Classic)
+	    {
+		    if (adCount > 2)
+		    {
+			    AdManager.Get.ShowAd();
+		    }
+		    else
+		    {
+			    adCount++;
+		    }
 
-        if (currentScore > highScore)
-        {
-	        highScore = currentScore;
-	        bestHighScoreText.text = highScore.ToString();
-	        PlatformManager.Get.ReportScore(highScore);
-	        StartCoroutine(GameOverPlay(highScorePanel, bestHighScoreText, SFXType.bestScore));
-        }
-        else
-        {
-            goHighScoreText.text = highScore.ToString();
-            goScoreText.text = currentScore.ToString();
-            StartCoroutine(GameOverPlay(gameOverPanel, goScoreText, SFXType.goScore));
-        }
+		    if (currentScore > highScore)
+		    {
+			    highScore = currentScore;
+			    bestHighScoreText.text = highScore.ToString();
+			    PlatformManager.Get.ReportScore(highScore);
+			    StartCoroutine(GameOverPlay(highScorePanel, bestHighScoreText, SFXType.bestScore));
+		    }
+		    else
+		    {
+			    goHighScoreText.text = highScore.ToString();
+			    goScoreText.text = currentScore.ToString();
+			    StartCoroutine(GameOverPlay(gameOverPanel, goScoreText, SFXType.goScore));
+		    }
+	    }
 
         base.GameOver();
     }
@@ -338,4 +341,12 @@ public class ClassicModeManager : ModeManager
 
 
     public int Score => currentScore;
+
+    public override void SetModeType(StageModeManager.StageModeType stageModeType)
+    {
+	    base.SetModeType(stageModeType);
+	    
+	    scoreText.SetActive(stageModeType == StageModeManager.StageModeType.Classic);
+	    highScoreText.SetActive(stageModeType == StageModeManager.StageModeType.Classic);
+    }
 }

@@ -2793,13 +2793,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 714939326}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.13052616, w: 0.9914449}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 294487108}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 15}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -100, y: -100}
@@ -2947,10 +2947,9 @@ MonoBehaviour:
   - {fileID: 1985337837}
   - {fileID: 1374260335}
   - {fileID: 1635143764}
-  modeManager: {fileID: 1822594366}
+  isInfinityMode: 1
   scaleAtSpawn: 0.7
   revivePanel: {fileID: 0}
-  isRevive: 1
   isTimeLimit: 1
   handPrefab: {fileID: 5317685900206151128, guid: 8d28c7129f53b964c8fce8826f31e485, type: 3}
   tutorialStartPoint: {fileID: 1985337837}
@@ -3087,6 +3086,7 @@ MonoBehaviour:
   columns: 8
   cellSize: 1
   cellPrefab: {fileID: 4145093259610895930, guid: 0a6fe3aba94aa0b429fa0b35e6988226, type: 3}
+  blockPrefab: {fileID: 0}
   destroyVFX: {fileID: 7861580100568878158, guid: 31f86a718a2f1ed43b00bdc6c4f4d491, type: 3}
   destroyHighlightColor: {r: 0.99607843, g: 0.25098044, b: 0.27928358, a: 1}
   spawnManager: {fileID: 737700784}
@@ -3546,6 +3546,7 @@ MonoBehaviour:
   leaderboardButtons:
   - {fileID: 495246136}
   - {fileID: 1362982022}
+  objSetting: {fileID: 0}
 --- !u!4 &983628106
 Transform:
   m_ObjectHideFlags: 0
@@ -6570,11 +6571,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f9131947de77fe49a2eb8aa51e2c4d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  modeType: 3
+  spawnManager: {fileID: 0}
   SettingsPanel: {fileID: 429852302}
   bgmOff: {fileID: 526742518}
   sfxOff: {fileID: 1196350486}
   vibOff: {fileID: 202881663}
   isHighScore: 0
+  isRevivable: 1
   scoreText: {fileID: 1945285625}
   highScoreText: {fileID: 252705770}
   scoreTextPrefab: {fileID: 469507181}
