@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0897c213125714dd9b9d934b7ea935dd, type: 3}
-  m_Name: test_MapData
+  m_Name: tutorial_3_MapData
   m_EditorClassIdentifier: 
   blocks:
   - x: 0
@@ -145,7 +145,7 @@ MonoBehaviour:
     values: 
   - x: 3
     y: 2
-    value: 0
+    value: 5
     blockName: 
     values: 
   - x: 3
@@ -190,7 +190,7 @@ MonoBehaviour:
     values: 
   - x: 4
     y: 3
-    value: 5
+    value: 0
     blockName: 
     values: 
   - x: 4
@@ -337,12 +337,7 @@ MonoBehaviour:
   - x: 0
     y: 0
     value: 0
-    blockName: Blocks
-    values: 05000000
-  - x: 0
-    y: 0
-    value: 0
-    blockName: Blocks
-    values: 05000000
+    blockName: Blocks 1
+    values: 0200000003000000
   width: 8
   height: 8
