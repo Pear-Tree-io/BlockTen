@@ -12,8 +12,6 @@ public class DraggableCompositeBlock : MonoBehaviour, IPointerDownHandler, IDrag
 	public Color[] availableColors;
 
 	[HideInInspector]
-	public SpawnManager spawnManager;
-	[HideInInspector]
 	public Vector3 startPosition;
 	[HideInInspector]
 	public List<NumberBlock> children;
@@ -36,10 +34,10 @@ public class DraggableCompositeBlock : MonoBehaviour, IPointerDownHandler, IDrag
 	private Vector3 offset;
 	private float dragStartWorldY = 0;
 	private float yOffsetFactor = 0.75f;
+	public bool valueInitialized = false;
 
-	public void Init(SpawnManager spawnManager, Vector3 pos, int[] values = null)
+	public void Init(Vector3 pos, int[] values = null)
 	{
-		this.spawnManager = spawnManager;
 		startPosition = pos;
 		
 		SetValues(values);
@@ -53,6 +51,8 @@ public class DraggableCompositeBlock : MonoBehaviour, IPointerDownHandler, IDrag
 			AssignValidRandomNumbers();
 			return;
 		}
+
+		valueInitialized = true;
 
 		for (var index = 0; index < children.Count; index++)
 		{
@@ -68,8 +68,7 @@ public class DraggableCompositeBlock : MonoBehaviour, IPointerDownHandler, IDrag
 			var tint = availableColors[Random.Range(0, availableColors.Length)];
 			foreach (var nb in children)
 			{
-				nb.spriteRenderer.color = tint;
-				nb.OriginalColor = tint;
+				nb.SetColor(tint);
 			}
 		}
 	}
@@ -177,6 +176,9 @@ public class DraggableCompositeBlock : MonoBehaviour, IPointerDownHandler, IDrag
 
 	public void OnDrag(PointerEventData e)
 	{
+		if (placed)
+			return;
+		
 		// 1) Move the composite with the cursor
 		Vector3 screenPt = new Vector3(e.position.x, e.position.y, screenZ);
 		Vector3 worldPt = cam.ScreenToWorldPoint(screenPt);
@@ -234,9 +236,12 @@ public class DraggableCompositeBlock : MonoBehaviour, IPointerDownHandler, IDrag
 
 		// 0) First: stop *all* play‐preview on the dragged blocks
 		foreach (var nb in children)
+		{
 			nb.StopPreview();
+		}
 
-		if (placed) return;
+		if (placed)
+			return;
 
 		// new:
 		if (!GridManager.Instance.TryPlaceCompositeAt(this, out var placedGrid))
@@ -255,17 +260,20 @@ public class DraggableCompositeBlock : MonoBehaviour, IPointerDownHandler, IDrag
 
 		// register every block in their mapped cell
 		foreach (var kv in placedGrid)
+		{
 			GridManager.Instance.RegisterBlock(kv.Key, kv.Value.x, kv.Value.y);
+		}
 
-		// finish the drop
-		children.ForEach(i => i.OnDragEnd());
 		placed = true;
+		foreach (var nb in children)
+		{
+			nb.transform.SetParent(GridManager.Instance.traBlockTarget, true);
+			nb.OnDragEnd();
+		}
 		GridManager.Instance.LastPlacedPosition = transform.position;
 		GridManager.Instance.CheckAndDestroyMatches();
-		foreach (var nb in children)
-			nb.transform.SetParent(GridManager.Instance.transform, true);
-		Destroy(gameObject);
-
 		AudioManager.Instance.PlaySFX(SFXType.PlaceBlock);
+		
+		Destroy(gameObject);
 	}
 }

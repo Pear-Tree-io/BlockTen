@@ -11,10 +11,10 @@ public class MainMenuManager : ModeManager
 	{
 		base.Awake();
 		
-		Application.targetFrameRate = 240;
+		Application.targetFrameRate = 120;
 
-		if (ClassicModeManager.CheckTutorial() == false)
-            LoadClassicScene();
+		if (PlayerData.ShouldTutorial())
+			LoadStageScene();
 	}
 
 	public void EnterClassicMode()
@@ -31,8 +31,15 @@ public class MainMenuManager : ModeManager
 	{
 		SceneManager.LoadScene(1);
 	}
+    
     private void LoadTimeLimitScene()
     {
         SceneManager.LoadScene(2);
     }
+    
+    private void LoadStageScene()
+    {
+	    PlayerData.CompleteTutorial();
+		SceneManager.LoadScene("Stage");
+	}
 }

@@ -105,49 +105,49 @@ MonoBehaviour:
     values: 
   - x: 2
     y: 2
-    value: 0
-    blockName: 
-    values: 
-  - x: 2
-    y: 3
-    value: 0
-    blockName: 
-    values: 
-  - x: 2
-    y: 4
-    value: 0
-    blockName: 
-    values: 
-  - x: 2
-    y: 5
-    value: 0
-    blockName: 
-    values: 
-  - x: 2
-    y: 6
-    value: 0
-    blockName: 
-    values: 
-  - x: 2
-    y: 7
-    value: 0
-    blockName: 
-    values: 
-  - x: 3
-    y: 0
-    value: 0
-    blockName: 
-    values: 
-  - x: 3
-    y: 1
-    value: 0
-    blockName: 
-    values: 
-  - x: 3
-    y: 2
     value: 2
     blockName: 
     values: 
+  - x: 2
+    y: 3
+    value: 0
+    blockName: 
+    values: 
+  - x: 2
+    y: 4
+    value: 0
+    blockName: 
+    values: 
+  - x: 2
+    y: 5
+    value: 0
+    blockName: 
+    values: 
+  - x: 2
+    y: 6
+    value: 0
+    blockName: 
+    values: 
+  - x: 2
+    y: 7
+    value: 0
+    blockName: 
+    values: 
+  - x: 3
+    y: 0
+    value: 0
+    blockName: 
+    values: 
+  - x: 3
+    y: 1
+    value: 0
+    blockName: 
+    values: 
+  - x: 3
+    y: 2
+    value: 3
+    blockName: 
+    values: 
   - x: 3
     y: 3
     value: 0
@@ -185,7 +185,7 @@ MonoBehaviour:
     values: 
   - x: 4
     y: 2
-    value: 3
+    value: 0
     blockName: 
     values: 
   - x: 4
@@ -338,6 +338,11 @@ MonoBehaviour:
     y: 0
     value: 0
     blockName: Blocks
-    values: 05000000
+    values: 08000000
+  - x: 0
+    y: 0
+    value: 0
+    blockName: Blocks
+    values: 07000000
   width: 8
   height: 8

@@ -42,7 +42,6 @@ public abstract class ModeManager : MonoBehaviour
 		MenuUpdate();
 		if (AudioManager.Instance.bgmSource.isPlaying == false)
 			AudioManager.Instance.PlayMainMenuBGM();
-		spawnManager.Init(this);
 	}
 
 	/// <summary>
@@ -125,16 +124,15 @@ public abstract class ModeManager : MonoBehaviour
 		{
 			case StageModeManager.StageModeType.Classic:
 				GridManager.Instance.InitializeEndGrid();
-		
 				AudioManager.Instance.StopBGM();
 				SaveGame();
 				break;
 			case StageModeManager.StageModeType.Tutorial:
 			case StageModeManager.StageModeType.Clear:
 				if (GridManager.Instance.IsClear())
-					SceneManager.LoadScene("Menu");
+					StageModeManager.Get.NextStage();
 				else
-					SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+					StageModeManager.Get.ResetStage();
 				break;
 		}
 		
@@ -197,5 +195,6 @@ public abstract class ModeManager : MonoBehaviour
 	public virtual void SetModeType(StageModeManager.StageModeType stageModeType)
 	{
 		modeType = stageModeType;
+		spawnManager.Init(this);
 	}
 }

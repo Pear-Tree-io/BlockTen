@@ -7,346 +7,318 @@ using DG.Tweening;
 
 public class ClassicModeManager : ModeManager
 {
-    public static ClassicModeManager Instance { get; private set; }
+	public static ClassicModeManager Instance { get; private set; }
 
-    [Header("UI")]
-    [SerializeField] private TMP_Text scoreText;
-    [SerializeField] private TMP_Text highScoreText;
-    [SerializeField] private GameObject comboTextPrefab;
-    [SerializeField] private GameObject scoreTextPrefab;
-    private Canvas _canvas;
+	[Header("UI")]
+	[SerializeField]
+	private TMP_Text scoreText;
+	[SerializeField]
+	private TMP_Text highScoreText;
+	[SerializeField]
+	private GameObject comboTextPrefab;
+	[SerializeField]
+	private GameObject scoreTextPrefab;
+	private Canvas _canvas;
 
-    private int highScore = 0;
-    private int currentScore;
-    private int comboMultiplier = 1;
-    private int adCount = 0;
-    private int streakMultiplier = 0;
+	private int highScore = 0;
+	private int currentScore;
+	private int comboMultiplier = 1;
+	private int adCount = 0;
+	private int streakMultiplier = 0;
 
-    private const string HighScoreKey = "ClassicHighScore";
-    private const string TutorialKey = "Tutorial";
-    private const string AdKey = "Ad";
+	public GameObject gameOverPanel;
+	public TMP_Text goScoreText;
+	public TMP_Text goHighScoreText;
 
-    public GameObject gameOverPanel;
-    public TMP_Text goScoreText;
-    public TMP_Text goHighScoreText;
+	public GameObject highScorePanel;
+	public TMP_Text bestHighScoreText;
 
-    public GameObject highScorePanel;
-    public TMP_Text bestHighScoreText;
+	public GameObject noSpaceLeft;
 
-    public GameObject tutorialPanel;
-    public GameObject noSpaceLeft;
+	public GameObject goodStamp;
+	public GameObject greatStamp;
+	public GameObject fantasticStamp;
+	public GameObject Streak;
+	public GameObject goodStreak;
+	public GameObject greatStreak;
+	public GameObject fantasticStreak;
+	public Animation anim;
 
-    public GameObject goodStamp;
-    public GameObject greatStamp;
-    public GameObject fantasticStamp;
-    public GameObject Streak;
-    public GameObject goodStreak;
-    public GameObject greatStreak;
-    public GameObject fantasticStreak;
-    public Animation anim;
+	public ParticleSystem fantasticEffect;
+	public ParticleSystem greatEffect;
+	public ParticleSystem goodEffect;
 
-    public ParticleSystem fantasticEffect;
-    public ParticleSystem greatEffect;
-    public ParticleSystem goodEffect;
+	protected override void Awake()
+	{
+		Instance = this;
 
-    protected override void Awake()
-    {
-	    Instance = this;
-	    
-        base.Awake();
-        LoadGame();
-        gameOverPanel.SetActive(false);
-        highScorePanel.SetActive(false);
-        noSpaceLeft.SetActive(false);
-    }
+		base.Awake();
+		LoadGame();
+		gameOverPanel.SetActive(false);
+		highScorePanel.SetActive(false);
+		noSpaceLeft.SetActive(false);
+	}
 
-    protected override void Start()
-    {
-        Debug.Log(PlayerPrefs.GetInt(TutorialKey));
+	protected override void Start()
+	{
+		_canvas = scoreText.GetComponentInParent<Canvas>();
+		highScoreText.text = highScore.ToString();
+		base.Start();
+	}
 
-        // Cache the canvas for world-to-screen conversions
-        _canvas = scoreText.GetComponentInParent<Canvas>();
-        highScoreText.text = highScore.ToString();
-        base.Start();
+	/// <summary>
+	/// Call this whenever blocks are destroyed.
+	/// </summary>
+	public override void OnMatchBlocksDestroyed(int matchCount, int blockCount)
+	{
+		if (blockCount >= 6)
+		{
+			streakMultiplier++;
+			anim.Play();
+			StartCoroutine(PrintStamp(fantasticStamp, SFXType.fantasticStamp, fantasticStreak));
+			Camera.main.DOShakePosition(0.2f, 0.2f, 50, 180, true);
+			// AudioManager.Instance.PlaySFX(SFXType.brickBreak);
+		}
+		else if (blockCount > 4 || matchCount >= 2)
+		{
+			streakMultiplier++;
+			StartCoroutine(PrintStamp(greatStamp, SFXType.greatStamp, greatStreak));
+			Camera.main.DOShakePosition(0.2f, 0.1f, 30, 180, true);
+		}
+		else if (blockCount > 2)
+		{
+			streakMultiplier++;
+			StartCoroutine(PrintStamp(goodStamp, SFXType.goodStamp, goodStreak));
+		}
+		else if (blockCount > 0)
+		{
+			streakMultiplier++;
+			StartCoroutine(PrintStreak(Streak));
+			// AudioManager.Instance.PlaySFX(SFXType.noStamp);
+		}
+		else
+		{
+			streakMultiplier = 0;
+		}
 
-        if (!CheckTutorial())
-        {
-            tutorialPanel.SetActive(true);
-        }
-    }
+		//comboMultiplier = matchCount;
 
-    /// <summary>
-    /// Call this whenever blocks are destroyed.
-    /// </summary>
-    public override void OnMatchBlocksDestroyed(int matchCount, int blockCount)
-    {
+		var pointsGained = 0f;
 
-        if (blockCount >= 6)
-        {
-            streakMultiplier++;
-            anim.Play();
-            StartCoroutine(PrintStamp(fantasticStamp, SFXType.fantasticStamp, fantasticStreak));
-            Camera.main.DOShakePosition(0.2f, 0.2f, 50, 180, true);
-            // AudioManager.Instance.PlaySFX(SFXType.brickBreak);
-        }
-        else if (blockCount > 4 || matchCount >= 2)
-        {
-            streakMultiplier++;
-            StartCoroutine(PrintStamp(greatStamp, SFXType.greatStamp, greatStreak));
-            Camera.main.DOShakePosition(0.2f, 0.1f, 30, 180, true);   
-        }
-        else if (blockCount > 2)
-        {
-            streakMultiplier++;
-            StartCoroutine(PrintStamp(goodStamp, SFXType.goodStamp, goodStreak));
-        }
-        else if (blockCount > 0)
-        {
-            streakMultiplier++;
-            StartCoroutine(PrintStreak(Streak));
-            // AudioManager.Instance.PlaySFX(SFXType.noStamp);
-        }
-        else
-        {
-            streakMultiplier = 0;
-        }
+		if (scoreText.isActiveAndEnabled)
+		{
+			if (streakMultiplier > 1)
+			{
+				pointsGained = blockCount * matchCount * 10f * (1f + (streakMultiplier / 2f));
+			}
+			else
+			{
+				pointsGained = blockCount * matchCount * 10;
+			}
+		}
 
-        //comboMultiplier = matchCount;
+		var oldScore = currentScore;
+		currentScore += (int)pointsGained;
 
-        var pointsGained = 0;
+		if (scoreText != null)
+			scoreText.text = currentScore.ToString();
 
-        if(streakMultiplier > 1)
-        {
-            pointsGained = (blockCount * matchCount * 10) + (streakMultiplier * 10);
-        }
-        else
-        {
-            pointsGained = blockCount * matchCount * 10;
-        }
+		// Animate score increment
+		StartCoroutine(AnimateScore(scoreText, oldScore, currentScore, 0.5f));
 
-        int oldScore = currentScore;
-        int newScore = oldScore + (int)pointsGained;
-        currentScore = newScore;
+		if (matchCount >= 1)
+		{
+			StartCoroutine(PlayScoreTexts(matchCount, (int)pointsGained));
+		}
 
-        if (scoreText != null)
-            scoreText.text = currentScore.ToString();
+		if (currentScore > highScore)
+		{
+			isHighScore = true;
+			highScoreText.text = "" + currentScore;
+		}
+	}
 
-        // Animate score increment
-        StartCoroutine(AnimateScore(scoreText, oldScore, newScore, 0.5f));
+	protected override int CalculateScore(int destroyedCount)
+	{
+		return destroyedCount * 10 * comboMultiplier;
+	}
 
-        if (matchCount >= 1)
-        {
-            StartCoroutine(PlayScoreTexts(matchCount, (int)pointsGained));
-        }
+	/// <summary>
+	/// Resets score & combo—call at level start or on restart.
+	/// </summary>
+	public override void ResetMode()
+	{
+		base.ResetMode();
 
-        if (currentScore > highScore)
-        {
-	        isHighScore = true;
-            highScoreText.text = "" + currentScore;
-        }
-    }
+		currentScore = 0;
+		comboMultiplier = 1;
+		scoreText.text = "0";
+		isHighScore = false;
+	}
 
-    protected override int CalculateScore(int destroyedCount)
-    {
-        return destroyedCount * 10 * comboMultiplier;
-    }
+	public override void GameOver()
+	{
+		if (modeType == StageModeManager.StageModeType.Classic)
+		{
+			if (adCount > 2)
+			{
+				AdManager.Get.ShowAd();
+			}
+			else
+			{
+				adCount++;
+			}
 
-    /// <summary>
-    /// Resets score & combo—call at level start or on restart.
-    /// </summary>
-    public override void ResetMode()
-    {
-	    base.ResetMode();
-	    
-        currentScore = 0;
-        comboMultiplier = 1;
-        scoreText.text = "0";
-        isHighScore = false;
-    }
+			if (currentScore > highScore)
+			{
+				highScore = currentScore;
+				bestHighScoreText.text = highScore.ToString();
+				PlatformManager.Get.ReportScore(highScore);
+				StartCoroutine(GameOverPlay(highScorePanel, bestHighScoreText, SFXType.bestScore));
+			}
+			else
+			{
+				goHighScoreText.text = highScore.ToString();
+				goScoreText.text = currentScore.ToString();
+				StartCoroutine(GameOverPlay(gameOverPanel, goScoreText, SFXType.goScore));
+			}
+		}
 
-    public override void GameOver()
-    {
-	    if (modeType == StageModeManager.StageModeType.Classic)
-	    {
-		    if (adCount > 2)
-		    {
-			    AdManager.Get.ShowAd();
-		    }
-		    else
-		    {
-			    adCount++;
-		    }
+		base.GameOver();
+	}
 
-		    if (currentScore > highScore)
-		    {
-			    highScore = currentScore;
-			    bestHighScoreText.text = highScore.ToString();
-			    PlatformManager.Get.ReportScore(highScore);
-			    StartCoroutine(GameOverPlay(highScorePanel, bestHighScoreText, SFXType.bestScore));
-		    }
-		    else
-		    {
-			    goHighScoreText.text = highScore.ToString();
-			    goScoreText.text = currentScore.ToString();
-			    StartCoroutine(GameOverPlay(gameOverPanel, goScoreText, SFXType.goScore));
-		    }
-	    }
+	protected override void SaveGame()
+	{
+		PlayerData.SetAdCount(adCount);
+		PlayerData.SetHighScore(modeType, highScore);
+	}
 
-        base.GameOver();
-    }
+	protected override void LoadGame()
+	{
+		adCount = PlayerData.GetAdCount();
+		highScore = PlayerData.GetHighScore(modeType);
+	}
 
-    protected override void SaveGame()
-    {
-        PlayerPrefs.SetInt(AdKey, adCount);
-        PlayerPrefs.SetInt(HighScoreKey, highScore);
-        PlayerPrefs.Save();
-    }
+	public void LoadClassicScene()
+	{
+		AudioManager.Instance.PlaySFX(SFXType.Button);
+		SceneManager.LoadScene("Classic");
+	}
 
-    protected override void LoadGame()
-    {
-        adCount = PlayerPrefs.GetInt(AdKey, 0);
-        highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
-    }
+	private IEnumerator GameOverPlay(GameObject objectToActive, TMP_Text text, SFXType type)
+	{
+		SetNoSpaceLeftMessage(true);
+		yield return new WaitForSeconds(2f);
 
-    public void TutorialPlayed()
-    {
-        PlayerPrefs.SetInt(TutorialKey, 1);
-        PlayerPrefs.Save();
-    }
+		objectToActive.SetActive(true);
+		StartCoroutine(AnimateScore(text, 0, currentScore, 1));
+		AudioManager.Instance.PlaySFX(type);
+	}
 
-    public static bool CheckTutorial()
-    {
-        if (PlayerPrefs.GetInt(TutorialKey) == 0)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
+	public override void SetNoSpaceLeftMessage(bool active)
+	{
+		noSpaceLeft.SetActive(active);
+	}
 
-    public void LoadClassicScene()
-    {
-        AudioManager.Instance.PlaySFX(SFXType.Button);
-        SceneManager.LoadScene("Classic");
-    }
+	private IEnumerator PlayScoreTexts(int count, int score)
+	{
+		var waitPopup = 0f;
+		var waitTime = (count * 0.4f) + 0.2f;
 
-    private IEnumerator GameOverPlay(GameObject objectToActive, TMP_Text text, SFXType type)
-    {
-        SetNoSpaceLeftMessage(true);
-        yield return new WaitForSeconds(2f);
+		if (count >= 2)
+		{
+			waitPopup = count * 0.3f + 0.2f;
+			waitTime = (count * 0.4f) + 0.75f - waitPopup;
+			yield return new WaitForSeconds(waitPopup);
+			StartCoroutine(ShowTextOnCanvas(comboTextPrefab, _canvas, count, 0.5f));
+		}
 
-        objectToActive.SetActive(true);
-        StartCoroutine(AnimateScore(text, 0, currentScore, 1));
-        AudioManager.Instance.PlaySFX(type);
-    }
+		yield return new WaitForSeconds(waitTime);
+		StartCoroutine(ShowTextOnCanvas(scoreTextPrefab, _canvas, score, 0.5f));
+	}
 
-    public override void SetNoSpaceLeftMessage(bool active)
-    {
-	    noSpaceLeft.SetActive(active);
-    }
+	/// <summary>
+	/// Smoothly animates the scoreText from 'start' to 'end' over 'duration' seconds.
+	/// </summary>
+	private IEnumerator AnimateScore(TMP_Text text, int start, int end, float duration)
+	{
+		float elapsed = 0f;
+		while (elapsed < duration)
+		{
+			elapsed += Time.deltaTime;
+			int displayValue = Mathf.RoundToInt(Mathf.Lerp(start, end, elapsed / duration));
+			text.text = displayValue.ToString();
+			yield return null;
+		}
+		text.text = end.ToString();
+	}
 
-    private IEnumerator PlayScoreTexts(int count, int score)
-    {
-        var waitPopup = 0f;
-        var waitTime = (count * 0.4f) + 0.2f;
+	public void ToMenu()
+	{
+		AudioManager.Instance.PlaySFX(SFXType.Button);
+		SceneManager.LoadScene(0);
+	}
 
-        if (count >= 2)
-        {
-            waitPopup = count * 0.3f + 0.2f;
-            waitTime = (count * 0.4f) + 0.75f - waitPopup;
-            yield return new WaitForSeconds(waitPopup);
-            StartCoroutine(ShowTextOnCanvas(comboTextPrefab, _canvas, count, 0.5f));
-        }
+	public void Replay()
+	{
+		AudioManager.Instance.PlaySFX(SFXType.Button);
+		SceneManager.LoadScene("Classic");
+	}
 
-        yield return new WaitForSeconds(waitTime);
-        StartCoroutine(ShowTextOnCanvas(scoreTextPrefab, _canvas, score, 0.5f));
-    }
+	private IEnumerator PrintStamp(GameObject stamp, SFXType type, GameObject streak)
+	{
+		stamp.SetActive(true);
+		stamp.GetComponent<Animator>().Play("StampAnimation");
 
-    /// <summary>
-    /// Smoothly animates the scoreText from 'start' to 'end' over 'duration' seconds.
-    /// </summary>
-    private IEnumerator AnimateScore(TMP_Text text, int start, int end, float duration)
-    {
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            int displayValue = Mathf.RoundToInt(Mathf.Lerp(start, end, elapsed / duration));
-            text.text = displayValue.ToString();
-            yield return null;
-        }
-        text.text = end.ToString();
-    }
+		if (streakMultiplier > 1)
+		{
+			streak.SetActive(true);
+			streak.GetComponent<TMP_Text>().text = streakMultiplier.ToString();
+		}
 
-    public void ToMenu()
-    {
-        AudioManager.Instance.PlaySFX(SFXType.Button);
-        SceneManager.LoadScene(0);
-    }
+		//yield return new WaitForSeconds(0.3456f);
+		switch (type)
+		{
+			case SFXType.fantasticStamp:
+				fantasticEffect.Play();
+				AudioManager.Instance.PlaySFX(SFXType.fantastic);
+				break;
+			case SFXType.greatStamp:
+				greatEffect.Play();
+				AudioManager.Instance.PlaySFX(SFXType.great);
+				break;
+			case SFXType.goodStamp:
+				goodEffect.Play();
+				AudioManager.Instance.PlaySFX(SFXType.good);
+				break;
+		}
 
-    public void Replay()
-    {
-        AudioManager.Instance.PlaySFX(SFXType.Button);
-        SceneManager.LoadScene("Classic");
-    }
+		AudioManager.Instance.PlaySFX(type);
 
-    private IEnumerator PrintStamp(GameObject stamp ,SFXType type, GameObject streak)
-    {
-        stamp.SetActive(true);
-        stamp.GetComponent<Animator>().Play("StampAnimation");
+		yield return new WaitForSeconds(0.5f);
+		stamp.SetActive(false);
+		streak.SetActive(false);
+	}
 
-        if(streakMultiplier > 1)
-        {
-            streak.SetActive(true);
-            streak.GetComponent<TMP_Text>().text = streakMultiplier.ToString();
-        }
+	private IEnumerator PrintStreak(GameObject streak)
+	{
+		if (streakMultiplier > 1)
+		{
+			streak.SetActive(true);
+			streak.GetComponent<TMP_Text>().text = streakMultiplier.ToString();
+		}
 
-        //yield return new WaitForSeconds(0.3456f);
-        switch (type)
-        {
-	        case SFXType.fantasticStamp:
-		        fantasticEffect.Play();
-                AudioManager.Instance.PlaySFX(SFXType.fantastic);
-		        break;
-	        case SFXType.greatStamp:
-		        greatEffect.Play();
-                AudioManager.Instance.PlaySFX(SFXType.great);
-                break;
-	        case SFXType.goodStamp:
-		        goodEffect.Play();
-                AudioManager.Instance.PlaySFX(SFXType.good);
-                break;
-        }
-        
-        AudioManager.Instance.PlaySFX(type);
-        
-        yield return new WaitForSeconds(0.5f);
-        stamp.SetActive(false);
-        streak.SetActive(false);
-    }
+		yield return new WaitForSeconds(0.5f);
+		streak.SetActive(false);
+	}
 
-    private IEnumerator PrintStreak(GameObject streak)
-    {
-        if (streakMultiplier > 1)
-        {
-            streak.SetActive(true);
-            streak.GetComponent<TMP_Text>().text = streakMultiplier.ToString();
-        }
+	public int Score => currentScore;
 
-        yield return new WaitForSeconds(0.5f);
-        streak.SetActive(false);
-    }
+	public override void SetModeType(StageModeManager.StageModeType stageModeType)
+	{
+		base.SetModeType(stageModeType);
 
-
-    public int Score => currentScore;
-
-    public override void SetModeType(StageModeManager.StageModeType stageModeType)
-    {
-	    base.SetModeType(stageModeType);
-	    
-	    scoreText.SetActive(stageModeType == StageModeManager.StageModeType.Classic);
-	    highScoreText.SetActive(stageModeType == StageModeManager.StageModeType.Classic);
-    }
+		scoreText.SetActive(stageModeType == StageModeManager.StageModeType.Classic);
+		highScoreText.SetActive(stageModeType == StageModeManager.StageModeType.Classic);
+	}
 }

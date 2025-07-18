@@ -12,11 +12,13 @@ public class SpawnManager : MonoBehaviour
 	public List<GameObject> compositePrefabs;
 	private Queue<SerializableNumberBlock> _upcomingBlocks;
 	public Transform[] spawnPoints;
+	[SerializeField]
+	private Transform traSpawnTarget;
 	[HideInInspector]
 	public bool isInfinityMode = true;
 
 	private int placedCount;
-	private List<DraggableCompositeBlock> currentBlocks = new();
+	private List<DraggableCompositeBlock> _currentBlocks = new();
 
 	private ModeManager _modeManager;
 
@@ -34,7 +36,6 @@ public class SpawnManager : MonoBehaviour
 
 	private void InitSpawn()
 	{
-		placedCount = 0;
 		SpawnFull();
 	}
 
@@ -62,20 +63,11 @@ public class SpawnManager : MonoBehaviour
 		if (CheckGameOver())
 			return;
 
-		// 2) Tear down leftovers
-		foreach (var old in currentBlocks)
-		{
-			if (old)
-				Destroy(old.gameObject);
-		}
-		currentBlocks.Clear();
+		ClearBlocks();
 
-		bool gridEmpty = !GridManager.Instance.HasPlacedBlocks();
+		var gridEmpty = !GridManager.Instance.HasPlacedBlocks();
 
-		placedCount = 0;
-
-		// 3) Spawn exactly three composites
-		for (int i = 0; i < spawnPoints.Length; i++)
+		for (var i = 0; i < spawnPoints.Length; i++)
 		{
 			if (_upcomingBlocks is { Count: 0 })
 			{
@@ -84,7 +76,7 @@ public class SpawnManager : MonoBehaviour
 			}
 
 			DraggableCompositeBlock compInstance = null;
-			Vector3 pos = spawnPoints[i].position;
+			var pos = spawnPoints[i].position;
 
 			// Wave-2+: try to fit + match
 			if (i == 0 && !gridEmpty)
@@ -97,6 +89,12 @@ public class SpawnManager : MonoBehaviour
 
 					var comp = SpawnBlock(prefab, pos);
 
+					if (comp.valueInitialized)
+					{
+						compInstance = comp;
+						break;
+					}
+					
 					// must fit
 					if (!GridManager.Instance.CanPlaceCompositeBlockAnywhere(comp))
 					{
@@ -121,6 +119,7 @@ public class SpawnManager : MonoBehaviour
 						compInstance = comp;
 						break;
 					}
+
 					Destroy(comp.gameObject);
 				}
 
@@ -134,7 +133,13 @@ public class SpawnManager : MonoBehaviour
 						var go = Instantiate(prefab, pos, Quaternion.identity);
 						go.transform.localScale = Vector3.one * scaleAtSpawn;
 						var comp = go.GetComponent<DraggableCompositeBlock>();
-						comp.Init(this, pos);
+						comp.Init(pos);
+
+						if (comp.valueInitialized)
+						{
+							compInstance = comp;
+							break;
+						}
 
 						if (GridManager.Instance.CanPlaceCompositeBlockAnywhere(comp))
 						{
@@ -160,13 +165,14 @@ public class SpawnManager : MonoBehaviour
 				compInstance = SpawnBlock(compositePrefabs[Random.Range(0, compositePrefabs.Count)], pos);
 			}
 
-			currentBlocks.Add(compInstance);
+			_currentBlocks.Add(compInstance);
 		}
 	}
 
 	private DraggableCompositeBlock SpawnBlock(GameObject prefab, Vector3 pos)
 	{
-		if (_upcomingBlocks != null && _upcomingBlocks.TryDequeue(out var blockData))
+		SerializableNumberBlock blockData = null;
+		if (_upcomingBlocks != null && _upcomingBlocks.TryDequeue(out blockData))
 		{
 			prefab = compositePrefabs.FirstOrDefault(i => i.name == blockData.blockName) ?? prefab;
 
@@ -174,9 +180,9 @@ public class SpawnManager : MonoBehaviour
 				_upcomingBlocks = null;
 		}
 
-		var comp = Instantiate(prefab, pos, Quaternion.identity).GetComponent<DraggableCompositeBlock>();
+		var comp = Instantiate(prefab, pos, Quaternion.identity, traSpawnTarget).GetComponent<DraggableCompositeBlock>();
 		comp.transform.localScale = Vector3.one * scaleAtSpawn;
-		comp.Init(this, pos);
+		comp.Init(pos, blockData?.values);
 
 		return comp;
 	}
@@ -186,13 +192,7 @@ public class SpawnManager : MonoBehaviour
 		if (CheckGameOver())
 			return;
 
-		// 2) Tear down leftovers
-		foreach (var old in currentBlocks)
-		{
-			if (old)
-				Destroy(old.gameObject);
-		}
-		currentBlocks.Clear();
+		ClearBlocks();
 
 		var gridEmpty = !GridManager.Instance.HasPlacedBlocks();
 
@@ -206,6 +206,12 @@ public class SpawnManager : MonoBehaviour
 			foreach (var prefab in compositePrefabs.OrderBy(_ => Random.value))
 			{
 				var comp = SpawnBlock(prefab, pos);
+
+				if (comp.valueInitialized)
+				{
+					chosen = comp;
+					break;
+				}
 
 				// must fit somewhere
 				if (!GridManager.Instance.CanPlaceCompositeBlockAnywhere(comp))
@@ -233,7 +239,7 @@ public class SpawnManager : MonoBehaviour
 					{
 						// chain‐match: at least one NumberBlock in this comp
 						// sums to 10 with one in the previous slot
-						var prev = currentBlocks[i - 1];
+						var prev = _currentBlocks[i - 1];
 						if (prev.children.Any(a =>
 							    comp.children.Any(b => a.Value + b.Value == 10)))
 						{
@@ -260,6 +266,12 @@ public class SpawnManager : MonoBehaviour
 				{
 					var comp = SpawnBlock(prefab, pos);
 
+					if (comp.valueInitialized)
+					{
+						chosen = comp;
+						break;
+					}
+					
 					if (GridManager.Instance.CanPlaceCompositeBlockAnywhere(comp))
 					{
 						comp.AssignValidRandomNumbers(); // at least randomize
@@ -279,11 +291,8 @@ public class SpawnManager : MonoBehaviour
 				}
 			}
 
-			currentBlocks.Add(chosen);
+			_currentBlocks.Add(chosen);
 		}
-
-		// 4) Reset for this wave
-		placedCount = 0;
 	}
 
 	/// <summary>
@@ -295,9 +304,9 @@ public class SpawnManager : MonoBehaviour
 		for (var i = 0; i < spawnPoints.Length; i++)
 		{
 			// empty if we've destroyed it (== null) or it’s already been placed
-			if (currentBlocks[i] == null || currentBlocks[i].placed)
+			if (_currentBlocks[i] == null || _currentBlocks[i].placed)
 			{
-				currentBlocks[i] = SpawnBlock(compositePrefabs[Random.Range(0, compositePrefabs.Count)], spawnPoints[i].position);
+				_currentBlocks[i] = SpawnBlock(compositePrefabs[Random.Range(0, compositePrefabs.Count)], spawnPoints[i].position);
 				return;
 			}
 		}
@@ -310,7 +319,7 @@ public class SpawnManager : MonoBehaviour
 			SpawnNew();
 
 			// Of the *un-placed* composites, is there at least one that fits?
-			var anyFit = currentBlocks.Where(c => c != null && !c.placed).Any(c => GridManager.Instance.CanPlaceCompositeBlockAnywhere(c));
+			var anyFit = _currentBlocks.Where(c => c != null && !c.placed).Any(c => GridManager.Instance.CanPlaceCompositeBlockAnywhere(c));
 
 			if (!anyFit)
 			{
@@ -329,7 +338,7 @@ public class SpawnManager : MonoBehaviour
 			if (remaining > 0)
 			{
 				// Of the *un-placed* composites, is there at least one that fits?
-				bool anyFit = currentBlocks
+				bool anyFit = _currentBlocks
 					.Where(c => c != null && !c.placed)
 					.Any(c => GridManager.Instance.CanPlaceCompositeBlockAnywhere(c));
 
@@ -368,7 +377,7 @@ public class SpawnManager : MonoBehaviour
 	/// </summary>
 	public void CheckRemainingSpace()
 	{
-		bool anyFit = currentBlocks
+		bool anyFit = _currentBlocks
 			.Where(c => c != null && !c.placed)
 			.Any(c => GridManager.Instance.CanPlaceCompositeBlockAnywhere(c));
 
@@ -386,6 +395,17 @@ public class SpawnManager : MonoBehaviour
 			StartCoroutine(AskRevive());
 		else
 			_modeManager.GameOver();
+	}
+
+	public void ClearBlocks()
+	{
+		foreach (Transform child in traSpawnTarget)
+		{
+			Destroy(child.gameObject);
+		}
+
+		_currentBlocks.Clear();
+		placedCount = 0;
 	}
 
 	#region Revive
@@ -408,14 +428,7 @@ public class SpawnManager : MonoBehaviour
 		_modeManager.SetNoSpaceLeftMessage(false);
 		revivePanel.SetActive(false);
 
-		foreach (var comp in currentBlocks)
-		{
-			if (comp != null)
-				Destroy(comp.gameObject);
-		}
-
-		currentBlocks.Clear();
-		placedCount = 0;
+		ClearBlocks();
 		SpawnAllMatch();
 	}
 
@@ -456,7 +469,7 @@ public class SpawnManager : MonoBehaviour
 		{
 			bool matchFound = false;
 			// Find a composite and grid block pair summing to 10
-			foreach (var comp in currentBlocks.Where(c => c != null && !c.placed))
+			foreach (var comp in _currentBlocks.Where(c => c != null && !c.placed))
 			{
 				if (!gm.CanPlaceCompositeBlockAnywhere(comp)) continue;
 
@@ -487,7 +500,7 @@ public class SpawnManager : MonoBehaviour
 			if (!matchFound)
 			{
 				// No valid match: if there are still unplaced spawn blocks, point from first to grid center
-				var remaining = currentBlocks.Where(c => c != null && !c.placed).ToList();
+				var remaining = _currentBlocks.Where(c => c != null && !c.placed).ToList();
 				if (remaining.Any())
 				{
 					var comp = remaining.First();

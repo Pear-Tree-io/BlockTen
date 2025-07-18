@@ -37,30 +37,45 @@ public class GridManager : MonoBehaviour
 	private void Awake()
 	{
 		if (Instance != null && Instance != this)
+		{
 			Destroy(gameObject);
-		else
-			Instance = this;
+			return;
+		}
 
-		occupied = new bool[columns, rows];
-		gridBlocks = new NumberBlock[columns, rows];
+		Instance = this;
+		Clear();
 
 		var w = columns * cellSize;
 		var h = rows * cellSize;
 		origin = transform.position - new Vector3(w / 2f - cellSize / 2f, h / 2f - cellSize / 2f, 0f);
 
 		shadows = new SpriteRenderer[columns, rows];
-		for (int x = 0; x < columns; x++)
-		for (int y = 0; y < rows; y++)
+		for (var x = 0; x < columns; x++)
 		{
-			var go = Instantiate(
-				shadowPrefab,
-				GetCellCenter(x, y),
-				Quaternion.identity,
-				transform // parent under your grid
-			);
-			var sr = go.GetComponent<SpriteRenderer>();
-			sr.enabled = false; // start hidden
-			shadows[x, y] = sr;
+			for (var y = 0; y < rows; y++)
+			{
+				var go = Instantiate(
+					shadowPrefab,
+					GetCellCenter(x, y),
+					Quaternion.identity,
+					transform // parent under your grid
+				);
+				var sr = go.GetComponent<SpriteRenderer>();
+				sr.enabled = false; // start hidden
+				shadows[x, y] = sr;
+			}
+		}
+	}
+
+	public void Clear()
+	{
+		occupied = new bool[columns, rows];
+		gridBlocks = new NumberBlock[columns, rows];
+		spawnManager?.ClearBlocks();
+
+		foreach (Transform tra in traBlockTarget)
+		{
+			Destroy(tra.gameObject);
 		}
 	}
 
@@ -282,7 +297,7 @@ public class GridManager : MonoBehaviour
 		if (b?.gameObject == false)
 			yield break;
 
-		b.SetColor(destroyHighlightColor);
+		// b.SetColor(destroyHighlightColor);
 		b.spriteRenderer.sortingOrder = 3;
 		b.ValueText.sortingOrder = 4;
 
@@ -591,13 +606,9 @@ public class GridManager : MonoBehaviour
 
 	public void ClearAllPreviews()
 	{
-		for (var x = 0; x < columns; x++)
+		foreach (var b in gridBlocks)
 		{
-			for (var y = 0; y < rows; y++)
-			{
-				if (GetBlockAt(x, y) is NumberBlock b)
-					b.StopPreview();
-			}
+			b?.StopPreview();
 		}
 	}
 
@@ -634,9 +645,13 @@ public class GridManager : MonoBehaviour
 	/// </summary>
 	public void ClearShadows()
 	{
-		for (int x = 0; x < columns; x++)
-		for (int y = 0; y < rows; y++)
-			shadows[x, y].enabled = false;
+		for (var x = 0; x < columns; x++)
+		{
+			for (var y = 0; y < rows; y++)
+			{
+				shadows[x, y].enabled = false;
+			}
+		}
 	}
 
 	[Header("End Grid Initialization Settings")]
@@ -644,6 +659,7 @@ public class GridManager : MonoBehaviour
 	private float initEndDelay = 0.05f;
 	[SerializeField]
 	private GameObject gameOverTile;
+	public Transform traBlockTarget;
 
 	/// <summary>
 	/// Initializes the grid with an animated fill from bottom to top.
@@ -690,16 +706,18 @@ public class GridManager : MonoBehaviour
 
 	public void SetMapData(MapData data)
 	{
+		Clear();
+
 		foreach (var block in data.blocks)
 		{
 			if (block is not { value: > 0 })
 				continue;
 
-			var obj = Instantiate(blockPrefab, GetCellCenter(block.x, block.y), Quaternion.identity);
-			obj.GetComponent<DraggableCompositeBlock>().placed = true;
-			var nb = obj.GetComponentInChildren<NumberBlock>();
-			nb.Value = block.value;
-			SetBlockData(nb, new(block.x, block.y));
+			var obj = Instantiate(blockPrefab, GetCellCenter(block.x, block.y), Quaternion.identity, traBlockTarget);
+			var draggable = obj.GetComponent<DraggableCompositeBlock>();
+			draggable.Init(Vector3.zero, new[] { block.value });
+			draggable.placed = true;
+			SetBlockData(draggable.children.First(), new(block.x, block.y));
 		}
 	}
 }

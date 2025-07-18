@@ -145,7 +145,7 @@ MonoBehaviour:
     values: 
   - x: 3
     y: 2
-    value: 5
+    value: 0
     blockName: 
     values: 
   - x: 3
@@ -190,7 +190,7 @@ MonoBehaviour:
     values: 
   - x: 4
     y: 3
-    value: 0
+    value: 5
     blockName: 
     values: 
   - x: 4

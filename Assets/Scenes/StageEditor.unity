@@ -355,7 +355,6 @@ GameObject:
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
   - component: {fileID: 519420033}
-  - component: {fileID: 519420034}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -497,21 +496,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_MaxRayIntersections: 0
---- !u!114 &519420034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: daf5a09ccee7ad74380cd094745bd5fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _camera: {fileID: 519420031}
-  _baseOrthographicSize: 10
-  _baseAspect: 0.5625
 --- !u!1 &563418914
 GameObject:
   m_ObjectHideFlags: 0
@@ -785,6 +769,7 @@ MonoBehaviour:
   shadowPrefab: {fileID: 0}
   initEndDelay: 0.05
   gameOverTile: {fileID: 4630699909476805297, guid: 5a9bb2ace39d92b4d8dce66555671415, type: 3}
+  traBlockTarget: {fileID: 1475675196}
 --- !u!4 &859904051
 Transform:
   m_ObjectHideFlags: 0
@@ -808,6 +793,7 @@ Transform:
   - {fileID: 1064949924}
   - {fileID: 2135204695}
   - {fileID: 5845662905990718946}
+  - {fileID: 1475675196}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1057982513
@@ -1182,6 +1168,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1475675195
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1475675196}
+  m_Layer: 0
+  m_Name: traBlockTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1475675196
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1475675195}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 859904051}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1622820505
 GameObject:
   m_ObjectHideFlags: 0
@@ -1192,7 +1209,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1622820507}
   - component: {fileID: 1622820506}
-  - component: {fileID: 1622820508}
   m_Layer: 0
   m_Name: StageEditor
   m_TagString: Untagged
@@ -1213,8 +1229,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 859904050}
+  stageName: tutorial_4
   objCell: {fileID: 4958560085060495230, guid: 480a53435e2a1ac49b9f6883ffd358dd, type: 3}
-  stageName: test
   input:
     m_Name: Input
     m_Type: 0
@@ -1327,19 +1343,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1622820508
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1622820505}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30e854364b032184b831e13321663f76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stageName: 
 --- !u!1 &1806767915
 GameObject:
   m_ObjectHideFlags: 0
