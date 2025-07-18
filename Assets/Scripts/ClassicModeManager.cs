@@ -113,11 +113,11 @@ public class ClassicModeManager : ModeManager
 
         //comboMultiplier = matchCount;
 
-        var pointsGained = 0f;
+        var pointsGained = 0;
 
         if(streakMultiplier > 1)
         {
-            pointsGained = blockCount * matchCount * 10f * (1f + (streakMultiplier/2f));
+            pointsGained = (blockCount * matchCount * 10) + (streakMultiplier * 10);
         }
         else
         {
