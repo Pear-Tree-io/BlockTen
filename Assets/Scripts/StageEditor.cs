@@ -58,7 +58,6 @@ public class StageEditor : MonoBehaviour
 				nb.Value = value;
 		}
 	}
-#endif
 
 	[Button("Save Block Data", ButtonSizes.Large)]
 	public void SaveBlock()
@@ -78,4 +77,6 @@ public class StageEditor : MonoBehaviour
 
 		Debug.Log("Save Block Data");
 	}
+#endif
+
 }

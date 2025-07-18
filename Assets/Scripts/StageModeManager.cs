@@ -34,6 +34,7 @@ public class StageModeManager : MonoBehaviour
 	
 	public MapData LoadMapData()
 	{
+		#if UNITY_EDITOR
 		var path = $"Assets/Resources/{stageName}_MapData.asset";
 		var data = AssetDatabase.LoadAssetAtPath<MapData>(path);
 		if (data == null)
@@ -45,5 +46,7 @@ public class StageModeManager : MonoBehaviour
 		GridManager.Instance.SetMapData(data);
 		@base.spawnManager.SetUpcomingBlocks(data.upcomingBlocks);
 		return data;
+		#endif
+		return null;
 	}
 }
