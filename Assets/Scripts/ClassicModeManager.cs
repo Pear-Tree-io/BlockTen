@@ -22,7 +22,7 @@ public class ClassicModeManager : ModeManager
     private int adCount = 0;
     private int streakMultiplier = 0;
 
-    private const string HighScoreKey = "HighScore";
+    private const string HighScoreKey = "ClassicHighScore";
     private const string TutorialKey = "Tutorial";
     private const string AdKey = "Ad";
 
