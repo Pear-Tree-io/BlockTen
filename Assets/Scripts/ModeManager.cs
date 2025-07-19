@@ -24,7 +24,10 @@ public abstract class ModeManager : MonoBehaviour
 
 	public bool isHighScore;
 	public bool isRevivable = true;
-	public bool ConsumeRevivableState()
+
+    private int adCount = 0;
+
+    public bool ConsumeRevivableState()
 	{
 		var value = isRevivable;
 		isRevivable = false;
@@ -137,15 +140,21 @@ public abstract class ModeManager : MonoBehaviour
 		}
 		
 		FirebaseAnalytics.LogEvent("GameOver", new Parameter("mode", modeType.ToString()));
-	}
+
+        AdCountUp();
+        PlayAd();
+    }
 
 	protected virtual void SaveGame()
 	{
-	}
+        PlayerData.SetAdCount(adCount);
+        PlayerPrefs.Save();
+    }
 
 	protected virtual void LoadGame()
 	{
-	}
+        adCount = PlayerData.GetAdCount();
+    }
 
 	public virtual void ToggleSettings()
 	{
@@ -197,4 +206,33 @@ public abstract class ModeManager : MonoBehaviour
 		modeType = stageModeType;
 		spawnManager.Init(this);
 	}
+
+	protected virtual void PlayAd()
+	{
+        if (adCount > 2)
+        {
+			Debug.Log("AD is played");
+            AdManager.Get.ShowAd();
+        }
+    }
+
+	protected virtual void AdCountUp()
+	{
+		if(adCount <= 2)
+		{
+			adCount++;
+		}
+	}
+
+	public virtual void ToMenu() 
+	{
+		PlayAd();
+        AudioManager.Instance.PlaySFX(SFXType.Button);
+        SceneManager.LoadScene(0);
+    }
+
+    public virtual void Replay() {
+		PlayAd();
+        AudioManager.Instance.PlaySFX(SFXType.Button);
+    }
 }

@@ -17,7 +17,6 @@ public class TimeModeManager : ModeManager
 
     private int highScore = 0;
     private int currentScore;
-    private int adCount = 0;
 
     private const string HighScoreKey = "TimeHighScore";
     private const string AdKey = "Ad";
@@ -124,15 +123,6 @@ public class TimeModeManager : ModeManager
     {
         timerAnimation.enabled = false;
 
-        if (adCount > 2)
-        {
-            AdManager.Get.ShowAd();
-        }
-        else
-        {
-            adCount++;
-        }
-
         if (currentScore > highScore)
         {
 	        highScore = currentScore;
@@ -152,15 +142,14 @@ public class TimeModeManager : ModeManager
 
     protected override void SaveGame()
     {
-        PlayerPrefs.SetInt(AdKey, adCount);
         PlayerPrefs.SetInt(HighScoreKey, highScore);
-        PlayerPrefs.Save();
+        base.SaveGame();
     }
 
     protected override void LoadGame()
     {
-        adCount = PlayerPrefs.GetInt(AdKey, 0);
         highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
+        base.LoadGame();
     }
 
     public void LoadTimeLimitScene()
@@ -206,15 +195,9 @@ public class TimeModeManager : ModeManager
         text.text = end.ToString();
     }
 
-    public void ToMenu()
-    {
-        AudioManager.Instance.PlaySFX(SFXType.Button);
-        SceneManager.LoadScene(0);
-    }
-
     public void Replay()
     {
-        AudioManager.Instance.PlaySFX(SFXType.Button);
+        base.Replay();
         SceneManager.LoadScene("TimeLimit");
     }
 

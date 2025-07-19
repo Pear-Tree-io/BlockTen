@@ -23,7 +23,7 @@ public class ClassicModeManager : ModeManager
 	private int highScore = 0;
 	private int currentScore;
 	private int comboMultiplier = 1;
-	private int adCount = 0;
+	
 	private int streakMultiplier = 0;
 
 	public GameObject gameOverPanel;
@@ -160,15 +160,6 @@ public class ClassicModeManager : ModeManager
 	{
 		if (modeType == StageModeManager.StageModeType.Classic)
 		{
-			if (adCount > 2)
-			{
-				AdManager.Get.ShowAd();
-			}
-			else
-			{
-				adCount++;
-			}
-
 			if (currentScore > highScore)
 			{
 				highScore = currentScore;
@@ -189,14 +180,14 @@ public class ClassicModeManager : ModeManager
 
 	protected override void SaveGame()
 	{
-		PlayerData.SetAdCount(adCount);
 		PlayerData.SetHighScore(modeType, highScore);
+		base.SaveGame();
 	}
 
 	protected override void LoadGame()
 	{
-		adCount = PlayerData.GetAdCount();
 		highScore = PlayerData.GetHighScore(modeType);
+		base.LoadGame();
 	}
 
 	public void LoadClassicScene()
@@ -253,15 +244,9 @@ public class ClassicModeManager : ModeManager
 		text.text = end.ToString();
 	}
 
-	public void ToMenu()
-	{
-		AudioManager.Instance.PlaySFX(SFXType.Button);
-		SceneManager.LoadScene(0);
-	}
-
 	public void Replay()
 	{
-		AudioManager.Instance.PlaySFX(SFXType.Button);
+		base.Replay();
 		SceneManager.LoadScene("Classic");
 	}
 
